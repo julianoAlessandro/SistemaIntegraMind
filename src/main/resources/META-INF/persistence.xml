@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+             http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+             version="2.1">
+
+    <persistence-unit name="IntegraMIND-JPA" transaction-type="RESOURCE_LOCAL">
+        <properties>
+
+            <!-- URL JDBC PARA SEU MARIADB -->
+            <property name="javax.persistence.jdbc.url"
+                      value="jdbc:mariadb://127.0.0.1:3308/bancointegramind" />
+
+            <property
+                name="javax.persistence.jdbc.url"
+                value="jdbc:mysql://127.0.0.1:3308/bancointegramind?allowPublicKeyRetrieval=true&amp;useSSL=false&amp;serverTimezone=America/Sao_Paulo"/>
+
+            <!-- CREDENCIAIS -->
+            <property name="javax.persistence.jdbc.user" value="root" />
+            <property name="javax.persistence.jdbc.password" value="753951" />
+
+            <!-- HIBERNATE -->
+            <property name="hibernate.hbm2ddl.auto" value="update" />
+            <property name="hibernate.dialect"
+                      value="org.hibernate.dialect.MariaDBDialect" />
+
+            <!-- OPCIONAL PARA DEBUG -->
+            <property name="hibernate.show_sql" value="true" />
+            <property name="hibernate.format_sql" value="true" />
+
+        </properties>
+    </persistence-unit>
+</persistence>
