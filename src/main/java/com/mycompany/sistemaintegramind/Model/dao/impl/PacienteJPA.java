@@ -4,7 +4,7 @@
  */
 package com.mycompany.sistemaintegramind.Model.dao.impl;
 
-import com.mycompany.sistemaintegramind.Model.dao.ClienteFiltro;
+import com.mycompany.sistemaintegramind.Model.dao.PacienteFiltro;
 import com.mycompany.sistemaintegramind.Model.entidades.Pacientes;
 import com.mycompany.sistemaintegramind.util.Utilitarios.JPAUtil;
 import java.util.ArrayList;
@@ -71,7 +71,7 @@ public class PacienteJPA implements PacienteDAO {
     }
 
     @Override
-    public List<Pacientes> listarClientes() {
+    public List<Pacientes> listarPacientes() {
         EntityManager em = JPAUtil.getEntityManager();
         List<Pacientes> listClientes = new ArrayList<>();
 
@@ -83,7 +83,7 @@ public class PacienteJPA implements PacienteDAO {
             Root<Pacientes> RootCliente = cq.from(Pacientes.class);
 
             //2026-02-26 Juliano: mostrando na listagem todos os clientes que são ativos
-            Predicate somenteClienteAtivo = cb.equal(RootCliente.get("statuspaciente;"), StatusPaciente.ATIVO);
+            Predicate somenteClienteAtivo = cb.equal(RootCliente.get("statuspaciente"), StatusPaciente.ATIVO);
             cq.select(RootCliente).where(somenteClienteAtivo);
 
             listClientes = em.createQuery(cq).getResultList();
@@ -104,7 +104,7 @@ public class PacienteJPA implements PacienteDAO {
     }
 
     @Override
-    public List<Pacientes> filtrarClientes(ClienteFiltro clientefiltro) {
+    public List<Pacientes> filtrarPacientes(PacienteFiltro pacientefiltro) {
         List<Pacientes> filtrarClientes = new ArrayList<>();
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -113,7 +113,7 @@ public class PacienteJPA implements PacienteDAO {
             Root<Pacientes> RootClientes = cq.from(Pacientes.class);
 
             List<Predicate> predicates = new ArrayList<>(); // 2025-11-23 Juliano indica qual condicao/ filtro  tera
-            
+
             //2026-08-04 Juliano: já definindo que está lista filtrada tera somente os clientes ATIVOS
             predicates.add(
                     cb.equal(
@@ -122,16 +122,15 @@ public class PacienteJPA implements PacienteDAO {
                     )
             );
 
-            if (clientefiltro.getId() != null) {
-                predicates.add(cb.equal(RootClientes.get("id"), clientefiltro.getId()));
+            if (pacientefiltro.getId() != null) {
+                predicates.add(cb.equal(RootClientes.get("id"), pacientefiltro.getId()));
             }
-            if (clientefiltro.getSexo() != null) {
-                predicates.add(cb.equal(RootClientes.get("sexo"), clientefiltro.getSexo()));
+            if (pacientefiltro.getSexo() != null) {
+                predicates.add(cb.equal(RootClientes.get("sexo"), pacientefiltro.getSexo()));
 
             }
-            if (clientefiltro.getNome() != null && !clientefiltro.getNome().isEmpty()) {
-                predicates.add(
-                        cb.like(cb.lower(RootClientes.get("nome")), "%" + clientefiltro.getNome().toLowerCase() + "%"));
+            if (pacientefiltro.getNome() != null && !pacientefiltro.getNome().isEmpty()) {
+                predicates.add(cb.like(cb.lower(RootClientes.get("nome")), "%" + pacientefiltro.getNome().toLowerCase() + "%"));
 
             }
 
@@ -188,6 +187,27 @@ public class PacienteJPA implements PacienteDAO {
             }
         }
 
+    }
+
+    public Pacientes buscarPorId(Long id) {
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+
+            return em.find(Pacientes.class, id);
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            return null;
+
+        } finally {
+
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
     }
 
     public EntityManager getEntityManager() {

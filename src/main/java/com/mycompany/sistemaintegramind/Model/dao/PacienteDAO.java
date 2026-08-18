@@ -14,8 +14,8 @@ import java.util.List;
 public interface PacienteDAO {
 
     public void CadastrarCliente(Pacientes cliente);
-    public List<Pacientes> listarClientes();
-    public List<Pacientes> filtrarClientes(ClienteFiltro clientefiltro);
+    public List<Pacientes> listarPacientes();
+    public List<Pacientes> filtrarPacientes(PacienteFiltro clientefiltro);
     public void deletarCliente(Pacientes cliente);
     public void atualizarCliente(Pacientes cliente);
     

@@ -5,13 +5,14 @@
 package com.mycompany.sistemaintegramind.View.Pacientes;
 
 import com.mycompany.sistemaintegramind.util.Utilitarios.ValidarCpfCnpj;
-import com.mycompany.sistemaintegramind.Model.dao.ClienteFiltro;
+import com.mycompany.sistemaintegramind.Model.dao.PacienteFiltro;
 import com.mycompany.sistemaintegramind.Model.dao.impl.PacienteJPA;
 import com.mycompany.sistemaintegramind.Model.dao.impl.FinanceiroJPA;
 import com.mycompany.sistemaintegramind.Model.dto.FinanceiroDTO;
 import com.mycompany.sistemaintegramind.Model.entidades.Pacientes;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.EstadosBrasileiros;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.Sexo;
+import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPaciente;
 import com.mycompany.sistemaintegramind.View.Componentes.BotaoEstilo;
 import com.mycompany.sistemaintegramind.View.Componentes.ComponenteUtil;
 import com.mycompany.sistemaintegramind.View.Componentes.TabelaEstilo;
@@ -58,8 +59,9 @@ import javax.swing.text.BadLocationException;
  */
 public class PacienteView extends javax.swing.JPanel {
 
+    Pacientes paciente = new Pacientes();
     private PacienteJPA pacientejpa = new PacienteJPA();
-    private ClienteFiltro filtro = new ClienteFiltro();
+    private PacienteFiltro filtro = new PacienteFiltro();
     private List<Pacientes> listarPacientesFiltrados;
 
     public PacienteView() {
@@ -74,7 +76,7 @@ public class PacienteView extends javax.swing.JPanel {
                 new Color(87, 179, 131),
                 new Color(72, 148, 109)
         );
-        TabelaEstilo.aplicar(tblClientes);
+        TabelaEstilo.aplicar(tblPacientes);
 
         //2025-12-22 Guilherme: Define placeholders dos campos
         txtNome.putClientProperty("JTextField.placeholderText", "Ex: João da Silva");
@@ -100,8 +102,8 @@ public class PacienteView extends javax.swing.JPanel {
         cbSexo.setModel(new DefaultComboBoxModel<>(Sexo.values()));
         cbEstadosSigla.setModel(new DefaultComboBoxModel<>(EstadosBrasileiros.values()));
 
-        tblClientes.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        tblClientes.setRowHeight(28);
+        tblPacientes.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        tblPacientes.setRowHeight(28);
 
         //2026-01-10 Guilherme: Máscara para data e números de telefone
         ((AbstractDocument) txtDataNascimento.getDocument()).setDocumentFilter(new MascaraData());
@@ -212,7 +214,7 @@ public class PacienteView extends javax.swing.JPanel {
         jLabel20 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
-        tblClientes = new javax.swing.JTable();
+        tblPacientes = new javax.swing.JTable();
         container2 = new com.mycompany.sistemaintegramind.View.Componentes.Container();
         jLabel18 = new javax.swing.JLabel();
         txtId = new javax.swing.JTextField();
@@ -475,7 +477,7 @@ public class PacienteView extends javax.swing.JPanel {
         jLabel29.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/whatsapp_icon-icons.com_62756.png"))); // NOI18N
 
         jLabel10.setFont(new java.awt.Font("Arial", 0, 16)); // NOI18N
-        jLabel10.setText("Telefone Comercial");
+        jLabel10.setText("Telefone de Urgência");
 
         jLabel30.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/whatsapp_icon-icons.com_62680.png"))); // NOI18N
 
@@ -729,8 +731,18 @@ public class PacienteView extends javax.swing.JPanel {
         jPanel2.setBackground(new java.awt.Color(221, 223, 237));
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
-        tblClientes.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
-        tblClientes.setModel(new javax.swing.table.DefaultTableModel(
+        jScrollPane4.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                jScrollPane4AncestorAdded(evt);
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
+
+        tblPacientes.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        tblPacientes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -741,17 +753,17 @@ public class PacienteView extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        tblClientes.setMinimumSize(new java.awt.Dimension(500, 500));
-        tblClientes.addAncestorListener(new javax.swing.event.AncestorListener() {
+        tblPacientes.setMinimumSize(new java.awt.Dimension(500, 500));
+        tblPacientes.addAncestorListener(new javax.swing.event.AncestorListener() {
             public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
-                tblClientesAncestorAdded(evt);
+                tblPacientesAncestorAdded(evt);
             }
             public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
             }
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
             }
         });
-        jScrollPane4.setViewportView(tblClientes);
+        jScrollPane4.setViewportView(tblPacientes);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -913,9 +925,9 @@ public class PacienteView extends javax.swing.JPanel {
 
     //2025-12-09 Juliano conjunto de métodos para otimizar relacionamento com o CRUD do JPA evitando duplicidade  de código e melhorando a legibilidade do mesmo
     private void carregartabela() {
-        DefaultTableModel model = (DefaultTableModel) tblClientes.getModel();
+        DefaultTableModel model = (DefaultTableModel) tblPacientes.getModel();
         model.setRowCount(0);
-        List<Pacientes> listarClientes = pacientejpa.listarClientes();
+        List<Pacientes> listarClientes = pacientejpa.listarPacientes();
         for (Pacientes paciente : listarClientes) {
             model.addRow(new Object[]{
                 paciente.getNome(),
@@ -961,7 +973,7 @@ public class PacienteView extends javax.swing.JPanel {
             paciente.setNumero(txtNumero.getText());
             paciente.setComplemento(txtComplemento.getText());
             paciente.setCidade(txtCidade.getText());
-            //cliente.setTipopessoa(TipoPessoa.PESSOA_FÍSICA);
+            paciente.setStatuspaciente(StatusPaciente.ATIVO);
 
             pacientejpa.CadastrarCliente(paciente);
 
@@ -969,7 +981,7 @@ public class PacienteView extends javax.swing.JPanel {
 
             JOptionPane.showMessageDialog(
                     null,
-                    "Cliente salvo com sucesso!",
+                    "Paciente salvo com sucesso!",
                     "Sucesso",
                     JOptionPane.INFORMATION_MESSAGE,
                     icon
@@ -977,7 +989,7 @@ public class PacienteView extends javax.swing.JPanel {
 
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Não foi possível salvar o cliente: " + e.getMessage());
+            System.out.println("Não foi possível salvar o Paciente: " + e.getMessage());
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
     }
@@ -1003,8 +1015,9 @@ public class PacienteView extends javax.swing.JPanel {
     }
 
     private Pacientes lerCamposPaciente() {
-
+        
         Pacientes paciente = new Pacientes();
+
         paciente.setNome(txtNomeCliente.getText());
 
         String dataTexto = txtDataNascimento.getText().trim();
@@ -1033,6 +1046,7 @@ public class PacienteView extends javax.swing.JPanel {
         paciente.setNumero(txtNumero.getText());
         paciente.setCidade(txtCidade.getText());
         paciente.setCep(txtBuscaCep.getText());
+        paciente.setStatuspaciente(StatusPaciente.ATIVO);
 
         String idText = txtId.getText().trim();
         if (!idText.isEmpty()) {
@@ -1074,7 +1088,7 @@ public class PacienteView extends javax.swing.JPanel {
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
 
         String nome = txtNomeCliente.getText().trim();
-        
+
         if (nome.isEmpty() || nome.length() < 4) {
             txtNomeCliente.putClientProperty("JComponent.outline", "error");
             JOptionPane.showMessageDialog(this, "Nome obrigatório (mínimo 4 caracteres)");
@@ -1083,7 +1097,6 @@ public class PacienteView extends javax.swing.JPanel {
         } else {
             txtNomeCliente.putClientProperty("JComponent.outline", null);
         }
-         
 
         String cpf = txtcpf.getText();
 
@@ -1092,7 +1105,7 @@ public class PacienteView extends javax.swing.JPanel {
             if (!ValidarCpfCnpj.isCPF(cpf)) {
                 JOptionPane.showMessageDialog(this, "CPF Inválido!", "Erro", JOptionPane.ERROR_MESSAGE);
                 txtcpf.requestFocus();
-                return; 
+                return;
             }
         }
 
@@ -1108,7 +1121,7 @@ public class PacienteView extends javax.swing.JPanel {
         }
 
         System.out.println("Clicou no botão salvar.");
-        
+
         Pacientes pacienteEditar = lerCamposPaciente(); // 2025-12-09 juliano pega todos os valores dos atributos do objeto
 
         if (pacienteEditar.getId() == null) {
@@ -1130,18 +1143,16 @@ public class PacienteView extends javax.swing.JPanel {
 
     }//GEN-LAST:event_btnSalvarActionPerformed
 
-    private void tblClientesAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_tblClientesAncestorAdded
+    private void tblPacientesAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_tblPacientesAncestorAdded
         //2025-11-22 Juliano definindo o nome das colunas da tabela
         DefaultTableModel modelo = new DefaultTableModel(
                 new Object[]{
                     "Nome",
                     "id",
-                    "Nome Fantasia",
                     "CPF",
-                    "CNPJ",
                     "E-mail",
                     "Celular",
-                    "Telefone Comercial",
+                    "Telefone Urgência",
                     "Telefone Fixo",
                     "Rua",
                     "Bairro",
@@ -1151,29 +1162,29 @@ public class PacienteView extends javax.swing.JPanel {
                 0
         );
 
-        tblClientes.setModel(modelo);
+        tblPacientes.setModel(modelo);
 
-        List<Pacientes> listarClientes = pacientejpa.listarClientes();
+        List<Pacientes> listarPacientes = pacientejpa.listarPacientes();
 
         modelo.setRowCount(0);
 
-        for (Pacientes pacientes : listarClientes) {
+        for (Pacientes p : listarPacientes) {
             modelo.addRow(new Object[]{
-                pacientes.getNome(),
-                pacientes.getId(),
-                pacientes.getCpf(),
-                pacientes.getEmail(),
-                pacientes.getTelefoneCelular(),
-                pacientes.getTelefoneComercial(),
-                pacientes.getTelefoneFixo(),
-                pacientes.getRua(),
-                pacientes.getBairro(),
-                pacientes.getComplemento(),
-                pacientes.getNumero()
+                p.getNome(),
+                p.getId(),
+                p.getCpf(),
+                p.getEmail(),
+                p.getTelefoneCelular(),
+                p.getTelefoneComercial(),
+                p.getTelefoneFixo(),
+                p.getRua(),
+                p.getBairro(),
+                p.getComplemento(),
+                p.getNumero()
             });
         }
 
-    }//GEN-LAST:event_tblClientesAncestorAdded
+    }//GEN-LAST:event_tblPacientesAncestorAdded
 
     private void txtIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdActionPerformed
 
@@ -1183,7 +1194,7 @@ public class PacienteView extends javax.swing.JPanel {
     private void btnBuscarFiltroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarFiltroActionPerformed
 
         //2026-08-10 Juliano: Limpa os filtros da pesquisa anterior, criando um novo objeto para as novas pesquisas
-        filtro = new ClienteFiltro();
+        PacienteFiltro filtro = new PacienteFiltro(); // 2026-08-17 Juliano: Preciso criar uma nova instância/novo objeto para cada filtro por isso tive que ter um new como variável local
         if (!txtId.getText().trim().isEmpty()) {
             filtro.setId(Long.parseLong(txtId.getText()));
 
@@ -1200,10 +1211,10 @@ public class PacienteView extends javax.swing.JPanel {
 
         }
 
-        listarPacientesFiltrados = pacientejpa.filtrarClientes(filtro);
+        listarPacientesFiltrados = pacientejpa.filtrarPacientes(filtro);
 
         //2025-11-28 Juliano Atualiza a tabela
-        DefaultTableModel model = (DefaultTableModel) tblClientes.getModel();
+        DefaultTableModel model = (DefaultTableModel) tblPacientes.getModel();
         model.setRowCount(0); // 2025-11-28 Juliano limpa tudo deixar a tabela vazia para chegar a tabela agora filtrada
 
         for (Pacientes pacientes : listarPacientesFiltrados) {
@@ -1226,7 +1237,7 @@ public class PacienteView extends javax.swing.JPanel {
     }//GEN-LAST:event_btnBuscarFiltroActionPerformed
 
     private void cbSexoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbSexoActionPerformed
-      
+
     }//GEN-LAST:event_cbSexoActionPerformed
 
     private void btnLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparActionPerformed
@@ -1234,11 +1245,11 @@ public class PacienteView extends javax.swing.JPanel {
         txtId.setText("");
         txtNome.setText("");
         cbSexo.setSelectedIndex(0);
-        //2026-08-10 Juliano: Garantindo que o objeto filtro será NULL, possibilitando assim um relatorio geral de clientes
-        filtro = new ClienteFiltro();
+        //2026-08-10 Juliano: Garantindo que o objeto filtro será NULL, possibilitando assim um relatorio geral de p
+        PacienteFiltro filtro = new PacienteFiltro();
 
-        DefaultTableModel model = (DefaultTableModel) tblClientes.getModel();
-        List<Pacientes> listarPacientesAtivos = pacientejpa.listarClientes();
+        DefaultTableModel model = (DefaultTableModel) tblPacientes.getModel();
+        List<Pacientes> listarPacientesAtivos = pacientejpa.listarPacientes();
         model.setRowCount(0);
         for (Pacientes paciente : listarPacientesAtivos) {
             model.addRow(new Object[]{
@@ -1260,11 +1271,11 @@ public class PacienteView extends javax.swing.JPanel {
     }//GEN-LAST:event_btnLimparActionPerformed
 
     private void txtNomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNomeActionPerformed
-      
+
     }//GEN-LAST:event_txtNomeActionPerformed
 
     private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
-        int linhasSelecionadas = tblClientes.getSelectedRow();
+        int linhasSelecionadas = tblPacientes.getSelectedRow();
         if (linhasSelecionadas == -1) {
             JOptionPane.showMessageDialog(this,
                     "Selecione uma linha para excluir/ Editar.",
@@ -1273,27 +1284,40 @@ public class PacienteView extends javax.swing.JPanel {
             return;
 
         }
-        Long idCliente = (Long) tblClientes.getValueAt(linhasSelecionadas, 1);
+        Long idPaciente = (Long) tblPacientes.getValueAt(linhasSelecionadas, 1);
 
         int confirmacao = JOptionPane.showConfirmDialog(
                 this,
-                "Você realmente deseja excluir este cliente?",
+                "Você realmente deseja excluir este Paciente?",
                 "Confirmar Exclusão",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE
         );
 
         if (confirmacao == YES_NO_OPTION) {
-            PacienteJPA clientejpa = new PacienteJPA();
-            ClienteFiltro filtro = new ClienteFiltro();
-            filtro.setId(idCliente);
-            List<Pacientes> listClientes = clientejpa.filtrarClientes(filtro);
+            PacienteJPA pacientejpa = new PacienteJPA();
 
+            Pacientes paciente = pacientejpa.buscarPorId(idPaciente);
+            filtro.setId(idPaciente);
+            if (paciente != null) {
+                paciente.setStatuspaciente(StatusPaciente.INATIVO);
+                pacientejpa.atualizarCliente(paciente);
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Paciente excluído com sucesso!",
+                        "Sucesso",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+
+                List<Pacientes> listPacientes = pacientejpa.filtrarPacientes(filtro);
+                carregartabela();
+
+            }
         }
     }//GEN-LAST:event_btnExcluirActionPerformed
 
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
-        int linha = tblClientes.getSelectedRow();
+        int linha = tblPacientes.getSelectedRow();
         if (linha == -1) {
             JOptionPane.showMessageDialog(this,
                     "Selecione uma linha para excluir/ Editar.",
@@ -1302,13 +1326,13 @@ public class PacienteView extends javax.swing.JPanel {
             return;
         }
 
-        Long idCliente = (Long) tblClientes.getValueAt(linha, 1);
+        Long idCliente = (Long) tblPacientes.getValueAt(linha, 1);
 
         PacienteJPA clientejpa = new PacienteJPA();
-        ClienteFiltro filtro = new ClienteFiltro();
+        PacienteFiltro filtro = new PacienteFiltro();
         filtro.setId(idCliente);
 
-        List<Pacientes> listarClientes = clientejpa.filtrarClientes(filtro);
+        List<Pacientes> listarClientes = clientejpa.filtrarPacientes(filtro);
 
         if (!listarClientes.isEmpty()) {
             Pacientes cliente = listarClientes.get(0);
@@ -1329,11 +1353,11 @@ public class PacienteView extends javax.swing.JPanel {
 
 
     private void txtCidadeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCidadeActionPerformed
-        
+
     }//GEN-LAST:event_txtCidadeActionPerformed
 
     private void txtTelefoneComercialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTelefoneComercialActionPerformed
-        
+
     }//GEN-LAST:event_txtTelefoneComercialActionPerformed
 
     private void btnSalvarAncestorResized(java.awt.event.HierarchyEvent evt) {//GEN-FIRST:event_btnSalvarAncestorResized
@@ -1341,15 +1365,15 @@ public class PacienteView extends javax.swing.JPanel {
     }//GEN-LAST:event_btnSalvarAncestorResized
 
     private void txtTelefoneFixoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTelefoneFixoActionPerformed
-       
+
     }//GEN-LAST:event_txtTelefoneFixoActionPerformed
 
     private void txtDataNascimentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDataNascimentoActionPerformed
-       
+
     }//GEN-LAST:event_txtDataNascimentoActionPerformed
 
     private void txtcpfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtcpfActionPerformed
-       
+
     }//GEN-LAST:event_txtcpfActionPerformed
 
     private void cbEstadosSiglaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbEstadosSiglaActionPerformed
@@ -1357,7 +1381,7 @@ public class PacienteView extends javax.swing.JPanel {
     }//GEN-LAST:event_cbEstadosSiglaActionPerformed
 
     private void txtBuscaCepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscaCepActionPerformed
-       
+
     }//GEN-LAST:event_txtBuscaCepActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -1365,8 +1389,12 @@ public class PacienteView extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void txtNomeClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNomeClienteActionPerformed
-       
+
     }//GEN-LAST:event_txtNomeClienteActionPerformed
+
+    private void jScrollPane4AncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_jScrollPane4AncestorAdded
+
+    }//GEN-LAST:event_jScrollPane4AncestorAdded
 
     public class MascaraData extends DocumentFilter {
 
@@ -1861,7 +1889,7 @@ public class PacienteView extends javax.swing.JPanel {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
-    private javax.swing.JTable tblClientes;
+    private javax.swing.JTable tblPacientes;
     private javax.swing.JTextField txtBairro;
     private javax.swing.JTextField txtBuscaCep;
     private javax.swing.JTextField txtCidade;

@@ -49,7 +49,7 @@ public class Pacientes extends Entidade implements Serializable {
 
     private String telefoneCelular;
 
-    private String telefoneComercial;
+    private String telefoneUrgencia;
 
     private String telefoneFixo;
 
@@ -84,7 +84,7 @@ public class Pacientes extends Entidade implements Serializable {
         this.cpf = cpf;
         this.dataNascimento = dataNascimento;
         this.telefoneCelular = telefoneCelular;
-        this.telefoneComercial = telefoneComercial;
+        this.telefoneUrgencia = telefoneComercial;
         this.telefoneFixo = telefoneFixo;
         this.email = email;
         this.cep = cep;
@@ -146,11 +146,11 @@ public class Pacientes extends Entidade implements Serializable {
     }
 
     public String getTelefoneComercial() {
-        return telefoneComercial;
+        return telefoneUrgencia;
     }
 
     public void setTelefoneComercial(String telefoneComercial) {
-        this.telefoneComercial = telefoneComercial;
+        this.telefoneUrgencia = telefoneComercial;
     }
 
     public String getTelefoneFixo() {
