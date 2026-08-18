@@ -6,6 +6,7 @@
              version="2.1">
 
     <persistence-unit name="IntegraMIND-JPA" transaction-type="RESOURCE_LOCAL">
+          <class>com.mycompany.sistemaintegramind.Model.entidades.Pacientes</class>
         <properties>
 
             <!-- URL JDBC PARA SEU MARIADB -->
