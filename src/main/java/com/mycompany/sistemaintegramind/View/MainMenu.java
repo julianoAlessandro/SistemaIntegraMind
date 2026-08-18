@@ -153,6 +153,10 @@ public class MainMenu extends javax.swing.JFrame {
         setBackground(new java.awt.Color(255, 255, 255));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
+        menu1.setMinimumSize(new java.awt.Dimension(250, 0));
+        menu1.setName(""); // NOI18N
+        menu1.setPreferredSize(new java.awt.Dimension(250, 917));
+
         jLabel4.setBackground(new java.awt.Color(0, 0, 0));
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
@@ -163,7 +167,7 @@ public class MainMenu extends javax.swing.JFrame {
         tblClientes.setBackground(new java.awt.Color(58, 58, 191));
         tblClientes.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         tblClientes.setForeground(new java.awt.Color(255, 255, 255));
-        tblClientes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/Clientes_Icon_48x48.png"))); // NOI18N
+        tblClientes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/paciente48x48.png"))); // NOI18N
         tblClientes.setText("Pacientes");
         tblClientes.setToolTipText("");
         tblClientes.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -179,7 +183,7 @@ public class MainMenu extends javax.swing.JFrame {
         tblFinanceiro.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         tblFinanceiro.setForeground(new java.awt.Color(255, 255, 255));
         tblFinanceiro.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/finance_icon_48x48.png"))); // NOI18N
-        tblFinanceiro.setText("FINANCEIRO");
+        tblFinanceiro.setText("Financeiro");
         tblFinanceiro.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         tblFinanceiro.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         tblFinanceiro.setIconTextGap(10);
@@ -192,7 +196,7 @@ public class MainMenu extends javax.swing.JFrame {
         tblUsuarios.setBackground(new java.awt.Color(58, 58, 191));
         tblUsuarios.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         tblUsuarios.setForeground(new java.awt.Color(255, 255, 255));
-        tblUsuarios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/Usuarios_Icon_48x48.png"))); // NOI18N
+        tblUsuarios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/agendar48x48.png"))); // NOI18N
         tblUsuarios.setText("Agenda");
         tblUsuarios.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         tblUsuarios.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
@@ -206,7 +210,7 @@ public class MainMenu extends javax.swing.JFrame {
         tblConfiguracoes.setBackground(new java.awt.Color(58, 58, 191));
         tblConfiguracoes.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         tblConfiguracoes.setForeground(new java.awt.Color(255, 255, 255));
-        tblConfiguracoes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/Configuracao_Icon_48x48.png"))); // NOI18N
+        tblConfiguracoes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/folder48x48.png"))); // NOI18N
         tblConfiguracoes.setText("Recursos");
         tblConfiguracoes.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         tblConfiguracoes.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
@@ -221,7 +225,7 @@ public class MainMenu extends javax.swing.JFrame {
         tblDashboard.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         tblDashboard.setForeground(new java.awt.Color(255, 255, 255));
         tblDashboard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/Dashboard_Icon_48x48.png"))); // NOI18N
-        tblDashboard.setText("DASHBOARD");
+        tblDashboard.setText("Dashboard");
         tblDashboard.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         tblDashboard.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         tblDashboard.setIconTextGap(10);
@@ -239,7 +243,7 @@ public class MainMenu extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(menu1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(tblDashboard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(tblClientes, javax.swing.GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE)
+                    .addComponent(tblClientes, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
                     .addComponent(tblUsuarios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(tblConfiguracoes, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
@@ -247,8 +251,8 @@ public class MainMenu extends javax.swing.JFrame {
                 .addGroup(menu1Layout.createSequentialGroup()
                     .addContainerGap()
                     .addGroup(menu1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(tblFinanceiro, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE))
+                        .addComponent(tblFinanceiro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel4))
                     .addContainerGap()))
         );
         menu1Layout.setVerticalGroup(
@@ -274,6 +278,7 @@ public class MainMenu extends javax.swing.JFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.ipadx = 5;
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(menu1, gridBagConstraints);
 
@@ -284,7 +289,7 @@ public class MainMenu extends javax.swing.JFrame {
         MenuPrincipal.setLayout(MenuPrincipalLayout);
         MenuPrincipalLayout.setHorizontalGroup(
             MenuPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1129, Short.MAX_VALUE)
+            .addGap(0, 305, Short.MAX_VALUE)
         );
         MenuPrincipalLayout.setVerticalGroup(
             MenuPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
