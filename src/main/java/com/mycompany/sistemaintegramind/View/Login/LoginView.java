@@ -186,10 +186,10 @@ public class LoginView extends javax.swing.JPanel {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jLabel4 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         container1 = new com.mycompany.sistemaintegramind.View.Componentes.Container();
+        jLabel4 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -201,17 +201,7 @@ public class LoginView extends javax.swing.JPanel {
         setPreferredSize(new java.awt.Dimension(850, 600));
         setLayout(new java.awt.GridBagLayout());
 
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(0, 204, 51));
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LogoLoginV2_60x60.png"))); // NOI18N
-        jLabel4.setText("IntegraMind");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_END;
-        gridBagConstraints.insets = new java.awt.Insets(10, 0, 0, 10);
-        add(jLabel4, gridBagConstraints);
-
+        jPanel2.setBackground(new java.awt.Color(236, 236, 241));
         jPanel2.setPreferredSize(new java.awt.Dimension(850, 600));
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
@@ -219,14 +209,26 @@ public class LoginView extends javax.swing.JPanel {
         jPanel3.setLayout(new java.awt.GridBagLayout());
 
         container1.setBackground(new java.awt.Color(255, 255, 255));
-        container1.setPreferredSize(new java.awt.Dimension(450, 530));
+        container1.setPreferredSize(new java.awt.Dimension(450, 500));
         container1.setLayout(new java.awt.GridBagLayout());
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(0, 204, 51));
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LogoLoginV2_60x60.png"))); // NOI18N
+        jLabel4.setText("IntegraMind");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_END;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 30, 0);
+        container1.add(jLabel4, gridBagConstraints);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         jLabel1.setText("Usuário ou Email");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 30, 3, 0);
         container1.add(jLabel1, gridBagConstraints);
@@ -235,7 +237,7 @@ public class LoginView extends javax.swing.JPanel {
         jLabel2.setText("Senha");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(21, 30, 3, 0);
         container1.add(jLabel2, gridBagConstraints);
@@ -244,7 +246,7 @@ public class LoginView extends javax.swing.JPanel {
         jLabel3.setText("Acessar Sistema");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 30, 30, 6);
         container1.add(jLabel3, gridBagConstraints);
@@ -257,7 +259,7 @@ public class LoginView extends javax.swing.JPanel {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 80;
         gridBagConstraints.weightx = 1.0;
@@ -275,7 +277,7 @@ public class LoginView extends javax.swing.JPanel {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipady = 10;
         gridBagConstraints.weightx = 1.0;
@@ -285,7 +287,7 @@ public class LoginView extends javax.swing.JPanel {
         txtSenha.setPreferredSize(new java.awt.Dimension(64, 30));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 30, 0, 30);
@@ -296,7 +298,7 @@ public class LoginView extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         jPanel2.add(jPanel3, gridBagConstraints);
