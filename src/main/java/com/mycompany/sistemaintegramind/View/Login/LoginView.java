@@ -202,13 +202,13 @@ public class LoginView extends javax.swing.JPanel {
         setLayout(new java.awt.GridBagLayout());
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(76, 115, 232));
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LogoLogin.png"))); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(0, 204, 51));
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LogoLoginV2_60x60.png"))); // NOI18N
         jLabel4.setText("IntegraMind");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_END;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_END;
         gridBagConstraints.insets = new java.awt.Insets(10, 0, 0, 10);
         add(jLabel4, gridBagConstraints);
 
