@@ -115,7 +115,7 @@
                       <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="239" max="-2" attributes="0"/>
                       <Component id="tblFinanceiro" min="-2" pref="59" max="-2" attributes="0"/>
-                      <EmptySpace pref="553" max="32767" attributes="0"/>
+                      <EmptySpace pref="551" max="32767" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -135,7 +135,7 @@
             </Property>
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/imagens/Logo_C_60x60.png"/>
+              <Image iconType="3" name="/imagens/Logo60x60.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="IntegraMind"/>
           </Properties>
@@ -154,7 +154,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/imagens/MenuIcones/paciente48x48.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Pacientes"/>
+            <Property name="text" type="java.lang.String" value="PACIENTES"/>
             <Property name="toolTipText" type="java.lang.String" value=""/>
             <Property name="horizontalAlignment" type="int" value="2"/>
             <Property name="horizontalTextPosition" type="int" value="4"/>
@@ -178,7 +178,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/imagens/MenuIcones/finance_icon_48x48.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Financeiro"/>
+            <Property name="text" type="java.lang.String" value="FINANCEIRO"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
             <Property name="horizontalTextPosition" type="int" value="4"/>
             <Property name="iconTextGap" type="int" value="10"/>
@@ -201,7 +201,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/imagens/MenuIcones/agendar48x48.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Agenda"/>
+            <Property name="text" type="java.lang.String" value="AGENDA"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
             <Property name="horizontalTextPosition" type="int" value="4"/>
             <Property name="iconTextGap" type="int" value="10"/>
@@ -224,7 +224,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/imagens/MenuIcones/folder48x48.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Recursos"/>
+            <Property name="text" type="java.lang.String" value="RECURSOS"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
             <Property name="horizontalTextPosition" type="int" value="4"/>
             <Property name="iconTextGap" type="int" value="10"/>
@@ -247,7 +247,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/imagens/MenuIcones/Dashboard_Icon_48x48.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Dashboard"/>
+            <Property name="text" type="java.lang.String" value="DASHBOARD"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
             <Property name="horizontalTextPosition" type="int" value="4"/>
             <Property name="iconTextGap" type="int" value="10"/>

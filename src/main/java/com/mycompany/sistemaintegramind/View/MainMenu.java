@@ -161,14 +161,14 @@ public class MainMenu extends javax.swing.JFrame {
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Logo_C_60x60.png"))); // NOI18N
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Logo60x60.png"))); // NOI18N
         jLabel4.setText("IntegraMind");
 
         tblClientes.setBackground(new java.awt.Color(58, 58, 191));
         tblClientes.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         tblClientes.setForeground(new java.awt.Color(255, 255, 255));
         tblClientes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/paciente48x48.png"))); // NOI18N
-        tblClientes.setText("Pacientes");
+        tblClientes.setText("PACIENTES");
         tblClientes.setToolTipText("");
         tblClientes.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         tblClientes.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
@@ -183,7 +183,7 @@ public class MainMenu extends javax.swing.JFrame {
         tblFinanceiro.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         tblFinanceiro.setForeground(new java.awt.Color(255, 255, 255));
         tblFinanceiro.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/finance_icon_48x48.png"))); // NOI18N
-        tblFinanceiro.setText("Financeiro");
+        tblFinanceiro.setText("FINANCEIRO");
         tblFinanceiro.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         tblFinanceiro.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         tblFinanceiro.setIconTextGap(10);
@@ -197,7 +197,7 @@ public class MainMenu extends javax.swing.JFrame {
         tblUsuarios.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         tblUsuarios.setForeground(new java.awt.Color(255, 255, 255));
         tblUsuarios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/agendar48x48.png"))); // NOI18N
-        tblUsuarios.setText("Agenda");
+        tblUsuarios.setText("AGENDA");
         tblUsuarios.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         tblUsuarios.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         tblUsuarios.setIconTextGap(10);
@@ -211,7 +211,7 @@ public class MainMenu extends javax.swing.JFrame {
         tblConfiguracoes.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         tblConfiguracoes.setForeground(new java.awt.Color(255, 255, 255));
         tblConfiguracoes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/folder48x48.png"))); // NOI18N
-        tblConfiguracoes.setText("Recursos");
+        tblConfiguracoes.setText("RECURSOS");
         tblConfiguracoes.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         tblConfiguracoes.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         tblConfiguracoes.setIconTextGap(10);
@@ -225,7 +225,7 @@ public class MainMenu extends javax.swing.JFrame {
         tblDashboard.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         tblDashboard.setForeground(new java.awt.Color(255, 255, 255));
         tblDashboard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/Dashboard_Icon_48x48.png"))); // NOI18N
-        tblDashboard.setText("Dashboard");
+        tblDashboard.setText("DASHBOARD");
         tblDashboard.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         tblDashboard.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         tblDashboard.setIconTextGap(10);
@@ -273,7 +273,7 @@ public class MainMenu extends javax.swing.JFrame {
                     .addComponent(jLabel4)
                     .addGap(239, 239, 239)
                     .addComponent(tblFinanceiro, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(553, Short.MAX_VALUE)))
+                    .addContainerGap(551, Short.MAX_VALUE)))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
