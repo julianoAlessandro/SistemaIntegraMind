@@ -125,10 +125,7 @@ public class PacienteJPA implements PacienteDAO {
             if (pacientefiltro.getId() != null) {
                 predicates.add(cb.equal(RootClientes.get("id"), pacientefiltro.getId()));
             }
-            if (pacientefiltro.getSexo() != null) {
-                predicates.add(cb.equal(RootClientes.get("sexo"), pacientefiltro.getSexo()));
-
-            }
+            
             if (pacientefiltro.getNome() != null && !pacientefiltro.getNome().isEmpty()) {
                 predicates.add(cb.like(cb.lower(RootClientes.get("nome")), "%" + pacientefiltro.getNome().toLowerCase() + "%"));
 

@@ -19,13 +19,13 @@ public class TabelaEstilo {
         tabela.setRowHeight(35);
         tabela.setShowVerticalLines(false);
         tabela.setGridColor(new Color(230, 230, 230));
-        tabela.putClientProperty("FlatLaf.style", "selectionBackground: #6495ED; selectionForeground: #ffffff;");
+        tabela.putClientProperty("FlatLaf.style", "selectionBackground: #008A3B; selectionForeground: #ffffff;");
         tabela.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 
         // 2. Cabeçalho
         JTableHeader header = tabela.getTableHeader();
         header.setFont(new Font("Segoe UI Semibold", Font.BOLD, 14));
-        header.setBackground(new Color(58, 110, 242));
+        header.setBackground(new Color(0, 138, 59));
         header.setForeground(Color.WHITE);
         header.setPreferredSize(new Dimension(header.getWidth(), 40));
 
