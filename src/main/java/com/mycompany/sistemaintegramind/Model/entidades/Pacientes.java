@@ -66,6 +66,10 @@ public class Pacientes extends Entidade implements Serializable {
     private String complemento;
 
     private String cidade;
+    
+    private String profissao;
+    
+    private int idade;
 
     @Enumerated(EnumType.STRING)
     private EstadosBrasileiros estado;
@@ -78,13 +82,14 @@ public class Pacientes extends Entidade implements Serializable {
 
     }
 
-    public Pacientes(String nome, Sexo sexo, String cpf, LocalDate dataNascimento, String nomeFantasia, String cnpj, String telefoneCelular, String telefoneComercial, String telefoneFixo, String email, String cep, String bairro, String rua, String numero, String complemento, String cidade, EstadosBrasileiros estado, StatusPaciente statuspaciente) {
+    public Pacientes(Long id, String nome, Sexo sexo, String cpf, LocalDate dataNascimento, String telefoneCelular, String telefoneUrgencia, String telefoneFixo, String email, String cep, String bairro, String rua, String numero, String complemento, String cidade, String profissao, int idade, EstadosBrasileiros estado, StatusPaciente statuspaciente) {
+        this.id = id;
         this.nome = nome;
         this.sexo = sexo;
         this.cpf = cpf;
         this.dataNascimento = dataNascimento;
         this.telefoneCelular = telefoneCelular;
-        this.telefoneUrgencia = telefoneComercial;
+        this.telefoneUrgencia = telefoneUrgencia;
         this.telefoneFixo = telefoneFixo;
         this.email = email;
         this.cep = cep;
@@ -93,10 +98,13 @@ public class Pacientes extends Entidade implements Serializable {
         this.numero = numero;
         this.complemento = complemento;
         this.cidade = cidade;
+        this.profissao = profissao;
+        this.idade = idade;
         this.estado = estado;
         this.statuspaciente = statuspaciente;
-        
     }
+
+    
 
     public Long getId() {
         return id;
@@ -231,6 +239,30 @@ public class Pacientes extends Entidade implements Serializable {
 
     public void setStatuspaciente(StatusPaciente statuspaciente) {
         this.statuspaciente = statuspaciente;
+    }
+
+    public String getTelefoneUrgencia() {
+        return telefoneUrgencia;
+    }
+
+    public void setTelefoneUrgencia(String telefoneUrgencia) {
+        this.telefoneUrgencia = telefoneUrgencia;
+    }
+
+    public String getProfissao() {
+        return profissao;
+    }
+
+    public void setProfissao(String profissao) {
+        this.profissao = profissao;
+    }
+
+    public int getIdade() {
+        return idade;
+    }
+
+    public void setIdade(int idade) {
+        this.idade = idade;
     }
 
     

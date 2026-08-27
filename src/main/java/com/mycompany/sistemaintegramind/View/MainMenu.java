@@ -11,6 +11,7 @@ import com.mycompany.sistemaintegramind.View.Login.LoginView;
 import com.mycompany.sistemaintegramind.View.Pacientes.PacienteView;
 import com.mycompany.sistemaintegramind.Model.entidades.Usuarios;
 import com.mycompany.sistemaintegramind.View.Agenda.AgendaView;
+import com.mycompany.sistemaintegramind.View.Painel.PainelView;
 import com.mycompany.sistemaintegramind.View.Recursos.RecursoView;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -67,7 +68,7 @@ public class MainMenu extends javax.swing.JFrame {
         //2025-11-08 Juliano: Cria um layout para poder adicionar várias paginas juntas como se fosse um baralho
         cardlayout = new CardLayout();
         MenuPrincipal.setLayout(cardlayout);
-
+        MenuPrincipal.add(new PainelView(), "Painel");
         MenuPrincipal.add(new PacienteView(), "Pacientes");
         MenuPrincipal.add(new DashboardView(), "Dashboard");
         MenuPrincipal.add(new AgendaView(), "Agenda");
@@ -76,19 +77,18 @@ public class MainMenu extends javax.swing.JFrame {
         MenuPrincipal.add(new RecursoView(), "Recursos");
 
         //2025-11-08 Juliano: Mostra a tela inicial de vendas antes de Clicar
-        cardlayout.show(MenuPrincipal, "Pacientes");
+        cardlayout.show(MenuPrincipal, "Painel");
 
         //2025-12-22 Guilherme: Faz os botões do menu lateral ficarem transparentes
-       
-        configurarHover(tblClientes);
-        configurarHover(tblFinanceiro);
-       
+        configurarHover(tblPainel);
+        configurarHover(tblPacientes);
         configurarHover(tblDashboard);
-        configurarHover(tblUsuarios);
-        configurarHover(tblConfiguracoes);
+        configurarHover(tblFinanceiro);
+        configurarHover(tblAgenda);
+        configurarHover(tblRecursos);
 
         //2025-12-22 Guilherme: Define o botão de vendas como selecionado inicialmente
-        selecionarBotao(tblClientes);
+        selecionarBotao(tblPainel);
         if (usuarioLogado != null) {
             setUsuarioLogado(usuarioLogado);
         } else {
@@ -124,11 +124,12 @@ public class MainMenu extends javax.swing.JFrame {
         txtNomeProduto = new javax.swing.JTextField();
         menu1 = new com.mycompany.sistemaintegramind.View.Componentes.Menu();
         jLabel4 = new javax.swing.JLabel();
-        tblClientes = new javax.swing.JButton();
+        tblPainel = new javax.swing.JButton();
         tblFinanceiro = new javax.swing.JButton();
-        tblUsuarios = new javax.swing.JButton();
-        tblConfiguracoes = new javax.swing.JButton();
+        tblAgenda = new javax.swing.JButton();
+        tblRecursos = new javax.swing.JButton();
         tblDashboard = new javax.swing.JButton();
+        tblPacientes = new javax.swing.JButton();
         MenuPrincipal = new javax.swing.JPanel();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -161,21 +162,21 @@ public class MainMenu extends javax.swing.JFrame {
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Logo_C_60x60.png"))); // NOI18N
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Illustration10.png"))); // NOI18N
         jLabel4.setText("IntegraMind");
 
-        tblClientes.setBackground(new java.awt.Color(58, 58, 191));
-        tblClientes.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
-        tblClientes.setForeground(new java.awt.Color(255, 255, 255));
-        tblClientes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/paciente48x48.png"))); // NOI18N
-        tblClientes.setText("Pacientes");
-        tblClientes.setToolTipText("");
-        tblClientes.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        tblClientes.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        tblClientes.setIconTextGap(10);
-        tblClientes.addActionListener(new java.awt.event.ActionListener() {
+        tblPainel.setBackground(new java.awt.Color(58, 58, 191));
+        tblPainel.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        tblPainel.setForeground(new java.awt.Color(255, 255, 255));
+        tblPainel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/icons8-layout-do-painel-48.png"))); // NOI18N
+        tblPainel.setText("PAINEL");
+        tblPainel.setToolTipText("");
+        tblPainel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        tblPainel.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        tblPainel.setIconTextGap(10);
+        tblPainel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tblClientesActionPerformed(evt);
+                tblPainelActionPerformed(evt);
             }
         });
 
@@ -183,7 +184,7 @@ public class MainMenu extends javax.swing.JFrame {
         tblFinanceiro.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         tblFinanceiro.setForeground(new java.awt.Color(255, 255, 255));
         tblFinanceiro.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/finance_icon_48x48.png"))); // NOI18N
-        tblFinanceiro.setText("Financeiro");
+        tblFinanceiro.setText("FINANCEIRO");
         tblFinanceiro.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         tblFinanceiro.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         tblFinanceiro.setIconTextGap(10);
@@ -193,31 +194,31 @@ public class MainMenu extends javax.swing.JFrame {
             }
         });
 
-        tblUsuarios.setBackground(new java.awt.Color(58, 58, 191));
-        tblUsuarios.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
-        tblUsuarios.setForeground(new java.awt.Color(255, 255, 255));
-        tblUsuarios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/agendar48x48.png"))); // NOI18N
-        tblUsuarios.setText("Agenda");
-        tblUsuarios.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        tblUsuarios.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        tblUsuarios.setIconTextGap(10);
-        tblUsuarios.addActionListener(new java.awt.event.ActionListener() {
+        tblAgenda.setBackground(new java.awt.Color(58, 58, 191));
+        tblAgenda.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        tblAgenda.setForeground(new java.awt.Color(255, 255, 255));
+        tblAgenda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/agendar48x48.png"))); // NOI18N
+        tblAgenda.setText("AGENDA");
+        tblAgenda.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        tblAgenda.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        tblAgenda.setIconTextGap(10);
+        tblAgenda.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tblUsuariosActionPerformed(evt);
+                tblAgendaActionPerformed(evt);
             }
         });
 
-        tblConfiguracoes.setBackground(new java.awt.Color(58, 58, 191));
-        tblConfiguracoes.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
-        tblConfiguracoes.setForeground(new java.awt.Color(255, 255, 255));
-        tblConfiguracoes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/folder48x48.png"))); // NOI18N
-        tblConfiguracoes.setText("Recursos");
-        tblConfiguracoes.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        tblConfiguracoes.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        tblConfiguracoes.setIconTextGap(10);
-        tblConfiguracoes.addActionListener(new java.awt.event.ActionListener() {
+        tblRecursos.setBackground(new java.awt.Color(58, 58, 191));
+        tblRecursos.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        tblRecursos.setForeground(new java.awt.Color(255, 255, 255));
+        tblRecursos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/folder48x48.png"))); // NOI18N
+        tblRecursos.setText("RECURSOS");
+        tblRecursos.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        tblRecursos.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        tblRecursos.setIconTextGap(10);
+        tblRecursos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tblConfiguracoesActionPerformed(evt);
+                tblRecursosActionPerformed(evt);
             }
         });
 
@@ -225,13 +226,28 @@ public class MainMenu extends javax.swing.JFrame {
         tblDashboard.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         tblDashboard.setForeground(new java.awt.Color(255, 255, 255));
         tblDashboard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/Dashboard_Icon_48x48.png"))); // NOI18N
-        tblDashboard.setText("Dashboard");
+        tblDashboard.setText("DASHBOARD");
         tblDashboard.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         tblDashboard.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         tblDashboard.setIconTextGap(10);
         tblDashboard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tblDashboardActionPerformed(evt);
+            }
+        });
+
+        tblPacientes.setBackground(new java.awt.Color(58, 58, 191));
+        tblPacientes.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        tblPacientes.setForeground(new java.awt.Color(255, 255, 255));
+        tblPacientes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/paciente48x48.png"))); // NOI18N
+        tblPacientes.setText("PACIENTES");
+        tblPacientes.setToolTipText("");
+        tblPacientes.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        tblPacientes.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        tblPacientes.setIconTextGap(10);
+        tblPacientes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tblPacientesActionPerformed(evt);
             }
         });
 
@@ -243,37 +259,39 @@ public class MainMenu extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(menu1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(tblDashboard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(tblClientes, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
-                    .addComponent(tblUsuarios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(tblConfiguracoes, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(tblPainel, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+                    .addComponent(tblAgenda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(tblRecursos, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(tblFinanceiro, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(tblPacientes, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE))
                 .addContainerGap())
             .addGroup(menu1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(menu1Layout.createSequentialGroup()
                     .addContainerGap()
-                    .addGroup(menu1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(tblFinanceiro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel4))
-                    .addContainerGap()))
+                    .addComponent(jLabel4)
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         menu1Layout.setVerticalGroup(
             menu1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(menu1Layout.createSequentialGroup()
-                .addGap(81, 81, 81)
-                .addComponent(tblClientes, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(69, 69, 69)
+                .addComponent(tblPainel, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tblPacientes, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(7, 7, 7)
                 .addComponent(tblDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(tblUsuarios, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(92, 92, 92)
-                .addComponent(tblConfiguracoes, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(472, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(tblAgenda, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(tblFinanceiro, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(21, 21, 21)
+                .addComponent(tblRecursos, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(436, Short.MAX_VALUE))
             .addGroup(menu1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(menu1Layout.createSequentialGroup()
                     .addContainerGap()
                     .addComponent(jLabel4)
-                    .addGap(239, 239, 239)
-                    .addComponent(tblFinanceiro, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(553, Short.MAX_VALUE)))
+                    .addContainerGap(847, Short.MAX_VALUE)))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -426,24 +444,22 @@ public class MainMenu extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNomeProdutoActionPerformed
 
-    private void tblConfiguracoesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tblConfiguracoesActionPerformed
+    private void tblRecursosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tblRecursosActionPerformed
         // TODO add your handling code here:
         cardlayout.show(MenuPrincipal, "Recursos");
 
-        selecionarBotao(tblConfiguracoes); //2025-12-22 Guilherme: Define o botão clientes como selecionado, o mudando visualmente
-    }//GEN-LAST:event_tblConfiguracoesActionPerformed
+        selecionarBotao(tblRecursos); //2025-12-22 Guilherme: Define o botão clientes como selecionado, o mudando visualmente
+    }//GEN-LAST:event_tblRecursosActionPerformed
 
-    private void tblUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tblUsuariosActionPerformed
+    private void tblAgendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tblAgendaActionPerformed
         // TODO add your handling code here:
         cardlayout.show(MenuPrincipal, "Agenda");
 
-        selecionarBotao(tblUsuarios); //2025-12-22 Guilherme: Define o botão clientes como selecionado, o mudando visualmente
-    }//GEN-LAST:event_tblUsuariosActionPerformed
+        selecionarBotao(tblAgenda); //2025-12-22 Guilherme: Define o botão clientes como selecionado, o mudando visualmente
+    }//GEN-LAST:event_tblAgendaActionPerformed
 
     private void tblDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tblDashboardActionPerformed
-        // TODO add your handling code here:
         cardlayout.show(MenuPrincipal, "Dashboard");
-
         selecionarBotao(tblDashboard); //2025-12-22 Guilherme: Define o botão clientes como selecionado, o mudando visualmente
     }//GEN-LAST:event_tblDashboardActionPerformed
 
@@ -452,17 +468,21 @@ public class MainMenu extends javax.swing.JFrame {
         selecionarBotao(tblFinanceiro); //2025-12-22 Guilherme: Define o botão financeiro como selecionado, o mudando visualmente
     }//GEN-LAST:event_tblFinanceiroActionPerformed
 
-    private void tblClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tblClientesActionPerformed
+    private void tblPainelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tblPainelActionPerformed
+        cardlayout.show(MenuPrincipal, "Painel");
+        selecionarBotao(tblPainel); //2025-12-22 Guilherme: Define o botão clientes como selecionado, o mudando visualmente
+    }//GEN-LAST:event_tblPainelActionPerformed
+
+    private void tblPacientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tblPacientesActionPerformed
         cardlayout.show(MenuPrincipal, "Pacientes");
-        selecionarBotao(tblClientes); //2025-12-22 Guilherme: Define o botão clientes como selecionado, o mudando visualmente
-    }//GEN-LAST:event_tblClientesActionPerformed
+        selecionarBotao(tblPacientes); //2025-12-22 Guilherme: Define o botão clientes como selecionado, o mudando visualmente
+    }//GEN-LAST:event_tblPacientesActionPerformed
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
 
-      
         try {
 
             UIManager.put("Component.minimumHeight", 35);
@@ -563,11 +583,12 @@ public class MainMenu extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollBar jScrollBar1;
     private com.mycompany.sistemaintegramind.View.Componentes.Menu menu1;
-    private javax.swing.JButton tblClientes;
-    private javax.swing.JButton tblConfiguracoes;
+    private javax.swing.JButton tblAgenda;
     private javax.swing.JButton tblDashboard;
     private javax.swing.JButton tblFinanceiro;
-    private javax.swing.JButton tblUsuarios;
+    private javax.swing.JButton tblPacientes;
+    private javax.swing.JButton tblPainel;
+    private javax.swing.JButton tblRecursos;
     private javax.swing.JTextField txtNomeProduto;
     // End of variables declaration//GEN-END:variables
 }

@@ -44,8 +44,6 @@ public class FinanceiroView extends javax.swing.JPanel {
         jSeparator3 = new javax.swing.JSeparator();
         txtCliente = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        txtNomeProduto = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         txtDataInicial = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
@@ -53,7 +51,6 @@ public class FinanceiroView extends javax.swing.JPanel {
         txtBuscarOpcoesFiltradas = new javax.swing.JButton();
         txtLimparPesquisa = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
-        jPanel2 = new javax.swing.JPanel();
 
         jPanel1.setBackground(new java.awt.Color(221, 223, 237));
         jPanel1.setLayout(new java.awt.GridBagLayout());
@@ -125,16 +122,7 @@ public class FinanceiroView extends javax.swing.JPanel {
         });
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabel1.setText("Cliente");
-
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabel2.setText("Nome Produto");
-
-        txtNomeProduto.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtNomeProdutoActionPerformed(evt);
-            }
-        });
+        jLabel1.setText("Paciente");
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel4.setText("Data Inicial");
@@ -184,42 +172,28 @@ public class FinanceiroView extends javax.swing.JPanel {
             .addGroup(container1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSeparator3)
+                    .addComponent(jSeparator3, javax.swing.GroupLayout.DEFAULT_SIZE, 914, Short.MAX_VALUE)
+                    .addComponent(jLabel15)
+                    .addGroup(container1Layout.createSequentialGroup()
+                        .addComponent(txtBuscarOpcoesFiltradas, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtLimparPesquisa)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1))
                     .addGroup(container1Layout.createSequentialGroup()
                         .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(container1Layout.createSequentialGroup()
-                                .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(container1Layout.createSequentialGroup()
-                                        .addGap(6, 6, 6)
-                                        .addComponent(jLabel1))
-                                    .addComponent(txtCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(container1Layout.createSequentialGroup()
-                                        .addGap(12, 12, 12)
-                                        .addComponent(jLabel2))
-                                    .addGroup(container1Layout.createSequentialGroup()
-                                        .addGap(18, 18, 18)
-                                        .addComponent(txtNomeProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(container1Layout.createSequentialGroup()
-                                        .addGap(6, 6, 6)
-                                        .addComponent(jLabel4))
-                                    .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(container1Layout.createSequentialGroup()
-                                        .addGap(6, 6, 6)
-                                        .addComponent(jLabel5))
-                                    .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(jLabel15)
-                            .addGroup(container1Layout.createSequentialGroup()
-                                .addComponent(txtBuscarOpcoesFiltradas, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtLimparPesquisa)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1)))
-                        .addGap(0, 146, Short.MAX_VALUE)))
+                                .addGap(6, 6, 6)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(32, 32, 32)
+                        .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4)
+                            .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(45, 45, 45)
+                        .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5))))
                 .addContainerGap())
         );
         container1Layout.setVerticalGroup(
@@ -228,21 +202,18 @@ public class FinanceiroView extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(container1Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(container1Layout.createSequentialGroup()
                         .addComponent(jLabel15)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel1))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(txtCliente)
-                            .addComponent(txtNomeProduto)))
+                        .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(container1Layout.createSequentialGroup()
+                                .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel4))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(container1Layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -265,19 +236,6 @@ public class FinanceiroView extends javax.swing.JPanel {
 
         jTabbedPane1.addTab("Movimentação Financeira", jPanel1);
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 936, Short.MAX_VALUE)
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 594, Short.MAX_VALUE)
-        );
-
-        jTabbedPane1.addTab("Fechamento de Caixa", jPanel2);
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -293,47 +251,40 @@ public class FinanceiroView extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    //====================2026-06-19 Juliano: Métodos para serem utilizados ao longo do código(INICIO)==============
-   
-    //===========2026-06-19 Juliano: Métodos para serem utilizados ao longo do código(FINAL)=================
-    private void TabMovimentoFinanceiroAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_TabMovimentoFinanceiroAncestorAdded
-      
-    }//GEN-LAST:event_TabMovimentoFinanceiroAncestorAdded
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
-    private void txtClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtClienteActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtClienteActionPerformed
+    }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void txtNomeProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNomeProdutoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtNomeProdutoActionPerformed
+    private void txtLimparPesquisaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtLimparPesquisaActionPerformed
 
-    private void txtDataInicialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDataInicialActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtDataInicialActionPerformed
+    }//GEN-LAST:event_txtLimparPesquisaActionPerformed
+
+    private void txtBuscarOpcoesFiltradasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscarOpcoesFiltradasActionPerformed
+
+    }//GEN-LAST:event_txtBuscarOpcoesFiltradasActionPerformed
 
     private void txtDataFinalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDataFinalActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtDataFinalActionPerformed
 
-    private void txtBuscarOpcoesFiltradasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscarOpcoesFiltradasActionPerformed
-       
-    }//GEN-LAST:event_txtBuscarOpcoesFiltradasActionPerformed
+    private void txtDataInicialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDataInicialActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtDataInicialActionPerformed
 
-    private void txtLimparPesquisaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtLimparPesquisaActionPerformed
-
-
-    }//GEN-LAST:event_txtLimparPesquisaActionPerformed
+    private void txtClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtClienteActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtClienteActionPerformed
 
     private void txttotalfinanceiroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txttotalfinanceiroActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txttotalfinanceiroActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-       
-      
-        
-    }//GEN-LAST:event_jButton1ActionPerformed
+    //====================2026-06-19 Juliano: Métodos para serem utilizados ao longo do código(INICIO)==============
+   
+    //===========2026-06-19 Juliano: Métodos para serem utilizados ao longo do código(FINAL)=================
+    private void TabMovimentoFinanceiroAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_TabMovimentoFinanceiroAncestorAdded
+
+    }//GEN-LAST:event_TabMovimentoFinanceiroAncestorAdded
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -342,12 +293,10 @@ public class FinanceiroView extends javax.swing.JPanel {
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JTabbedPane jTabbedPane1;
@@ -356,7 +305,6 @@ public class FinanceiroView extends javax.swing.JPanel {
     private javax.swing.JTextField txtDataFinal;
     private javax.swing.JTextField txtDataInicial;
     private javax.swing.JButton txtLimparPesquisa;
-    private javax.swing.JTextField txtNomeProduto;
     private javax.swing.JTextField txttotalfinanceiro;
     // End of variables declaration//GEN-END:variables
 }
