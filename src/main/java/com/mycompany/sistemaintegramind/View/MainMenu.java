@@ -162,19 +162,19 @@ public class MainMenu extends javax.swing.JFrame {
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Illustration10.png"))); // NOI18N
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Logo60x60.png"))); // NOI18N
         jLabel4.setText("IntegraMind");
 
-        tblPainel.setBackground(new java.awt.Color(58, 58, 191));
-        tblPainel.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
-        tblPainel.setForeground(new java.awt.Color(255, 255, 255));
-        tblPainel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/icons8-layout-do-painel-48.png"))); // NOI18N
-        tblPainel.setText("PAINEL");
-        tblPainel.setToolTipText("");
-        tblPainel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        tblPainel.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        tblPainel.setIconTextGap(10);
-        tblPainel.addActionListener(new java.awt.event.ActionListener() {
+        tblClientes.setBackground(new java.awt.Color(58, 58, 191));
+        tblClientes.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        tblClientes.setForeground(new java.awt.Color(255, 255, 255));
+        tblClientes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/paciente48x48.png"))); // NOI18N
+        tblClientes.setText("PACIENTES");
+        tblClientes.setToolTipText("");
+        tblClientes.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        tblClientes.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        tblClientes.setIconTextGap(10);
+        tblClientes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tblPainelActionPerformed(evt);
             }
@@ -194,29 +194,29 @@ public class MainMenu extends javax.swing.JFrame {
             }
         });
 
-        tblAgenda.setBackground(new java.awt.Color(58, 58, 191));
-        tblAgenda.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
-        tblAgenda.setForeground(new java.awt.Color(255, 255, 255));
-        tblAgenda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/agendar48x48.png"))); // NOI18N
-        tblAgenda.setText("AGENDA");
-        tblAgenda.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        tblAgenda.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        tblAgenda.setIconTextGap(10);
-        tblAgenda.addActionListener(new java.awt.event.ActionListener() {
+        tblUsuarios.setBackground(new java.awt.Color(58, 58, 191));
+        tblUsuarios.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        tblUsuarios.setForeground(new java.awt.Color(255, 255, 255));
+        tblUsuarios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/agendar48x48.png"))); // NOI18N
+        tblUsuarios.setText("AGENDA");
+        tblUsuarios.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        tblUsuarios.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        tblUsuarios.setIconTextGap(10);
+        tblUsuarios.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tblAgendaActionPerformed(evt);
             }
         });
 
-        tblRecursos.setBackground(new java.awt.Color(58, 58, 191));
-        tblRecursos.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
-        tblRecursos.setForeground(new java.awt.Color(255, 255, 255));
-        tblRecursos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/folder48x48.png"))); // NOI18N
-        tblRecursos.setText("RECURSOS");
-        tblRecursos.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        tblRecursos.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        tblRecursos.setIconTextGap(10);
-        tblRecursos.addActionListener(new java.awt.event.ActionListener() {
+        tblConfiguracoes.setBackground(new java.awt.Color(58, 58, 191));
+        tblConfiguracoes.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        tblConfiguracoes.setForeground(new java.awt.Color(255, 255, 255));
+        tblConfiguracoes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/folder48x48.png"))); // NOI18N
+        tblConfiguracoes.setText("RECURSOS");
+        tblConfiguracoes.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        tblConfiguracoes.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        tblConfiguracoes.setIconTextGap(10);
+        tblConfiguracoes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tblRecursosActionPerformed(evt);
             }
@@ -291,7 +291,9 @@ public class MainMenu extends javax.swing.JFrame {
                 .addGroup(menu1Layout.createSequentialGroup()
                     .addContainerGap()
                     .addComponent(jLabel4)
-                    .addContainerGap(847, Short.MAX_VALUE)))
+                    .addGap(239, 239, 239)
+                    .addComponent(tblFinanceiro, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(551, Short.MAX_VALUE)))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
