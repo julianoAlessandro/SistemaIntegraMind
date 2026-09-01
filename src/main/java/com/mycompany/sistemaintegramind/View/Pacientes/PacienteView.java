@@ -16,6 +16,7 @@ import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacie
 import com.mycompany.sistemaintegramind.View.Componentes.BotaoEstilo;
 import com.mycompany.sistemaintegramind.View.Componentes.ComponenteUtil;
 import com.mycompany.sistemaintegramind.View.Componentes.TabelaEstilo;
+import com.mycompany.sistemaintegramind.util.Utilitarios.BotaoRenderizarProntuarioPaciente;
 import com.mycompany.sistemaintegramind.util.Utilitarios.JPAUtil;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -981,7 +982,8 @@ public class PacienteView extends javax.swing.JPanel {
                 paciente.getRua(),
                 paciente.getBairro(),
                 paciente.getComplemento(),
-                paciente.getNumero()
+                paciente.getNumero(),
+                "X"
             });
         }
     }
@@ -1056,7 +1058,7 @@ public class PacienteView extends javax.swing.JPanel {
     }
 
     private Pacientes lerCamposPaciente() {
-        
+
         Pacientes paciente = new Pacientes();
 
         paciente.setNome(txtNomeCliente.getText());
@@ -1198,12 +1200,17 @@ public class PacienteView extends javax.swing.JPanel {
                     "Rua",
                     "Bairro",
                     "Complemento",
-                    "Número"
+                    "Número",
+                    "Ficha"
                 },
                 0
         );
 
         tblPacientes.setModel(modelo);
+
+        tblPacientes.getColumnModel().getColumn(11).setMaxWidth(50);
+        tblPacientes.getColumnModel().getColumn(11)
+                .setCellRenderer(new BotaoRenderizarProntuarioPaciente());
 
         List<Pacientes> listarPacientes = pacientejpa.listarPacientes();
 
@@ -1240,15 +1247,13 @@ public class PacienteView extends javax.swing.JPanel {
             filtro.setId(Long.parseLong(txtId.getText()));
 
         }
-       // String sexoStr = cbSexo.getSelectedItem().toString();
+        // String sexoStr = cbSexo.getSelectedItem().toString();
 
         /*if (!sexoStr.equals("Selecione")) {
             Sexo sexo = Sexo.valueOf(sexoStr);
             filtro.setSexo(sexo);
         }
-*/
-   
-
+         */
         if (!txtNome.getText().trim().isEmpty()) {
             filtro.setNome(txtNome.getText());
 
