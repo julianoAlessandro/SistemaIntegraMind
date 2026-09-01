@@ -86,6 +86,7 @@ public class MainMenu extends javax.swing.JFrame {
         configurarHover(tblFinanceiro);
         configurarHover(tblAgenda);
         configurarHover(tblRecursos);
+        btnBackup.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         //2025-12-22 Guilherme: Define o botão de vendas como selecionado inicialmente
         selecionarBotao(tblPainel);
@@ -130,6 +131,7 @@ public class MainMenu extends javax.swing.JFrame {
         tblRecursos = new javax.swing.JButton();
         tblDashboard = new javax.swing.JButton();
         tblPacientes = new javax.swing.JButton();
+        btnBackup = new javax.swing.JButton();
         MenuPrincipal = new javax.swing.JPanel();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -251,6 +253,15 @@ public class MainMenu extends javax.swing.JFrame {
             }
         });
 
+        btnBackup.setBackground(new java.awt.Color(242, 242, 242));
+        btnBackup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Backup_1.png"))); // NOI18N
+        btnBackup.setContentAreaFilled(false);
+        btnBackup.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBackupActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout menu1Layout = new javax.swing.GroupLayout(menu1);
         menu1.setLayout(menu1Layout);
         menu1Layout.setHorizontalGroup(
@@ -265,6 +276,9 @@ public class MainMenu extends javax.swing.JFrame {
                     .addComponent(tblFinanceiro, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(tblPacientes, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE))
                 .addContainerGap())
+            .addGroup(menu1Layout.createSequentialGroup()
+                .addComponent(btnBackup)
+                .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(menu1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(menu1Layout.createSequentialGroup()
                     .addContainerGap()
@@ -284,9 +298,10 @@ public class MainMenu extends javax.swing.JFrame {
                 .addComponent(tblAgenda, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(tblFinanceiro, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(21, 21, 21)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(tblRecursos, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(436, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 374, Short.MAX_VALUE)
+                .addComponent(btnBackup))
             .addGroup(menu1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(menu1Layout.createSequentialGroup()
                     .addContainerGap()
@@ -478,6 +493,10 @@ public class MainMenu extends javax.swing.JFrame {
         selecionarBotao(tblPacientes); //2025-12-22 Guilherme: Define o botão clientes como selecionado, o mudando visualmente
     }//GEN-LAST:event_tblPacientesActionPerformed
 
+    private void btnBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackupActionPerformed
+       
+    }//GEN-LAST:event_btnBackupActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -579,6 +598,7 @@ public class MainMenu extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel MenuPrincipal;
+    private javax.swing.JButton btnBackup;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollBar jScrollBar1;
