@@ -86,6 +86,7 @@ public class MainMenu extends javax.swing.JFrame {
         configurarHover(tblFinanceiro);
         configurarHover(tblAgenda);
         configurarHover(tblRecursos);
+        btnBackup.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         //2025-12-22 Guilherme: Define o botão de vendas como selecionado inicialmente
         selecionarBotao(tblPainel);
@@ -130,6 +131,7 @@ public class MainMenu extends javax.swing.JFrame {
         tblRecursos = new javax.swing.JButton();
         tblDashboard = new javax.swing.JButton();
         tblPacientes = new javax.swing.JButton();
+        btnBackup = new javax.swing.JButton();
         MenuPrincipal = new javax.swing.JPanel();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -165,16 +167,16 @@ public class MainMenu extends javax.swing.JFrame {
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Logo60x60.png"))); // NOI18N
         jLabel4.setText("IntegraMind");
 
-        tblClientes.setBackground(new java.awt.Color(58, 58, 191));
-        tblClientes.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
-        tblClientes.setForeground(new java.awt.Color(255, 255, 255));
-        tblClientes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/paciente48x48.png"))); // NOI18N
-        tblClientes.setText("PACIENTES");
-        tblClientes.setToolTipText("");
-        tblClientes.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        tblClientes.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        tblClientes.setIconTextGap(10);
-        tblClientes.addActionListener(new java.awt.event.ActionListener() {
+        tblPainel.setBackground(new java.awt.Color(58, 58, 191));
+        tblPainel.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        tblPainel.setForeground(new java.awt.Color(255, 255, 255));
+        tblPainel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/icons8-layout-do-painel-48.png"))); // NOI18N
+        tblPainel.setText("PAINEL");
+        tblPainel.setToolTipText("");
+        tblPainel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        tblPainel.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        tblPainel.setIconTextGap(10);
+        tblPainel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tblPainelActionPerformed(evt);
             }
@@ -194,29 +196,29 @@ public class MainMenu extends javax.swing.JFrame {
             }
         });
 
-        tblUsuarios.setBackground(new java.awt.Color(58, 58, 191));
-        tblUsuarios.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
-        tblUsuarios.setForeground(new java.awt.Color(255, 255, 255));
-        tblUsuarios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/agendar48x48.png"))); // NOI18N
-        tblUsuarios.setText("AGENDA");
-        tblUsuarios.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        tblUsuarios.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        tblUsuarios.setIconTextGap(10);
-        tblUsuarios.addActionListener(new java.awt.event.ActionListener() {
+        tblAgenda.setBackground(new java.awt.Color(58, 58, 191));
+        tblAgenda.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        tblAgenda.setForeground(new java.awt.Color(255, 255, 255));
+        tblAgenda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/agendar48x48.png"))); // NOI18N
+        tblAgenda.setText("AGENDA");
+        tblAgenda.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        tblAgenda.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        tblAgenda.setIconTextGap(10);
+        tblAgenda.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tblAgendaActionPerformed(evt);
             }
         });
 
-        tblConfiguracoes.setBackground(new java.awt.Color(58, 58, 191));
-        tblConfiguracoes.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
-        tblConfiguracoes.setForeground(new java.awt.Color(255, 255, 255));
-        tblConfiguracoes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/folder48x48.png"))); // NOI18N
-        tblConfiguracoes.setText("RECURSOS");
-        tblConfiguracoes.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        tblConfiguracoes.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        tblConfiguracoes.setIconTextGap(10);
-        tblConfiguracoes.addActionListener(new java.awt.event.ActionListener() {
+        tblRecursos.setBackground(new java.awt.Color(58, 58, 191));
+        tblRecursos.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        tblRecursos.setForeground(new java.awt.Color(255, 255, 255));
+        tblRecursos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/folder48x48.png"))); // NOI18N
+        tblRecursos.setText("RECURSOS");
+        tblRecursos.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        tblRecursos.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        tblRecursos.setIconTextGap(10);
+        tblRecursos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tblRecursosActionPerformed(evt);
             }
@@ -251,6 +253,15 @@ public class MainMenu extends javax.swing.JFrame {
             }
         });
 
+        btnBackup.setBackground(new java.awt.Color(242, 242, 242));
+        btnBackup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Backup_1.png"))); // NOI18N
+        btnBackup.setContentAreaFilled(false);
+        btnBackup.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBackupActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout menu1Layout = new javax.swing.GroupLayout(menu1);
         menu1.setLayout(menu1Layout);
         menu1Layout.setHorizontalGroup(
@@ -265,6 +276,9 @@ public class MainMenu extends javax.swing.JFrame {
                     .addComponent(tblFinanceiro, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(tblPacientes, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE))
                 .addContainerGap())
+            .addGroup(menu1Layout.createSequentialGroup()
+                .addComponent(btnBackup)
+                .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(menu1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(menu1Layout.createSequentialGroup()
                     .addContainerGap()
@@ -284,16 +298,15 @@ public class MainMenu extends javax.swing.JFrame {
                 .addComponent(tblAgenda, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(tblFinanceiro, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(21, 21, 21)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(tblRecursos, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(436, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 374, Short.MAX_VALUE)
+                .addComponent(btnBackup))
             .addGroup(menu1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(menu1Layout.createSequentialGroup()
                     .addContainerGap()
                     .addComponent(jLabel4)
-                    .addGap(239, 239, 239)
-                    .addComponent(tblFinanceiro, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(551, Short.MAX_VALUE)))
+                    .addContainerGap(849, Short.MAX_VALUE)))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -480,6 +493,10 @@ public class MainMenu extends javax.swing.JFrame {
         selecionarBotao(tblPacientes); //2025-12-22 Guilherme: Define o botão clientes como selecionado, o mudando visualmente
     }//GEN-LAST:event_tblPacientesActionPerformed
 
+    private void btnBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackupActionPerformed
+       
+    }//GEN-LAST:event_btnBackupActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -581,6 +598,7 @@ public class MainMenu extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel MenuPrincipal;
+    private javax.swing.JButton btnBackup;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollBar jScrollBar1;
