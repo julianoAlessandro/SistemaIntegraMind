@@ -645,7 +645,7 @@
                                                   <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                                               </Group>
                                               <Component id="txtDataNascimento" alignment="0" min="-2" pref="216" max="-2" attributes="0"/>
-                                              <Component id="txtNomeCliente2" alignment="0" min="-2" pref="198" max="-2" attributes="0"/>
+                                              <Component id="txtProfissao" alignment="0" min="-2" pref="198" max="-2" attributes="0"/>
                                           </Group>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="0" attributes="0">
@@ -699,7 +699,7 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="cbSexo" min="-2" pref="30" max="-2" attributes="0"/>
                                       <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                                          <Component id="txtNomeCliente2" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                                          <Component id="txtProfissao" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                                           <Component id="txtIdade" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
@@ -821,7 +821,7 @@
                             <Property name="text" type="java.lang.String" value="Profiss&#xe3;o"/>
                           </Properties>
                         </Component>
-                        <Component class="javax.swing.JTextField" name="txtNomeCliente2">
+                        <Component class="javax.swing.JTextField" name="txtProfissao">
                           <Properties>
                             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                               <Dimension value="[250, 30]"/>
@@ -831,7 +831,7 @@
                             </Property>
                           </Properties>
                           <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtNomeCliente2ActionPerformed"/>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtProfissaoActionPerformed"/>
                           </Events>
                         </Component>
                         <Component class="javax.swing.JLabel" name="jLabel6">

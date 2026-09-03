@@ -16,6 +16,7 @@ import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacie
 import com.mycompany.sistemaintegramind.View.Componentes.BotaoEstilo;
 import com.mycompany.sistemaintegramind.View.Componentes.ComponenteUtil;
 import com.mycompany.sistemaintegramind.View.Componentes.TabelaEstilo;
+import com.mycompany.sistemaintegramind.View.PerfilPaciente.SelecionarPerfilPacienteView;
 import com.mycompany.sistemaintegramind.util.Utilitarios.BotaoRenderizarProntuarioPaciente;
 import com.mycompany.sistemaintegramind.util.Utilitarios.JPAUtil;
 import java.awt.BorderLayout;
@@ -64,6 +65,7 @@ public class PacienteView extends javax.swing.JPanel {
     private PacienteJPA pacientejpa = new PacienteJPA();
     private PacienteFiltro filtro = new PacienteFiltro();
     private List<Pacientes> listarPacientesFiltrados;
+    private Pacientes pacienteSelecionado;
 
     public PacienteView() {
         initComponents();
@@ -93,6 +95,8 @@ public class PacienteView extends javax.swing.JPanel {
         txtBairro.putClientProperty("JTextField.placeholderText", "Ex: Bela Vista");
         txtNumero.putClientProperty("JTextField.placeholderText", "Ex: 1000");
         txtComplemento.putClientProperty("JTextField.placeholderText", "Ex: Apto 12, Bloco B");
+        txtProfissao.putClientProperty("JTextField.placeholderText", "Ex: Autônomo");
+        txtIdade.putClientProperty("JTextField.placeholderText", "Ex: 21");
 
         //2025-12-23 Guilherme: Ajusta aparência das abas
         abasCadastrarClientes.putClientProperty("JTabbedPane.tabHeight", 45);
@@ -213,7 +217,7 @@ public class PacienteView extends javax.swing.JPanel {
         txtDataNascimento = new javax.swing.JFormattedTextField();
         txtIdade = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        txtNomeCliente2 = new javax.swing.JTextField();
+        txtProfissao = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         jPanel10 = new javax.swing.JPanel();
         jLabel20 = new javax.swing.JLabel();
@@ -642,11 +646,11 @@ public class PacienteView extends javax.swing.JPanel {
         jLabel4.setFont(new java.awt.Font("Arial", 0, 16)); // NOI18N
         jLabel4.setText("Profissão");
 
-        txtNomeCliente2.setMaximumSize(new java.awt.Dimension(250, 30));
-        txtNomeCliente2.setMinimumSize(new java.awt.Dimension(210, 30));
-        txtNomeCliente2.addActionListener(new java.awt.event.ActionListener() {
+        txtProfissao.setMaximumSize(new java.awt.Dimension(250, 30));
+        txtProfissao.setMinimumSize(new java.awt.Dimension(210, 30));
+        txtProfissao.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtNomeCliente2ActionPerformed(evt);
+                txtProfissaoActionPerformed(evt);
             }
         });
 
@@ -677,7 +681,7 @@ public class PacienteView extends javax.swing.JPanel {
                                 .addGap(15, 15, 15)
                                 .addComponent(jLabel2))
                             .addComponent(txtDataNascimento, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtNomeCliente2, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtProfissao, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel9Layout.createSequentialGroup()
@@ -717,7 +721,7 @@ public class PacienteView extends javax.swing.JPanel {
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cbSexo, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtNomeCliente2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtProfissao, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(txtIdade, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -1054,6 +1058,8 @@ public class PacienteView extends javax.swing.JPanel {
         txtComplemento.setText("");
         txtCidade.setText("");
         cbEstadosSigla.setSelectedItem(EstadosBrasileiros.SP);
+        txtProfissao.setText("");
+        txtIdade.setText("");
 
     }
 
@@ -1090,6 +1096,9 @@ public class PacienteView extends javax.swing.JPanel {
         paciente.setCidade(txtCidade.getText());
         paciente.setCep(txtBuscaCep.getText());
         paciente.setStatuspaciente(StatusPaciente.ATIVO);
+        paciente.setProfissao(txtProfissao.getText());
+        int idade = Integer.parseInt(txtIdade.getText().trim());
+        paciente.setIdade(idade);
 
         String idText = txtId.getText().trim();
         if (!idText.isEmpty()) {
@@ -1208,6 +1217,35 @@ public class PacienteView extends javax.swing.JPanel {
 
         tblPacientes.setModel(modelo);
 
+        //2026-09-02 Juliano: Permitindo abrir a tela de perfil do paciente 
+        // 2026-09-02 Juliano: Permitindo abrir a tela de perfil do paciente
+        tblPacientes.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                // Garante que a ação só dispara no PRIMEIRO clique
+                if (evt.getClickCount() == 1) {
+                    int coluna = tblPacientes.columnAtPoint(evt.getPoint());
+                    int linha = tblPacientes.rowAtPoint(evt.getPoint());
+
+                    if (coluna == 11 && linha >= 0) {
+                        PacienteJPA pacientejpa = new PacienteJPA();
+
+                        // 2026-09-02 Juliano: Pega o id da linha selecionada para recuperar o objeto no banco
+                        Long idPaciente = (Long) tblPacientes.getValueAt(linha, 1);
+
+                        // 2026-09-02 Juliano: Passando o id no método buscar para poder recuperar o id da linha selecionada
+                        pacienteSelecionado = pacientejpa.buscarPorId(idPaciente);
+
+                        SelecionarPerfilPacienteView tela = new SelecionarPerfilPacienteView(pacienteSelecionado);
+                        System.out.println("ID DO PACIENTE IGUAL ----> " + pacienteSelecionado.getId());
+
+                        tela.setLocationRelativeTo(null);
+                        tela.setVisible(true);
+                    }
+                }
+            }
+        });
+
         tblPacientes.getColumnModel().getColumn(11).setMaxWidth(50);
         tblPacientes.getColumnModel().getColumn(11)
                 .setCellRenderer(new BotaoRenderizarProntuarioPaciente());
@@ -1228,7 +1266,8 @@ public class PacienteView extends javax.swing.JPanel {
                 p.getRua(),
                 p.getBairro(),
                 p.getComplemento(),
-                p.getNumero()
+                p.getNumero(),
+                ""
             });
         }
 
@@ -1448,9 +1487,9 @@ public class PacienteView extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtIdadeActionPerformed
 
-    private void txtNomeCliente2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNomeCliente2ActionPerformed
+    private void txtProfissaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProfissaoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtNomeCliente2ActionPerformed
+    }//GEN-LAST:event_txtProfissaoActionPerformed
 
     public class MascaraData extends DocumentFilter {
 
@@ -1958,8 +1997,8 @@ public class PacienteView extends javax.swing.JPanel {
     private javax.swing.JTextField txtIdade;
     private javax.swing.JTextField txtNome;
     private javax.swing.JTextField txtNomeCliente;
-    private javax.swing.JTextField txtNomeCliente2;
     private javax.swing.JTextField txtNumero;
+    private javax.swing.JTextField txtProfissao;
     private javax.swing.JTextField txtRua;
     private javax.swing.JTextField txtTelefoneCelular;
     private javax.swing.JTextField txtTelefoneComercial;
