@@ -13,6 +13,7 @@ import com.mycompany.sistemaintegramind.Model.entidades.Usuarios;
 import com.mycompany.sistemaintegramind.View.Agenda.AgendaView;
 import com.mycompany.sistemaintegramind.View.Painel.PainelView;
 import com.mycompany.sistemaintegramind.View.Recursos.RecursoView;
+import com.mycompany.sistemaintegramind.util.Utilitarios.AlternarEntreJanelasMenu;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
@@ -89,7 +90,7 @@ public class MainMenu extends javax.swing.JFrame {
         btnBackup.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         //2025-12-22 Guilherme: Define o botão de vendas como selecionado inicialmente
-        selecionarBotao(tblPainel);
+        AlternarEntreJanelasMenu.selecionarBotao(tblPainel, botaoSelecionado);
         if (usuarioLogado != null) {
             setUsuarioLogado(usuarioLogado);
         } else {
@@ -418,26 +419,7 @@ public class MainMenu extends javax.swing.JFrame {
         });
     }
 
-    //2025-12-22 Guilherme: Define o botão selecionado no menu lateral
-    private void selecionarBotao(JButton botao) {
-        //2025-12-22 Guilherme: Guarda referência do botão anteriormente selecionado
-        JButton antigo = botaoSelecionado;
-
-        //2025-12-22 Guilherme: Atualiza o botão atualmente selecionado
-        botaoSelecionado = botao;
-
-        //2025-12-22 Guilherme: Repaint do botão antigo para remover o destaque
-        if (antigo != null) {
-            antigo.repaint();
-        }
-
-        //2025-12-22 Guilherme: Repaint do novo botão para aplicar o destaque visual
-        if (botaoSelecionado != null) {
-            botaoSelecionado.repaint();
-        }
-    }
-
-    //2025-12-22 Guilherme: Redimensiona o ícone do botão mantendo a qualidade da imagem
+    //2025-12-22 Guilherme: Red.mensiona o ícone do botão mantendo a qualidade da imagem
     private void ajustarIcone(javax.swing.JButton botao, int largura, int altura) {
         //2025-12-22 Guilherme: Verifica se o botão possui um ícone definido
         if (botao.getIcon() != null) {
@@ -462,39 +444,38 @@ public class MainMenu extends javax.swing.JFrame {
     private void tblRecursosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tblRecursosActionPerformed
         // TODO add your handling code here:
         cardlayout.show(MenuPrincipal, "Recursos");
+        AlternarEntreJanelasMenu.selecionarBotao(tblRecursos, botaoSelecionado);
 
-        selecionarBotao(tblRecursos); //2025-12-22 Guilherme: Define o botão clientes como selecionado, o mudando visualmente
     }//GEN-LAST:event_tblRecursosActionPerformed
 
     private void tblAgendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tblAgendaActionPerformed
-        // TODO add your handling code here:
         cardlayout.show(MenuPrincipal, "Agenda");
-
-        selecionarBotao(tblAgenda); //2025-12-22 Guilherme: Define o botão clientes como selecionado, o mudando visualmente
+        AlternarEntreJanelasMenu.selecionarBotao(tblAgenda, botaoSelecionado);
     }//GEN-LAST:event_tblAgendaActionPerformed
 
     private void tblDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tblDashboardActionPerformed
         cardlayout.show(MenuPrincipal, "Dashboard");
-        selecionarBotao(tblDashboard); //2025-12-22 Guilherme: Define o botão clientes como selecionado, o mudando visualmente
+        AlternarEntreJanelasMenu.selecionarBotao(tblDashboard, botaoSelecionado);
+
     }//GEN-LAST:event_tblDashboardActionPerformed
 
     private void tblFinanceiroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tblFinanceiroActionPerformed
         cardlayout.show(MenuPrincipal, "Financeiro");
-        selecionarBotao(tblFinanceiro); //2025-12-22 Guilherme: Define o botão financeiro como selecionado, o mudando visualmente
+        AlternarEntreJanelasMenu.selecionarBotao(tblFinanceiro, botaoSelecionado);
     }//GEN-LAST:event_tblFinanceiroActionPerformed
 
     private void tblPainelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tblPainelActionPerformed
         cardlayout.show(MenuPrincipal, "Painel");
-        selecionarBotao(tblPainel); //2025-12-22 Guilherme: Define o botão clientes como selecionado, o mudando visualmente
+        AlternarEntreJanelasMenu.selecionarBotao(tblPainel, botaoSelecionado);
     }//GEN-LAST:event_tblPainelActionPerformed
 
     private void tblPacientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tblPacientesActionPerformed
         cardlayout.show(MenuPrincipal, "Pacientes");
-        selecionarBotao(tblPacientes); //2025-12-22 Guilherme: Define o botão clientes como selecionado, o mudando visualmente
+        AlternarEntreJanelasMenu.selecionarBotao(tblPacientes, botaoSelecionado);      
     }//GEN-LAST:event_tblPacientesActionPerformed
 
     private void btnBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackupActionPerformed
-       
+
     }//GEN-LAST:event_btnBackupActionPerformed
 
     /**
