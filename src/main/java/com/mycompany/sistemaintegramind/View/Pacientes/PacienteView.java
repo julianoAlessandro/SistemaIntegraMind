@@ -16,7 +16,7 @@ import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacie
 import com.mycompany.sistemaintegramind.View.Componentes.BotaoEstilo;
 import com.mycompany.sistemaintegramind.View.Componentes.ComponenteUtil;
 import com.mycompany.sistemaintegramind.View.Componentes.TabelaEstilo;
-import com.mycompany.sistemaintegramind.View.PerfilPaciente.SelecionarPerfilPacienteView;
+import com.mycompany.sistemaintegramind.View.FichaMenuPaciente.FichaMenuPrincipalPacienteView;
 import com.mycompany.sistemaintegramind.util.Utilitarios.BotaoRenderizarProntuarioPaciente;
 import com.mycompany.sistemaintegramind.util.Utilitarios.JPAUtil;
 import java.awt.BorderLayout;
@@ -1097,8 +1097,7 @@ public class PacienteView extends javax.swing.JPanel {
         paciente.setCep(txtBuscaCep.getText());
         paciente.setStatuspaciente(StatusPaciente.ATIVO);
         paciente.setProfissao(txtProfissao.getText());
-        int idade = Integer.parseInt(txtIdade.getText().trim());
-        paciente.setIdade(idade);
+        paciente.setIdade(txtIdade.getText());
 
         String idText = txtId.getText().trim();
         if (!idText.isEmpty()) {
@@ -1236,11 +1235,28 @@ public class PacienteView extends javax.swing.JPanel {
                         // 2026-09-02 Juliano: Passando o id no método buscar para poder recuperar o id da linha selecionada
                         pacienteSelecionado = pacientejpa.buscarPorId(idPaciente);
 
-                        SelecionarPerfilPacienteView tela = new SelecionarPerfilPacienteView(pacienteSelecionado);
-                        System.out.println("ID DO PACIENTE IGUAL ----> " + pacienteSelecionado.getId());
+                        //2026-09-03 Juliano: Abrindo a ficha completa do paciente
+                        FichaMenuPrincipalPacienteView painelFicha = new FichaMenuPrincipalPacienteView(pacienteSelecionado);
 
-                        tela.setLocationRelativeTo(null);
-                        tela.setVisible(true);
+                        //2026-09-03 Juliano:  Realizando a criação do modal
+                        javax.swing.JDialog modal = new javax.swing.JDialog((java.awt.Frame) null, "Ficha do Paciente - " + pacienteSelecionado.getNome(), true);
+                        
+                        //2026-09-04 Juliano: Adicionando um icone ao lado do título do modal
+                        modal.setIconImage(
+                                new javax.swing.ImageIcon(
+                                        getClass().getResource("/imagens/PacienteModal.png")
+                                ).getImage()
+                        );
+                        modal.getContentPane().add(painelFicha);
+
+                        //2026-09-03 Juliano: Pega o tamanho total do monitor e aplica no modal (Tela Cheia)
+                        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+                        modal.setSize(screenSize);
+
+                        // 2026-09-03 Juliano: Centraliza e exibe o modal
+                        modal.setLocationRelativeTo(null);
+                        modal.setVisible(true);
+
                     }
                 }
             }

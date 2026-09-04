@@ -69,7 +69,7 @@ public class Pacientes extends Entidade implements Serializable {
     
     private String profissao;
     
-    private int idade;
+    private String idade;
 
     @Enumerated(EnumType.STRING)
     private EstadosBrasileiros estado;
@@ -82,7 +82,7 @@ public class Pacientes extends Entidade implements Serializable {
 
     }
 
-    public Pacientes(Long id, String nome, Sexo sexo, String cpf, LocalDate dataNascimento, String telefoneCelular, String telefoneUrgencia, String telefoneFixo, String email, String cep, String bairro, String rua, String numero, String complemento, String cidade, String profissao, int idade, EstadosBrasileiros estado, StatusPaciente statuspaciente) {
+    public Pacientes(Long id, String nome, Sexo sexo, String cpf, LocalDate dataNascimento, String telefoneCelular, String telefoneUrgencia, String telefoneFixo, String email, String cep, String bairro, String rua, String numero, String complemento, String cidade, String profissao, String idade, EstadosBrasileiros estado, StatusPaciente statuspaciente) {
         this.id = id;
         this.nome = nome;
         this.sexo = sexo;
@@ -257,11 +257,11 @@ public class Pacientes extends Entidade implements Serializable {
         this.profissao = profissao;
     }
 
-    public int getIdade() {
+    public String getIdade() {
         return idade;
     }
 
-    public void setIdade(int idade) {
+    public void setIdade(String idade) {
         this.idade = idade;
     }
 
