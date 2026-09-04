@@ -1097,8 +1097,7 @@ public class PacienteView extends javax.swing.JPanel {
         paciente.setCep(txtBuscaCep.getText());
         paciente.setStatuspaciente(StatusPaciente.ATIVO);
         paciente.setProfissao(txtProfissao.getText());
-        int idade = Integer.parseInt(txtIdade.getText().trim());
-        paciente.setIdade(idade);
+        paciente.setIdade(txtIdade.getText());
 
         String idText = txtId.getText().trim();
         if (!idText.isEmpty()) {
