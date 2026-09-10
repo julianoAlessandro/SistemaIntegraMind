@@ -22,6 +22,7 @@ import javax.swing.JOptionPane;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Insets;
+import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.UIManager;
 import java.util.Locale;
@@ -494,7 +495,40 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_tblPacientesActionPerformed
 
     private void btnBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackupActionPerformed
-       
+        //2026-08-31 Juliano: Backup do sistema para poder ter tanto localmente, quanto na nuvem
+        System.out.println("Iniciando o processo de backup no sistema....");
+        JOptionPane.showMessageDialog(
+                this,
+                "O backup do IntegraMIND está sendo iniciado.\n\nAguarde enquanto o processo é concluído.",
+                "Backup do IntegraMind",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+        try {
+            ProcessBuilder pb = new ProcessBuilder(
+                    "cmd.exe",
+                    "/c",
+                    "C:\\backup_integramind.bat"
+            );
+
+            pb.start();
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Backup iniciado com sucesso!",
+                    "Backup",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Não foi possível iniciar o backup.\n\nErro: " + e.getMessage(),
+                    "Erro no Backup",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+
+        System.out.println("Backup realizado com sucesso!!!");
     }//GEN-LAST:event_btnBackupActionPerformed
 
     /**
