@@ -142,7 +142,7 @@ public class PainelView extends javax.swing.JPanel {
         jLabel4.setText("8");
 
         jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LogoLogin.png"))); // NOI18N
+        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/calendar (1) (1).png"))); // NOI18N
 
         javax.swing.GroupLayout container2Layout = new javax.swing.GroupLayout(container2);
         container2.setLayout(container2Layout);
@@ -155,7 +155,7 @@ public class PainelView extends javax.swing.JPanel {
                 .addGroup(container2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
-                .addContainerGap(256, Short.MAX_VALUE))
+                .addContainerGap(216, Short.MAX_VALUE))
         );
         container2Layout.setVerticalGroup(
             container2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -167,7 +167,7 @@ public class PainelView extends javax.swing.JPanel {
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel4)))
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -189,7 +189,7 @@ public class PainelView extends javax.swing.JPanel {
         jLabel6.setText("R$ 1.200");
 
         jLabel11.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LogoLogin.png"))); // NOI18N
+        jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/money-bag (1).png"))); // NOI18N
 
         javax.swing.GroupLayout container1Layout = new javax.swing.GroupLayout(container1);
         container1.setLayout(container1Layout);
@@ -202,7 +202,7 @@ public class PainelView extends javax.swing.JPanel {
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5)
                     .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(144, Short.MAX_VALUE))
+                .addContainerGap(104, Short.MAX_VALUE))
         );
         container1Layout.setVerticalGroup(
             container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -214,7 +214,7 @@ public class PainelView extends javax.swing.JPanel {
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel6)))
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -236,7 +236,7 @@ public class PainelView extends javax.swing.JPanel {
         jLabel8.setText("2");
 
         jLabel12.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        jLabel12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LogoLogin.png"))); // NOI18N
+        jLabel12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/alarm (1).png"))); // NOI18N
 
         javax.swing.GroupLayout container5Layout = new javax.swing.GroupLayout(container5);
         container5.setLayout(container5Layout);
@@ -249,7 +249,7 @@ public class PainelView extends javax.swing.JPanel {
                 .addGroup(container5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7))
-                .addContainerGap(238, Short.MAX_VALUE))
+                .addContainerGap(198, Short.MAX_VALUE))
         );
         container5Layout.setVerticalGroup(
             container5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -261,7 +261,7 @@ public class PainelView extends javax.swing.JPanel {
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel8)))
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -295,7 +295,7 @@ public class PainelView extends javax.swing.JPanel {
         container3.add(jLabel2, gridBagConstraints);
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LogoLogin.png"))); // NOI18N
+        jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/add-user (3) (2).png"))); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;

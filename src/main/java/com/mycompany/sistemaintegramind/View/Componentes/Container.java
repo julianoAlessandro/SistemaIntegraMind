@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package com.mycompany.sistemaintegramind.View.Componentes;
 
 import java.awt.Color;
@@ -11,6 +7,7 @@ import java.awt.RenderingHints;
 import javax.swing.BorderFactory;
 
 /**
+ * Componente de Painel com Sombra e Bordas Arredondadas
  *
  * @author guilh
  */
@@ -39,11 +36,8 @@ public class Container extends javax.swing.JPanel {
      * Creates new form Container
      */
     public Container() {
-
         initComponents();
-
         setOpaque(false);
-
         atualizarMargemSombra();
     }
 
@@ -52,7 +46,6 @@ public class Container extends javax.swing.JPanel {
     // =========================================================
     @Override
     protected void paintComponent(Graphics g) {
-
         super.paintComponent(g);
 
         Graphics2D g2 = (Graphics2D) g.create();
@@ -68,21 +61,18 @@ public class Container extends javax.swing.JPanel {
         );
 
         // =====================================================
-        // ESPAÇO RESERVADO PARA A SOMBRA
+        // CÁLCULO DE POSICIONAMENTO DO CARD
         // =====================================================
-        int margem = shadowBlur + Math.max(
-                Math.abs(shadowX),
-                Math.abs(shadowY)
-        );
+        int topSpace = Math.max(shadowBlur - shadowY, shadowBlur);
+        int leftSpace = Math.max(shadowBlur - shadowX, shadowBlur);
+        int bottomSpace = Math.max(shadowBlur + shadowY, shadowBlur);
+        int rightSpace = Math.max(shadowBlur + shadowX, shadowBlur);
 
-        // =====================================================
-        // TAMANHO REAL DO CARD
-        // =====================================================
-        int cardX = margem;
-        int cardY = margem;
+        int cardX = leftSpace;
+        int cardY = topSpace;
 
-        int cardWidth = getWidth() - (margem * 2);
-        int cardHeight = getHeight() - (margem * 2);
+        int cardWidth = getWidth() - leftSpace - rightSpace;
+        int cardHeight = getHeight() - topSpace - bottomSpace;
 
         if (cardWidth <= 0 || cardHeight <= 0) {
             g2.dispose();
@@ -96,17 +86,9 @@ public class Container extends javax.swing.JPanel {
 
             for (int i = shadowBlur; i >= 1; i--) {
 
-                /*
-                 * Quanto mais longe do card,
-                 * mais transparente fica.
-                 */
-                float porcentagem
-                        = (float) (shadowBlur - i + 1)
-                        / shadowBlur;
+                float porcentagem = (float) (shadowBlur - i + 1) / shadowBlur;
 
-                int alpha = (int) (shadowColor.getAlpha()
-                        * porcentagem
-                        * 0.35f);
+                int alpha = (int) (shadowColor.getAlpha() * porcentagem * 0.35f);
 
                 if (alpha <= 0) {
                     continue;
@@ -121,9 +103,6 @@ public class Container extends javax.swing.JPanel {
 
                 g2.setColor(sombra);
 
-                /*
-                 * A sombra cresce para fora do card.
-                 */
                 int x = cardX + shadowX - i;
                 int y = cardY + shadowY - i;
 
@@ -142,7 +121,7 @@ public class Container extends javax.swing.JPanel {
         }
 
         // =====================================================
-        // FUNDO
+        // FUNDO DO CARD
         // =====================================================
         g2.setColor(getBackground());
 
@@ -156,7 +135,7 @@ public class Container extends javax.swing.JPanel {
         );
 
         // =====================================================
-        // BORDA
+        // BORDA DO CARD
         // =====================================================
         if (borderColor != null && borderWidth > 0) {
 
@@ -192,23 +171,21 @@ public class Container extends javax.swing.JPanel {
     // =========================================================
     private void atualizarMargemSombra() {
 
-        int margem = shadowBlur + Math.max(
-                Math.abs(shadowX),
-                Math.abs(shadowY)
-        );
+        int topSpace = Math.max(shadowBlur - shadowY, shadowBlur);
+        int leftSpace = Math.max(shadowBlur - shadowX, shadowBlur);
+        int bottomSpace = Math.max(shadowBlur + shadowY, shadowBlur);
+        int rightSpace = Math.max(shadowBlur + shadowX, shadowBlur);
 
         /*
-         * Reserva espaço para a sombra.
-         *
-         * Isso impede que ela seja cortada
-         * pelo limite do JPanel.
+         * Ajusta a margem interna para que os componentes filhos 
+         * fiquem contidos exatamente dentro da área visível do card.
          */
         setBorder(
                 BorderFactory.createEmptyBorder(
-                        margem,
-                        margem,
-                        margem,
-                        margem
+                        topSpace,
+                        leftSpace,
+                        bottomSpace,
+                        rightSpace
                 )
         );
     }
@@ -303,25 +280,25 @@ public class Container extends javax.swing.JPanel {
         revalidate();
         repaint();
     }
-    
+
     public void setCardStyle() {
 
-    setBackground(new Color(255, 255, 255));
+        setBackground(new Color(255, 255, 255));
 
-    setBorderRadius(22);
+        setBorderRadius(22);
 
-    setBorder(
-        new Color(230, 232, 235),
-        1
-    );
+        setBorder(
+                new Color(230, 232, 235),
+                1
+        );
 
-    setShadow(
-        new Color(0, 0, 0, 15),
-        2,
-        3,
-        9
-    );
-}
+        setShadow(
+                new Color(0, 0, 0, 15),
+                2,
+                3,
+                9
+        );
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
