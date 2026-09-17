@@ -67,6 +67,6 @@ public class PacienteResponsavel {
 
     @ManyToOne
     @JoinColumn(name = "Paciente_id",nullable = false)
-    private Pacientes paciente;
+    private Paciente paciente;
 
 }

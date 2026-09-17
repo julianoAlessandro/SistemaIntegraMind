@@ -5,7 +5,7 @@
 package com.mycompany.sistemaintegramind.Model.dao;
 
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.Sexo;
-import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPaciente;
+import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamento;
 
 /**
  *
@@ -16,7 +16,7 @@ public class PacienteFiltro {
     private Long id;
     private String nome;
     private Sexo sexo;
-    private StatusPaciente statuspaciente;
+    private StatusPacienteAgendamento statuspaciente;
 
     public Long getId() {
         return id;
@@ -42,11 +42,11 @@ public class PacienteFiltro {
         this.sexo = sexo;
     }
 
-    public StatusPaciente getStatuspaciente() {
+    public StatusPacienteAgendamento getStatuspaciente() {
         return statuspaciente;
     }
 
-    public void setStatuspaciente(StatusPaciente statuspaciente) {
+    public void setStatuspaciente(StatusPacienteAgendamento statuspaciente) {
         this.statuspaciente = statuspaciente;
     }
     

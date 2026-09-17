@@ -54,13 +54,18 @@
             <version>RELEASE280</version>
         </dependency>
         
-          <!-- Biblioteca para emitir relatorios -->
+        <!-- Biblioteca para emitir relatorios -->
         <dependency>
             <groupId>net.sf.jasperreports</groupId>
             <artifactId>jasperreports</artifactId>
             <version>6.21.5</version>
         </dependency>
         
+        <dependency>
+            <groupId>com.toedter</groupId>
+            <artifactId>jcalendar</artifactId>
+            <version>1.4</version>
+        </dependency>
         
         <!-- BCrypt (HASH DE SENHA) -->
         <dependency>

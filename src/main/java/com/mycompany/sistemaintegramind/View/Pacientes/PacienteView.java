@@ -9,15 +9,20 @@ import com.mycompany.sistemaintegramind.Model.dao.PacienteFiltro;
 import com.mycompany.sistemaintegramind.Model.dao.impl.PacienteJPA;
 import com.mycompany.sistemaintegramind.Model.dao.impl.FinanceiroJPA;
 import com.mycompany.sistemaintegramind.Model.dto.FinanceiroDTO;
-import com.mycompany.sistemaintegramind.Model.entidades.Pacientes;
+import com.mycompany.sistemaintegramind.Model.entidades.Paciente;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.EstadosBrasileiros;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.Sexo;
-import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPaciente;
+import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamento;
+import com.mycompany.sistemaintegramind.View.Agenda.AgendaView;
 import com.mycompany.sistemaintegramind.View.Componentes.BotaoEstilo;
 import com.mycompany.sistemaintegramind.View.Componentes.ComponenteUtil;
 import com.mycompany.sistemaintegramind.View.Componentes.TabelaEstilo;
+import java.awt.Color;
+import java.util.List;
+import com.mycompany.sistemaintegramind.View.PerfilPaciente.SelecionarPerfilPacienteView;
+import com.mycompany.sistemaintegramind.util.Utilitarios.BotaoRenderizarIcones;
 import com.mycompany.sistemaintegramind.View.FichaMenuPaciente.FichaMenuPrincipalPacienteView;
-import com.mycompany.sistemaintegramind.util.Utilitarios.BotaoRenderizarProntuarioPaciente;
+//import com.mycompany.sistemaintegramind.util.Utilitarios.BotaoRenderizarProntuarioPaciente;
 import com.mycompany.sistemaintegramind.util.Utilitarios.JPAUtil;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -61,11 +66,11 @@ import javax.swing.text.BadLocationException;
  */
 public class PacienteView extends javax.swing.JPanel {
 
-    Pacientes paciente = new Pacientes();
+    Paciente paciente = new Paciente();
     private PacienteJPA pacientejpa = new PacienteJPA();
     private PacienteFiltro filtro = new PacienteFiltro();
-    private List<Pacientes> listarPacientesFiltrados;
-    private Pacientes pacienteSelecionado;
+    private List<Paciente> listarPacientesFiltrados;
+    private Paciente pacienteSelecionado;
 
     public PacienteView() {
         initComponents();
@@ -993,8 +998,8 @@ public class PacienteView extends javax.swing.JPanel {
     private void carregartabela() {
         DefaultTableModel model = (DefaultTableModel) tblPacientes.getModel();
         model.setRowCount(0);
-        List<Pacientes> listarClientes = pacientejpa.listarPacientes();
-        for (Pacientes paciente : listarClientes) {
+        List<Paciente> listarClientes = pacientejpa.listarPacientes();
+        for (Paciente paciente : listarClientes) {
             model.addRow(new Object[]{
                 paciente.getNome(),
                 paciente.getId(),
@@ -1012,7 +1017,7 @@ public class PacienteView extends javax.swing.JPanel {
         }
     }
 
-    private void preencerPaciente(Pacientes paciente) {
+    private void preencerPaciente(Paciente paciente) {
         try {
 
             paciente.setNome(txtNomeCliente.getText());
@@ -1040,7 +1045,7 @@ public class PacienteView extends javax.swing.JPanel {
             paciente.setNumero(txtNumero.getText());
             paciente.setComplemento(txtComplemento.getText());
             paciente.setCidade(txtCidade.getText());
-            paciente.setStatuspaciente(StatusPaciente.ATIVO);
+            paciente.setStatuspaciente(StatusPacienteAgendamento.ATIVO);
 
             pacientejpa.CadastrarCliente(paciente);
 
@@ -1083,9 +1088,9 @@ public class PacienteView extends javax.swing.JPanel {
 
     }
 
-    private Pacientes lerCamposPaciente() {
+    private Paciente lerCamposPaciente() {
 
-        Pacientes paciente = new Pacientes();
+        Paciente paciente = new Paciente();
 
         paciente.setNome(txtNomeCliente.getText());
 
@@ -1115,7 +1120,7 @@ public class PacienteView extends javax.swing.JPanel {
         paciente.setNumero(txtNumero.getText());
         paciente.setCidade(txtCidade.getText());
         paciente.setCep(txtBuscaCep.getText());
-        paciente.setStatuspaciente(StatusPaciente.ATIVO);
+        paciente.setStatuspaciente(StatusPacienteAgendamento.ATIVO);
         paciente.setProfissao(txtProfissao.getText());
         paciente.setIdade(txtIdade.getText());
 
@@ -1127,7 +1132,7 @@ public class PacienteView extends javax.swing.JPanel {
         return paciente;
     }
 
-    private void preencherCamposDoFormularioComDadosExistentes(Pacientes paciente) {
+    private void preencherCamposDoFormularioComDadosExistentes(Paciente paciente) {
         //2025-12-06 Juliano caso o id exista ele vai definir os campos do formulário com os dados do respectivo ID,ou seja verificou que id existe vai pegar todos os atributos da intstância desse objeto e preencher campo a campo
         txtId.setText(String.valueOf(paciente.getId()));
 
@@ -1193,7 +1198,7 @@ public class PacienteView extends javax.swing.JPanel {
 
         System.out.println("Clicou no botão salvar.");
 
-        Pacientes pacienteEditar = lerCamposPaciente(); // 2025-12-09 juliano pega todos os valores dos atributos do objeto
+        Paciente pacienteEditar = lerCamposPaciente(); // 2025-12-09 juliano pega todos os valores dos atributos do objeto
 
         if (pacienteEditar.getId() == null) {
             pacientejpa.CadastrarCliente(pacienteEditar);
@@ -1203,7 +1208,7 @@ public class PacienteView extends javax.swing.JPanel {
             System.out.println("Paciente cadastrado com id ->" + pacienteEditar.getId());
 
         } else {
-            pacientejpa.atualizarCliente(pacienteEditar);
+            pacientejpa.atualizarPaciente(pacienteEditar);
             limparTelaCadastroPaciente();
             JOptionPane.showMessageDialog(this, "Paciente Atualizado com sucesso!!");
             System.out.println("Paciente com id -> " + pacienteEditar.getId() + "atualizado.");
@@ -1284,13 +1289,13 @@ public class PacienteView extends javax.swing.JPanel {
 
         tblPacientes.getColumnModel().getColumn(11).setMaxWidth(50);
         tblPacientes.getColumnModel().getColumn(11)
-                .setCellRenderer(new BotaoRenderizarProntuarioPaciente());
+                .setCellRenderer(new BotaoRenderizarIcones("/imagens/prontuario.png"));
 
-        List<Pacientes> listarPacientes = pacientejpa.listarPacientes();
+        List<Paciente> listarPacientes = pacientejpa.listarPacientes();
 
         modelo.setRowCount(0);
 
-        for (Pacientes p : listarPacientes) {
+        for (Paciente p : listarPacientes) {
             modelo.addRow(new Object[]{
                 p.getNome(),
                 p.getId(),
@@ -1340,7 +1345,7 @@ public class PacienteView extends javax.swing.JPanel {
         DefaultTableModel model = (DefaultTableModel) tblPacientes.getModel();
         model.setRowCount(0); // 2025-11-28 Juliano limpa tudo deixar a tabela vazia para chegar a tabela agora filtrada
 
-        for (Pacientes pacientes : listarPacientesFiltrados) {
+        for (Paciente pacientes : listarPacientesFiltrados) {
             model.addRow(new Object[]{
                 pacientes.getNome(),
                 pacientes.getId(),
@@ -1372,9 +1377,9 @@ public class PacienteView extends javax.swing.JPanel {
         PacienteFiltro filtro = new PacienteFiltro();
 
         DefaultTableModel model = (DefaultTableModel) tblPacientes.getModel();
-        List<Pacientes> listarPacientesAtivos = pacientejpa.listarPacientes();
+        List<Paciente> listarPacientesAtivos = pacientejpa.listarPacientes();
         model.setRowCount(0);
-        for (Pacientes paciente : listarPacientesAtivos) {
+        for (Paciente paciente : listarPacientesAtivos) {
             model.addRow(new Object[]{
                 paciente.getNome(),
                 paciente.getId(),
@@ -1420,11 +1425,11 @@ public class PacienteView extends javax.swing.JPanel {
         if (confirmacao == YES_NO_OPTION) {
             PacienteJPA pacientejpa = new PacienteJPA();
 
-            Pacientes paciente = pacientejpa.buscarPorId(idPaciente);
+            Paciente paciente = pacientejpa.buscarPorId(idPaciente);
             filtro.setId(idPaciente);
             if (paciente != null) {
-                paciente.setStatuspaciente(StatusPaciente.INATIVO);
-                pacientejpa.atualizarCliente(paciente);
+                paciente.setStatuspaciente(StatusPacienteAgendamento.INATIVO);
+                pacientejpa.atualizarPaciente(paciente);
                 JOptionPane.showMessageDialog(
                         this,
                         "Paciente excluído com sucesso!",
@@ -1432,7 +1437,7 @@ public class PacienteView extends javax.swing.JPanel {
                         JOptionPane.INFORMATION_MESSAGE
                 );
 
-                List<Pacientes> listPacientes = pacientejpa.filtrarPacientes(filtro);
+                List<Paciente> listPacientes = pacientejpa.filtrarPacientes(filtro);
                 carregartabela();
 
             }
@@ -1455,10 +1460,10 @@ public class PacienteView extends javax.swing.JPanel {
         PacienteFiltro filtro = new PacienteFiltro();
         filtro.setId(idCliente);
 
-        List<Pacientes> listarClientes = clientejpa.filtrarPacientes(filtro);
+        List<Paciente> listarClientes = clientejpa.filtrarPacientes(filtro);
 
         if (!listarClientes.isEmpty()) {
-            Pacientes cliente = listarClientes.get(0);
+            Paciente cliente = listarClientes.get(0);
 
             preencherCamposDoFormularioComDadosExistentes(cliente);
 

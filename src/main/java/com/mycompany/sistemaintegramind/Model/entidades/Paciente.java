@@ -6,7 +6,7 @@ package com.mycompany.sistemaintegramind.Model.entidades;
 
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.EstadosBrasileiros;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.Sexo;
-import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPaciente;
+import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamento;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,7 +26,7 @@ import org.hibernate.annotations.CreationTimestamp;
  */
 @Entity
 @Table(name = "Pacientes")
-public class Pacientes extends Entidade implements Serializable {
+public class Paciente extends Entidade implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -76,13 +76,13 @@ public class Pacientes extends Entidade implements Serializable {
     
     
     @Enumerated(EnumType.STRING)
-    private StatusPaciente statuspaciente;
+    private StatusPacienteAgendamento statuspaciente;
 
-    public Pacientes() {
+    public Paciente() {
 
     }
 
-    public Pacientes(Long id, String nome, Sexo sexo, String cpf, LocalDate dataNascimento, String telefoneCelular, String telefoneUrgencia, String telefoneFixo, String email, String cep, String bairro, String rua, String numero, String complemento, String cidade, String profissao, String idade, EstadosBrasileiros estado, StatusPaciente statuspaciente) {
+    public Paciente(Long id, String nome, Sexo sexo, String cpf, LocalDate dataNascimento, String telefoneCelular, String telefoneUrgencia, String telefoneFixo, String email, String cep, String bairro, String rua, String numero, String complemento, String cidade, String profissao, String idade, EstadosBrasileiros estado, StatusPacienteAgendamento statuspaciente) {
         this.id = id;
         this.nome = nome;
         this.sexo = sexo;
@@ -102,6 +102,7 @@ public class Pacientes extends Entidade implements Serializable {
         this.idade = idade;
         this.estado = estado;
         this.statuspaciente = statuspaciente;
+        
     }
 
     
@@ -233,11 +234,11 @@ public class Pacientes extends Entidade implements Serializable {
         this.estado = estado;
     }
 
-    public StatusPaciente getStatuspaciente() {
+    public StatusPacienteAgendamento getStatuspaciente() {
         return statuspaciente;
     }
 
-    public void setStatuspaciente(StatusPaciente statuspaciente) {
+    public void setStatuspaciente(StatusPacienteAgendamento statuspaciente) {
         this.statuspaciente = statuspaciente;
     }
 

@@ -73,9 +73,9 @@ public class PacienteEscolaridade extends Entidade implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "Paciente_id")
-    private Pacientes paciente;
+    private Paciente paciente;
 
-    public PacienteEscolaridade(Long id, String serie, String nomeEscola, String cepEscolar, String bairroEscolar, String ruaEscolar, String numeroEscolar, String cidadeEscolar, EstadosBrasileiros estado, StatusPeriodoEscolar periodoescolar, TipoEscola tipoescola, String telefoneCelular, Pacientes paciente) {
+    public PacienteEscolaridade(Long id, String serie, String nomeEscola, String cepEscolar, String bairroEscolar, String ruaEscolar, String numeroEscolar, String cidadeEscolar, EstadosBrasileiros estado, StatusPeriodoEscolar periodoescolar, TipoEscola tipoescola, String telefoneCelular, Paciente paciente) {
         this.id = id;
         this.serie = serie;
         this.nomeEscola = nomeEscola;
@@ -187,11 +187,11 @@ public class PacienteEscolaridade extends Entidade implements Serializable {
         this.telefoneCelular = telefoneCelular;
     }
 
-    public Pacientes getPaciente() {
+    public Paciente getPaciente() {
         return paciente;
     }
 
-    public void setPaciente(Pacientes paciente) {
+    public void setPaciente(Paciente paciente) {
         this.paciente = paciente;
     }
 

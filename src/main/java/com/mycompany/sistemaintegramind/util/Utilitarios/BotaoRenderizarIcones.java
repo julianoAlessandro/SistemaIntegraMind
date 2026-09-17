@@ -10,23 +10,19 @@ import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
-/**
- *
- * @author Micro
- */
-public class BotaoRenderizarProntuarioPaciente extends JButton implements TableCellRenderer {
 
-    public BotaoRenderizarProntuarioPaciente() {
+ public class BotaoRenderizarIcones extends JButton implements TableCellRenderer {
+
+    public BotaoRenderizarIcones(String imagem) {
 
         setIcon(new ImageIcon(
-                BotaoRenderizarProntuarioPaciente.class
-                        .getResource("/imagens/prontuario.png")
+            BotaoRenderizarIcones.class
+                .getResource(imagem)
         ));
 
         setBorderPainted(false);
         setContentAreaFilled(false);
         setFocusPainted(false);
-        setOpaque(false);
     }
 
     @Override
