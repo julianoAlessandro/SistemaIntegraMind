@@ -5,7 +5,7 @@
 package com.mycompany.sistemaintegramind.Model.dao.impl;
 
 import com.mycompany.sistemaintegramind.Model.dao.PacienteFiltro;
-import com.mycompany.sistemaintegramind.Model.entidades.Pacientes;
+import com.mycompany.sistemaintegramind.Model.entidades.Paciente;
 import com.mycompany.sistemaintegramind.util.Utilitarios.JPAUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import com.mycompany.sistemaintegramind.Model.dao.PacienteDAO;
-import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPaciente;
+import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamento;
 
 /**
  *
@@ -48,7 +48,7 @@ public class PacienteJPA implements PacienteDAO {
     // arquivo
     // novamente
     @Override
-    public void CadastrarCliente(Pacientes cliente) {
+    public void CadastrarCliente(Paciente cliente) {
         EntityManager em = JPAUtil.getEntityManager(); // 2026-08-08 Guilherme: Utilitario para reduzir o tempo de entrada do login
 
         try {
@@ -71,19 +71,19 @@ public class PacienteJPA implements PacienteDAO {
     }
 
     @Override
-    public List<Pacientes> listarPacientes() {
+    public List<Paciente> listarPacientes() {
         EntityManager em = JPAUtil.getEntityManager();
-        List<Pacientes> listClientes = new ArrayList<>();
+        List<Paciente> listClientes = new ArrayList<>();
 
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<Pacientes> cq = cb.createQuery(Pacientes.class); // 2025-11-20 Juliano montou a query aqui vai
+            CriteriaQuery<Paciente> cq = cb.createQuery(Paciente.class); // 2025-11-20 Juliano montou a query aqui vai
             // pegar os operadores do SQL(SELECT,INSERT
             // etc)
-            Root<Pacientes> RootCliente = cq.from(Pacientes.class);
+            Root<Paciente> RootCliente = cq.from(Paciente.class);
 
             //2026-02-26 Juliano: mostrando na listagem todos os clientes que são ativos
-            Predicate somenteClienteAtivo = cb.equal(RootCliente.get("statuspaciente"), StatusPaciente.ATIVO);
+            Predicate somenteClienteAtivo = cb.equal(RootCliente.get("statuspaciente"), StatusPacienteAgendamento.ATIVO);
             cq.select(RootCliente).where(somenteClienteAtivo);
 
             listClientes = em.createQuery(cq).getResultList();
@@ -104,28 +104,26 @@ public class PacienteJPA implements PacienteDAO {
     }
 
     @Override
-    public List<Pacientes> filtrarPacientes(PacienteFiltro pacientefiltro) {
-        List<Pacientes> filtrarClientes = new ArrayList<>();
+    public List<Paciente> filtrarPacientes(PacienteFiltro pacientefiltro) {
+        List<Paciente> filtrarClientes = new ArrayList<>();
         EntityManager em = JPAUtil.getEntityManager();
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<Pacientes> cq = cb.createQuery(Pacientes.class);
-            Root<Pacientes> RootClientes = cq.from(Pacientes.class);
+            CriteriaQuery<Paciente> cq = cb.createQuery(Paciente.class);
+            Root<Paciente> RootClientes = cq.from(Paciente.class);
 
             List<Predicate> predicates = new ArrayList<>(); // 2025-11-23 Juliano indica qual condicao/ filtro  tera
 
             //2026-08-04 Juliano: já definindo que está lista filtrada tera somente os clientes ATIVOS
-            predicates.add(
-                    cb.equal(
-                            RootClientes.get("statuspaciente"),
-                            StatusPaciente.ATIVO
+            predicates.add(cb.equal(RootClientes.get("statuspaciente"),
+                            StatusPacienteAgendamento.ATIVO
                     )
             );
 
             if (pacientefiltro.getId() != null) {
                 predicates.add(cb.equal(RootClientes.get("id"), pacientefiltro.getId()));
             }
-            
+
             if (pacientefiltro.getNome() != null && !pacientefiltro.getNome().isEmpty()) {
                 predicates.add(cb.like(cb.lower(RootClientes.get("nome")), "%" + pacientefiltro.getNome().toLowerCase() + "%"));
 
@@ -147,7 +145,7 @@ public class PacienteJPA implements PacienteDAO {
     }
 
     @Override
-    public void deletarCliente(Pacientes cliente) {
+    public void deletarCliente(Paciente cliente) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
@@ -167,11 +165,11 @@ public class PacienteJPA implements PacienteDAO {
     }
 
     @Override
-    public void atualizarCliente(Pacientes cliente) {
+    public void atualizarPaciente(Paciente paciente) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
-            em.merge(cliente);
+            em.merge(paciente);
             em.getTransaction().commit();
         } catch (Exception e) {
             if (em != null && em.getTransaction().isActive()) {
@@ -186,13 +184,38 @@ public class PacienteJPA implements PacienteDAO {
 
     }
 
-    public Pacientes buscarPorId(Long id) {
+    public Paciente buscarPorId(Long id) {
 
         EntityManager em = JPAUtil.getEntityManager();
 
         try {
 
-            return em.find(Pacientes.class, id);
+            return em.find(Paciente.class, id);
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            return null;
+
+        } finally {
+
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
+    }
+
+    public Paciente buscarPorNome(String nome) {
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+
+            return em.createQuery(
+                    "SELECT p FROM Paciente p WHERE p.nome = :nome",
+                    Paciente.class)
+                    .setParameter("nome", nome)
+                    .getSingleResult();
 
         } catch (Exception e) {
 

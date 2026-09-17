@@ -4,7 +4,7 @@
  */
 package com.mycompany.sistemaintegramind.View.PerfilPaciente;
 
-import com.mycompany.sistemaintegramind.Model.entidades.Pacientes;
+import com.mycompany.sistemaintegramind.Model.entidades.Paciente;
 
 /**
  *
@@ -13,9 +13,9 @@ import com.mycompany.sistemaintegramind.Model.entidades.Pacientes;
 public class SelecionarPerfilPacienteView extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(SelecionarPerfilPacienteView.class.getName());
-    private Pacientes paciente;
+    private Paciente paciente;
 
-    public SelecionarPerfilPacienteView(Pacientes paciente) {
+    public SelecionarPerfilPacienteView(Paciente paciente) {
         this.paciente = paciente;
         initComponents();
         txtid.setText(paciente.getId() + "");

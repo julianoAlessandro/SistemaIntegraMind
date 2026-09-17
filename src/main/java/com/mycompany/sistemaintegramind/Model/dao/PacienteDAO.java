@@ -4,7 +4,7 @@
  */
 package com.mycompany.sistemaintegramind.Model.dao;
 
-import com.mycompany.sistemaintegramind.Model.entidades.Pacientes;
+import com.mycompany.sistemaintegramind.Model.entidades.Paciente;
 import java.util.List;
 
 /**
@@ -13,10 +13,10 @@ import java.util.List;
  */
 public interface PacienteDAO {
 
-    public void CadastrarCliente(Pacientes cliente);
-    public List<Pacientes> listarPacientes();
-    public List<Pacientes> filtrarPacientes(PacienteFiltro clientefiltro);
-    public void deletarCliente(Pacientes cliente);
-    public void atualizarCliente(Pacientes cliente);
+    public void CadastrarCliente(Paciente cliente);
+    public List<Paciente> listarPacientes();
+    public List<Paciente> filtrarPacientes(PacienteFiltro clientefiltro);
+    public void deletarCliente(Paciente cliente);
+    public void atualizarPaciente(Paciente cliente);
     
 }

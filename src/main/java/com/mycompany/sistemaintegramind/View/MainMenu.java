@@ -38,6 +38,7 @@ public class MainMenu extends javax.swing.JFrame {
     private FinanceiroView financeiro;
     private CardLayout cardlayout; //2025-11-08 Juliano: Criação do atributo global da classe para poder ser chamado nos métodos de eventos do java
     private Usuarios usuarioLogado;
+    private AgendaView agenda;
 
     public MainMenu() {
         this(null);
@@ -470,8 +471,8 @@ public class MainMenu extends javax.swing.JFrame {
     private void tblAgendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tblAgendaActionPerformed
         // TODO add your handling code here:
         cardlayout.show(MenuPrincipal, "Agenda");
-
         selecionarBotao(tblAgenda); //2025-12-22 Guilherme: Define o botão clientes como selecionado, o mudando visualmente
+        //agenda.carregarPacientes();
     }//GEN-LAST:event_tblAgendaActionPerformed
 
     private void tblDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tblDashboardActionPerformed
