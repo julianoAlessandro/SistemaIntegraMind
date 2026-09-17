@@ -4,6 +4,8 @@
  */
 package com.mycompany.sistemaintegramind.View.FichaMenuPaciente;
 
+import java.awt.Color;
+import javax.swing.BorderFactory;
 import com.mycompany.sistemaintegramind.Model.entidades.Paciente;
 
 
@@ -21,6 +23,8 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
         txtIdade.setText(paciente.getIdade());
         txtProfissao.setText(paciente.getProfissao());
         txtCPF.setText(paciente.getCpf());
+        
+        
     }
 
     /**
@@ -31,84 +35,658 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        container1 = new com.mycompany.sistemaintegramind.View.Componentes.Container();
+        jLabel5 = new javax.swing.JLabel();
+        txtProfissao1 = new javax.swing.JTextField();
         txtNome = new javax.swing.JTextField();
-        txtIdade = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
         txtProfissao = new javax.swing.JTextField();
+        txtIdade = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
         txtCPF = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        container2 = new com.mycompany.sistemaintegramind.View.Componentes.Container();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        txtProfissao2 = new javax.swing.JTextField();
+        txtProfissao3 = new javax.swing.JTextField();
+        txtProfissao4 = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        container3 = new com.mycompany.sistemaintegramind.View.Componentes.Container();
+        jLabel18 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        txtProfissao5 = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
+        txtProfissao6 = new javax.swing.JTextField();
+        jLabel13 = new javax.swing.JLabel();
+        txtProfissao7 = new javax.swing.JTextField();
+        jLabel14 = new javax.swing.JLabel();
+        txtProfissao8 = new javax.swing.JTextField();
+        txtProfissao11 = new javax.swing.JTextField();
+        jLabel17 = new javax.swing.JLabel();
+        txtProfissao10 = new javax.swing.JTextField();
+        jLabel16 = new javax.swing.JLabel();
+        txtProfissao9 = new javax.swing.JTextField();
+        jLabel15 = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        container4 = new com.mycompany.sistemaintegramind.View.Componentes.Container();
+        jLabel21 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
+        txtProfissao12 = new javax.swing.JTextField();
+        jLabel20 = new javax.swing.JLabel();
+        txtProfissao13 = new javax.swing.JTextField();
+        jPanel1 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
 
-        jLabel1.setText("NOME");
+        setBackground(new java.awt.Color(221, 223, 237));
+        setLayout(new java.awt.GridBagLayout());
 
-        jLabel2.setText("IDADE");
+        container1.setLayout(new java.awt.GridBagLayout());
+
+        jLabel5.setText("Sexo");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.ipadx = 48;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 5);
+        container1.add(jLabel5, gridBagConstraints);
+
+        txtProfissao1.addActionListener(this::txtProfissao1ActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.ipadx = 160;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 15);
+        container1.add(txtProfissao1, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.ipadx = 160;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 15);
+        container1.add(txtNome, gridBagConstraints);
+
+        jLabel2.setText("Data de Nascimento");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 0);
+        container1.add(jLabel2, gridBagConstraints);
+
+        jLabel4.setText("Profissão");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.ipadx = 13;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 0);
+        container1.add(jLabel4, gridBagConstraints);
+
+        txtProfissao.addActionListener(this::txtProfissaoActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.ipadx = 160;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 15);
+        container1.add(txtProfissao, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.ipadx = 160;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 15);
+        container1.add(txtIdade, gridBagConstraints);
 
         jLabel3.setText("CPF");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.ipadx = 55;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 0);
+        container1.add(jLabel3, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.ipadx = 160;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        container1.add(txtCPF, gridBagConstraints);
 
-        jLabel4.setText("PROFISSAO");
+        jLabel6.setText("Nome");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.ipadx = 26;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 5);
+        container1.add(jLabel6, gridBagConstraints);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(53, 53, 53)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtIdade)
-                        .addContainerGap(216, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtCPF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtProfissao, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addContainerGap(169, Short.MAX_VALUE))))
+        jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel10.setForeground(new java.awt.Color(0, 153, 51));
+        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/PerfilPacientesIcons/PerfilPaciente_Paciente.png"))); // NOI18N
+        jLabel10.setText("Informações Basicas");
+        jLabel10.setIconTextGap(10);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 9;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 20, 5);
+        container1.add(jLabel10, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        add(container1, gridBagConstraints);
+
+        container2.setMinimumSize(new java.awt.Dimension(532, 350));
+        container2.setPreferredSize(new java.awt.Dimension(532, 350));
+        container2.setLayout(new java.awt.GridBagLayout());
+
+        jLabel1.setBackground(new java.awt.Color(0, 153, 51));
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(0, 153, 51));
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/PerfilPacientesIcons/PerfilPaciente_Telefone.png"))); // NOI18N
+        jLabel1.setText("Contatos");
+        jLabel1.setIconTextGap(10);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 20, 5);
+        container2.add(jLabel1, gridBagConstraints);
+
+        jLabel7.setText("Telefone Fixo");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.ipadx = 12;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 5);
+        container2.add(jLabel7, gridBagConstraints);
+
+        jLabel8.setText("Email");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.ipadx = 30;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 5);
+        container2.add(jLabel8, gridBagConstraints);
+
+        txtProfissao2.addActionListener(this::txtProfissao2ActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.ipadx = 160;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 15);
+        container2.add(txtProfissao2, gridBagConstraints);
+
+        txtProfissao3.addActionListener(this::txtProfissao3ActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.ipadx = 160;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 15);
+        container2.add(txtProfissao3, gridBagConstraints);
+
+        txtProfissao4.addActionListener(this::txtProfissao4ActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.ipadx = 160;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 15);
+        container2.add(txtProfissao4, gridBagConstraints);
+
+        jLabel9.setText("Telefone Celular");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.ipadx = 12;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 5);
+        container2.add(jLabel9, gridBagConstraints);
+
+        jPanel2.setOpaque(false);
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(55, 55, 55)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(txtIdade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(txtProfissao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(txtCPF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(109, Short.MAX_VALUE))
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        container2.add(jPanel2, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 10);
+        add(container2, gridBagConstraints);
+
+        container3.setMinimumSize(new java.awt.Dimension(604, 350));
+        container3.setPreferredSize(new java.awt.Dimension(604, 350));
+        container3.setLayout(new java.awt.GridBagLayout());
+
+        jLabel18.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel18.setForeground(new java.awt.Color(0, 153, 51));
+        jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/PerfilPacientesIcons/PerfilPaciente_Gps.png"))); // NOI18N
+        jLabel18.setText("Endereço");
+        jLabel18.setIconTextGap(10);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 20, 5);
+        container3.add(jLabel18, gridBagConstraints);
+
+        jLabel11.setText("CEP");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 5);
+        container3.add(jLabel11, gridBagConstraints);
+
+        txtProfissao5.addActionListener(this::txtProfissao5ActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.ipadx = 160;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 15);
+        container3.add(txtProfissao5, gridBagConstraints);
+
+        jLabel12.setText("Rua");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 5);
+        container3.add(jLabel12, gridBagConstraints);
+
+        txtProfissao6.addActionListener(this::txtProfissao6ActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.ipadx = 160;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 15);
+        container3.add(txtProfissao6, gridBagConstraints);
+
+        jLabel13.setText("Número");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 5);
+        container3.add(jLabel13, gridBagConstraints);
+
+        txtProfissao7.addActionListener(this::txtProfissao7ActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.ipadx = 160;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 15);
+        container3.add(txtProfissao7, gridBagConstraints);
+
+        jLabel14.setText("UF");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 5);
+        container3.add(jLabel14, gridBagConstraints);
+
+        txtProfissao8.addActionListener(this::txtProfissao8ActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.ipadx = 160;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 15);
+        container3.add(txtProfissao8, gridBagConstraints);
+
+        txtProfissao11.addActionListener(this::txtProfissao11ActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.ipadx = 160;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 15);
+        container3.add(txtProfissao11, gridBagConstraints);
+
+        jLabel17.setText("Cidade");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 5);
+        container3.add(jLabel17, gridBagConstraints);
+
+        txtProfissao10.addActionListener(this::txtProfissao10ActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.ipadx = 160;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 15);
+        container3.add(txtProfissao10, gridBagConstraints);
+
+        jLabel16.setText("Bairro");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 5);
+        container3.add(jLabel16, gridBagConstraints);
+
+        txtProfissao9.addActionListener(this::txtProfissao9ActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.ipadx = 160;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 15);
+        container3.add(txtProfissao9, gridBagConstraints);
+
+        jLabel15.setText("Complemento");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 5);
+        container3.add(jLabel15, gridBagConstraints);
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.weighty = 1.0;
+        container3.add(jPanel4, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 10);
+        add(container3, gridBagConstraints);
+
+        container4.setMinimumSize(new java.awt.Dimension(0, 300));
+        container4.setPreferredSize(new java.awt.Dimension(586, 300));
+        container4.setLayout(new java.awt.GridBagLayout());
+
+        jLabel21.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel21.setForeground(new java.awt.Color(0, 153, 51));
+        jLabel21.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/PerfilPacientesIcons/PerfilPaciente_telefoneEmergencia.png"))); // NOI18N
+        jLabel21.setText("Contatos de Emergência");
+        jLabel21.setIconTextGap(10);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 20, 5);
+        container4.add(jLabel21, gridBagConstraints);
+
+        jLabel19.setText("Telefone Celular");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 5);
+        container4.add(jLabel19, gridBagConstraints);
+
+        txtProfissao12.addActionListener(this::txtProfissao12ActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.ipadx = 160;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 15);
+        container4.add(txtProfissao12, gridBagConstraints);
+
+        jLabel20.setText("Telefone Celular");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 5);
+        container4.add(jLabel20, gridBagConstraints);
+
+        txtProfissao13.addActionListener(this::txtProfissao13ActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.ipadx = 160;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 15);
+        container4.add(txtProfissao13, gridBagConstraints);
+
+        jPanel1.setOpaque(false);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 589, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 116, Short.MAX_VALUE)
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        container4.add(jPanel1, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
+        add(container4, gridBagConstraints);
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.weighty = 1.0;
+        add(jPanel3, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void txtProfissaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProfissaoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtProfissaoActionPerformed
+
+    private void txtProfissao1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProfissao1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtProfissao1ActionPerformed
+
+    private void txtProfissao2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProfissao2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtProfissao2ActionPerformed
+
+    private void txtProfissao3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProfissao3ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtProfissao3ActionPerformed
+
+    private void txtProfissao4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProfissao4ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtProfissao4ActionPerformed
+
+    private void txtProfissao5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProfissao5ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtProfissao5ActionPerformed
+
+    private void txtProfissao6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProfissao6ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtProfissao6ActionPerformed
+
+    private void txtProfissao7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProfissao7ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtProfissao7ActionPerformed
+
+    private void txtProfissao8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProfissao8ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtProfissao8ActionPerformed
+
+    private void txtProfissao9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProfissao9ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtProfissao9ActionPerformed
+
+    private void txtProfissao10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProfissao10ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtProfissao10ActionPerformed
+
+    private void txtProfissao11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProfissao11ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtProfissao11ActionPerformed
+
+    private void txtProfissao12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProfissao12ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtProfissao12ActionPerformed
+
+    private void txtProfissao13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProfissao13ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtProfissao13ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private com.mycompany.sistemaintegramind.View.Componentes.Container container1;
+    private com.mycompany.sistemaintegramind.View.Componentes.Container container2;
+    private com.mycompany.sistemaintegramind.View.Componentes.Container container3;
+    private com.mycompany.sistemaintegramind.View.Componentes.Container container4;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JTextField txtCPF;
     private javax.swing.JTextField txtIdade;
     private javax.swing.JTextField txtNome;
     private javax.swing.JTextField txtProfissao;
+    private javax.swing.JTextField txtProfissao1;
+    private javax.swing.JTextField txtProfissao10;
+    private javax.swing.JTextField txtProfissao11;
+    private javax.swing.JTextField txtProfissao12;
+    private javax.swing.JTextField txtProfissao13;
+    private javax.swing.JTextField txtProfissao2;
+    private javax.swing.JTextField txtProfissao3;
+    private javax.swing.JTextField txtProfissao4;
+    private javax.swing.JTextField txtProfissao5;
+    private javax.swing.JTextField txtProfissao6;
+    private javax.swing.JTextField txtProfissao7;
+    private javax.swing.JTextField txtProfissao8;
+    private javax.swing.JTextField txtProfissao9;
     // End of variables declaration//GEN-END:variables
 }
