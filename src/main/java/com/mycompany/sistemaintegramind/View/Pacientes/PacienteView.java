@@ -22,7 +22,7 @@ import java.util.List;
 import com.mycompany.sistemaintegramind.View.PerfilPaciente.SelecionarPerfilPacienteView;
 import com.mycompany.sistemaintegramind.util.Utilitarios.BotaoRenderizarIcones;
 import com.mycompany.sistemaintegramind.View.FichaMenuPaciente.FichaMenuPrincipalPacienteView;
-import com.mycompany.sistemaintegramind.util.Utilitarios.BotaoRenderizarProntuarioPaciente;
+//import com.mycompany.sistemaintegramind.util.Utilitarios.BotaoRenderizarProntuarioPaciente;
 import com.mycompany.sistemaintegramind.util.Utilitarios.JPAUtil;
 import java.awt.BorderLayout;
 import java.awt.Color;

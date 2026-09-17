@@ -4,7 +4,8 @@
  */
 package com.mycompany.sistemaintegramind.View.FichaMenuPaciente;
 
-import com.mycompany.sistemaintegramind.Model.entidades.Pacientes;
+import com.mycompany.sistemaintegramind.Model.entidades.Paciente;
+
 
 /**
  *
@@ -12,8 +13,8 @@ import com.mycompany.sistemaintegramind.Model.entidades.Pacientes;
  */
 public class FichaPerfilPacienteView extends javax.swing.JPanel {
 
-   private Pacientes paciente;
-    public FichaPerfilPacienteView(Pacientes paciente) {
+   private Paciente paciente;
+    public FichaPerfilPacienteView(Paciente paciente) {
         this.paciente = paciente;
         initComponents();
         txtNome.setText(paciente.getNome());

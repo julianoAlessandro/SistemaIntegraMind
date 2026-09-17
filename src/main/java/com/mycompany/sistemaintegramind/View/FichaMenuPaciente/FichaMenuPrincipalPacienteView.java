@@ -1,18 +1,18 @@
 package com.mycompany.sistemaintegramind.View.FichaMenuPaciente;
 
-import com.mycompany.sistemaintegramind.Model.entidades.Pacientes;
+import com.mycompany.sistemaintegramind.Model.entidades.Paciente;
 import com.mycompany.sistemaintegramind.util.Utilitarios.AlternarEntreJanelasMenu;
 import java.awt.CardLayout;
 import javax.swing.JButton;
 
 public class FichaMenuPrincipalPacienteView extends javax.swing.JPanel {
 
-    private Pacientes paciente;
+    private Paciente paciente;
     private CardLayout cardlayout;
     private JButton botaoSelecionado;
-    private Pacientes pacienteSelecionado;
+    private Paciente pacienteSelecionado;
 
-    public FichaMenuPrincipalPacienteView(Pacientes paciente) {
+    public FichaMenuPrincipalPacienteView(Paciente paciente) {
         this.paciente = paciente;
         initComponents();
         paciente.getId();
