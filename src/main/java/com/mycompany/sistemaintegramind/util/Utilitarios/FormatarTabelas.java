@@ -96,7 +96,20 @@ public class FormatarTabelas {
         );
         tblListarPagamentos.setModel(modelo);
 
+        return modelo;
+    }
 
+    public static DefaultTableModel formatarTabelaListarMovimentacaoFinanceiraPaciente() {
+        DefaultTableModel modelo = new DefaultTableModel(
+                new Object[]{
+                    "Código Agendamento",
+                    "Nome",
+                    "Data do Pagamento",
+                    "Valor"
+
+                },
+                0
+        );
         return modelo;
     }
 

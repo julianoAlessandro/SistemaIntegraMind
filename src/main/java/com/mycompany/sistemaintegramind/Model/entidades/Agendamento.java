@@ -4,6 +4,7 @@
  */
 package com.mycompany.sistemaintegramind.Model.entidades;
 
+import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.FrequenciaAtendimento;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamento;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPagamento;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.TipoAtendimento;
@@ -63,7 +64,12 @@ public class Agendamento extends Entidade implements Serializable {
     private BigDecimal valorDaConsulta;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "Status_Agendamento_Paciente")
     private StatusPacienteAgendamento statuspacienteagendamento;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "Frequência_Atendimento_Paciente")
+    private FrequenciaAtendimento frequenciaatendimento;
 
     public Long getId() {
         return id;
@@ -145,5 +151,20 @@ public class Agendamento extends Entidade implements Serializable {
         this.statuspacienteagendamento = statuspacienteagendamento;
     }
 
-    
+    public StatusPacienteAgendamento getStatuspacienteagendamento() {
+        return statuspacienteagendamento;
+    }
+
+    public void setStatuspacienteagendamento(StatusPacienteAgendamento statuspacienteagendamento) {
+        this.statuspacienteagendamento = statuspacienteagendamento;
+    }
+
+    public FrequenciaAtendimento getFrequenciaatendimento() {
+        return frequenciaatendimento;
+    }
+
+    public void setFrequenciaatendimento(FrequenciaAtendimento frequenciaatendimento) {
+        this.frequenciaatendimento = frequenciaatendimento;
+    }
+
 }
