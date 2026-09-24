@@ -120,7 +120,7 @@ public class AgendaView extends javax.swing.JPanel {
         List<Paciente> carregarListaPacientes = pacientejpa.listarPacientes();
         cmbListarPacientes.removeAllItems();
         for (Paciente p : carregarListaPacientes) {
-            cmbListarPacientes.addItem(p.getNome());
+            cmbListarPacientes.addItem(p);
         }
 
     }
@@ -317,6 +317,12 @@ public class AgendaView extends javax.swing.JPanel {
             }
         });
 
+        cmbListarPacientes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbListarPacientesActionPerformed(evt);
+            }
+        });
+
         jPanel1.setBackground(new java.awt.Color(204, 255, 204));
         jPanel1.setForeground(new java.awt.Color(153, 153, 255));
 
@@ -428,6 +434,11 @@ public class AgendaView extends javax.swing.JPanel {
             }
         });
 
+        txtHorario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtHorarioActionPerformed(evt);
+            }
+        });
         txtHorario.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtHorarioKeyReleased(evt);
@@ -758,8 +769,8 @@ public class AgendaView extends javax.swing.JPanel {
         LocalDate dataInicial = dtDataAgendamento.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
         //2026-09-22 Juliano: Pegando o nome do paciente para poder associar ao seu respectivo agendamento
-        String PacienteNome = (String) cmbListarPacientes.getSelectedItem();
-        Paciente paciente = pacientejpa.buscarPorNome(PacienteNome);
+        Paciente PacienteNome =  (Paciente)cmbListarPacientes.getSelectedItem();        
+        Paciente paciente = pacientejpa.buscarPorId(PacienteNome.getId());
         
         //2026-09-22 Juliano: Validação dos agendamentos não é possível realizar um agendamento de um dia e um horário que já está agendado
         if (agendamentojpa.horarioOcupado(dataInicial, horario)) {
@@ -1057,6 +1068,14 @@ public class AgendaView extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btnLimparFiltroAgendamentoActionPerformed
 
+    private void cmbListarPacientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbListarPacientesActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmbListarPacientesActionPerformed
+
+    private void txtHorarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtHorarioActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtHorarioActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAtualizarTabela;
@@ -1069,7 +1088,7 @@ public class AgendaView extends javax.swing.JPanel {
     private javax.swing.JComboBox<StatusPagamento> cmbFiltrarStatusPagamento;
     private javax.swing.JComboBox<TipoAtendimento> cmbFiltrarTipoAtendimento;
     private javax.swing.JComboBox<FrequenciaAtendimento> cmbFrequenciaAtendimento;
-    private javax.swing.JComboBox<String> cmbListarPacientes;
+    private javax.swing.JComboBox<Paciente> cmbListarPacientes;
     private javax.swing.JComboBox<StatusPagamento> cmbStatusPagamento;
     private javax.swing.JComboBox<TipoAtendimento> cmbTipoAtendimento;
     private com.toedter.calendar.JDateChooser dtDataAgendamento;
