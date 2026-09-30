@@ -10,11 +10,16 @@ import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacie
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPagamento;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.TipoAtendimento;
 import com.mycompany.sistemaintegramind.util.Utilitarios.StatusAgendamento;
+import java.awt.Window;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -31,9 +36,11 @@ public class EditarAgendamentoView extends javax.swing.JPanel {
         jcListarAtendimentos.setModel(new DefaultComboBoxModel<>(TipoAtendimento.values()));
         jcListarStatusPagamento.setModel(new DefaultComboBoxModel<>(StatusPagamento.values()));
         jcListarStatus.setModel(new DefaultComboBoxModel<>(StatusAgendamento.values()));
+        txtObservacao.putClientProperty("JTextField.placeholderText", "Ex: Paciente precisou realizar o cancelamento da consulta e irá remarcar....");
 
-        String valorString = agendamento.getValorDaConsulta().toString();
-        txtConsulta.setText(valorString);
+        txtConsulta.setText(agendamento.getValorDaConsulta().toString());
+        txtObservacao.setText(agendamento.getObservacao());
+        txtHorario.setText(agendamento.getHorario().toString());
     }
 
     /**
@@ -53,11 +60,13 @@ public class EditarAgendamentoView extends javax.swing.JPanel {
         jLabel7 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         btnAtualizar = new javax.swing.JButton();
-        jcListarHorários = new javax.swing.JComboBox<>();
         jcListarAtendimentos = new javax.swing.JComboBox<>();
         jcListarStatus = new javax.swing.JComboBox<>();
         jcListarStatusPagamento = new javax.swing.JComboBox<>();
         txtConsulta = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        txtObservacao = new javax.swing.JTextField();
+        txtHorario = new javax.swing.JTextField();
 
         jLabel1.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         jLabel1.setText("Editar Informações Agendamento");
@@ -91,6 +100,15 @@ public class EditarAgendamentoView extends javax.swing.JPanel {
             }
         });
 
+        jLabel2.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        jLabel2.setText("OBS");
+
+        txtHorario.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtHorarioKeyReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -99,7 +117,7 @@ public class EditarAgendamentoView extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jcListarHorários, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtHorario, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -107,22 +125,28 @@ public class EditarAgendamentoView extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnAtualizar, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jcListarAtendimentos, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel5)
+                        .addComponent(jLabel5))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnAtualizar, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jcListarStatusPagamento, 0, 119, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jcListarStatusPagamento, 0, 108, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel7)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtConsulta, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtConsulta, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtObservacao, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))))
             .addGroup(layout.createSequentialGroup()
                 .addGap(390, 390, 390)
                 .addComponent(jLabel1)
@@ -134,22 +158,26 @@ public class EditarAgendamentoView extends javax.swing.JPanel {
                 .addGap(28, 28, 28)
                 .addComponent(jLabel1)
                 .addGap(50, 50, 50)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel6)
-                    .addComponent(jcListarAtendimentos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jcListarStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jcListarStatusPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtConsulta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7)
-                    .addComponent(jcListarHorários, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel3)
+                        .addComponent(txtHorario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel4)
+                        .addComponent(jLabel5)
+                        .addComponent(jLabel6)
+                        .addComponent(jcListarAtendimentos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jcListarStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jcListarStatusPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtConsulta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel7)))
+                .addGap(61, 61, 61)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAtualizar)
-                    .addComponent(jButton1))
-                .addContainerGap(39, Short.MAX_VALUE))
+                    .addComponent(jButton1)
+                    .addComponent(txtObservacao, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addGap(17, 17, 17))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -159,41 +187,88 @@ public class EditarAgendamentoView extends javax.swing.JPanel {
 
     private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarActionPerformed
         AgendamentoJPA agendamentojpa = new AgendamentoJPA();
-        agendamento.setHorario(LocalTime.MIN);
+        //agendamento.setHorario(LocalTime.MIN);
         agendamento.setStatuspagamento((StatusPagamento) jcListarStatusPagamento.getSelectedItem());
         agendamento.setTipoatendimento((TipoAtendimento) jcListarAtendimentos.getSelectedItem());
         agendamento.setStatusagendamento((StatusAgendamento) jcListarStatus.getSelectedItem());
         String valorConsulta = txtConsulta.getText();
         BigDecimal valorConsultadinheiro = new BigDecimal(valorConsulta.replace(",", "."));
         agendamento.setValorDaConsulta(valorConsultadinheiro);
+        agendamento.setObservacao(txtObservacao.getText());
 
+        String horario = txtHorario.getText();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        LocalTime novoHorario = LocalTime.parse(horario, formatter);
+        LocalTime horarioAtual = agendamento.getHorario();
+
+        System.out.println("=================================");
+        System.out.println("Horário atual: " + horarioAtual);
+        System.out.println("Novo horário: " + novoHorario);
+        System.out.println("Horário foi alterado? "  + !horarioAtual.equals(novoHorario));
+
+        //2026-09-22 Juliano: Validação dos agendamentos não é possível realizar um agendamento de um dia e um horário que já está agendado
+        if (!horarioAtual.equals(novoHorario) && agendamentojpa.horarioOcupado(agendamento.getDataAgendamento(), novoHorario)) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Este horário e esta data já estão agendados, escolha outro para continuar."
+            );
+            return;
+        }
+        agendamento.setHorario(novoHorario);
         agendamentojpa.atualizarAgendamento(agendamento);
         System.out.println("Dados do Agendamento do Paciente --> " + agendamento.getPaciente().getNome() + " atualizados!!!");
-           JOptionPane.showMessageDialog(
+        JOptionPane.showMessageDialog(
                 this,
                 "Agendamento atualizado com sucesso!",
                 "Sucesso",
                 JOptionPane.PLAIN_MESSAGE,
                 new ImageIcon(getClass().getResource("/imagens/Alertas/sucesso.png"))
         );
-       
 
+        //2026-09-18 Juliano: Fechando a janela após atualizar o agendamento
+        Window janela = SwingUtilities.getWindowAncestor(this);
+
+        if (janela != null) {
+            janela.dispose();
+        }
     }//GEN-LAST:event_btnAtualizarActionPerformed
+
+    private void txtHorarioKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtHorarioKeyReleased
+        String horario = txtHorario.getText();
+
+        // Remove tudo que não for número
+        horario = horario.replaceAll("[^0-9]", "");
+
+        // Limita a 4 números
+        if (horario.length() > 4) {
+            horario = horario.substring(0, 4);
+        }
+
+        // Adiciona os dois pontos
+        if (horario.length() >= 3) {
+            horario = horario.substring(0, 2) + ":" + horario.substring(2);
+        }
+
+        txtHorario.setText(horario);
+    }//GEN-LAST:event_txtHorarioKeyReleased
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAtualizar;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JComboBox<TipoAtendimento> jcListarAtendimentos;
-    private javax.swing.JComboBox<String> jcListarHorários;
     private javax.swing.JComboBox<StatusAgendamento> jcListarStatus;
     private javax.swing.JComboBox<StatusPagamento> jcListarStatusPagamento;
     private javax.swing.JTextField txtConsulta;
+    private javax.swing.JTextField txtHorario;
+    private javax.swing.JTextField txtObservacao;
     // End of variables declaration//GEN-END:variables
 }

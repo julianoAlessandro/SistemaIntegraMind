@@ -115,7 +115,7 @@
                       <Group type="102" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jSeparator3" pref="914" max="32767" attributes="0"/>
+                              <Component id="jSeparator3" pref="968" max="32767" attributes="0"/>
                               <Component id="jLabel15" min="-2" max="-2" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="txtBuscarOpcoesFiltradas" min="-2" pref="103" max="-2" attributes="0"/>
@@ -126,7 +126,7 @@
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="txtCliente" min="-2" pref="191" max="-2" attributes="0"/>
+                                      <Component id="txtPaciente" min="-2" pref="191" max="-2" attributes="0"/>
                                       <Group type="102" attributes="0">
                                           <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
                                           <Component id="jLabel1" min="-2" pref="82" max="-2" attributes="0"/>
@@ -165,7 +165,7 @@
                                               <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
                                           </Group>
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="txtCliente" min="-2" max="-2" attributes="0"/>
+                                          <Component id="txtPaciente" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <Component id="txtDataInicial" min="-2" max="-2" attributes="0"/>
                                   </Group>
@@ -204,9 +204,9 @@
                 </Component>
                 <Component class="javax.swing.JSeparator" name="jSeparator3">
                 </Component>
-                <Component class="javax.swing.JTextField" name="txtCliente">
+                <Component class="javax.swing.JTextField" name="txtPaciente">
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtClienteActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtPacienteActionPerformed"/>
                   </Events>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel1">

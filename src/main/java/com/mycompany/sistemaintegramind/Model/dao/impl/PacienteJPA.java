@@ -16,6 +16,9 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import com.mycompany.sistemaintegramind.Model.dao.PacienteDAO;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamento;
+import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPagamento;
+import com.mycompany.sistemaintegramind.util.Utilitarios.StatusAgendamento;
+import java.math.BigDecimal;
 
 /**
  *
@@ -116,8 +119,8 @@ public class PacienteJPA implements PacienteDAO {
 
             //2026-08-04 Juliano: já definindo que está lista filtrada tera somente os clientes ATIVOS
             predicates.add(cb.equal(RootClientes.get("statuspaciente"),
-                            StatusPacienteAgendamento.ATIVO
-                    )
+                    StatusPacienteAgendamento.ATIVO
+            )
             );
 
             if (pacientefiltro.getId() != null) {
@@ -239,5 +242,28 @@ public class PacienteJPA implements PacienteDAO {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from
         // nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
+
+    public int totalPacientesAtivos() {
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+
+            Long totalPacientesAtivos = em.createQuery(
+                    "SELECT COUNT(p) FROM Paciente p "
+                    + "WHERE p.statuspaciente = :statuspaciente",
+                    Long.class)
+                    .setParameter("statuspaciente", StatusPacienteAgendamento.ATIVO)
+                    .getSingleResult();
+
+            return totalPacientesAtivos.intValue();
+
+        } finally {
+            em.close();
+        }
+
+    }
+
+   
 
 }

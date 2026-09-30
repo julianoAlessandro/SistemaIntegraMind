@@ -1,101 +1,66 @@
 package com.mycompany.sistemaintegramind.Model.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime; //2026-06-16 Juliano:Alterado de java.util.Date para java.time.LocalDateTime
+import java.time.LocalDateTime; 
 import java.time.ZoneId;
 import java.util.Date;
 
 public class FinanceiroDTO {
 
-    private long idVenda; //2026-06-16 Juliano: Alterado de Long para long primitivo conforme o erro exigiu
-    private String cliente;
-    private LocalDateTime dataVenda; // Alterado para LocalDateTime
-    private String produto;
-    private BigDecimal valorUnitario;
-    private BigDecimal quantidade;
-    private BigDecimal subtotal;
+    private long codigoPaciente; 
+    private String nomePaciente;
+    private LocalDateTime dataPagamento; 
+    private BigDecimal consultaValor;
+   
+    
 
-    //2026-06-16 Juliano: Construtor com a assinatura exata esperada pelo Hibernate
-    public FinanceiroDTO(long idVenda,
-            String cliente,
-            LocalDateTime dataVenda,
-            String produto,
-            BigDecimal valorUnitario,
-            BigDecimal quantidade,
-            BigDecimal subtotal) {
-        this.idVenda = idVenda;
-        this.cliente = cliente;
-        this.dataVenda = dataVenda;
-        this.produto = produto;
-        this.valorUnitario = valorUnitario;
-        this.quantidade = quantidade;
-        this.subtotal = subtotal;
+    public FinanceiroDTO(long codigoPaciente, String nomePaciente, LocalDateTime dataPagamento, BigDecimal consultaValor) {
+        this.codigoPaciente = codigoPaciente;
+        this.nomePaciente = nomePaciente;
+        this.dataPagamento = dataPagamento;
+        this.consultaValor = consultaValor;
     }
 
-    public long getIdVenda() {
-        return idVenda;
+    public long getCodigoPaciente() {
+        return codigoPaciente;
     }
 
-    public void setIdVenda(long idVenda) {
-        this.idVenda = idVenda;
+    public void setCodigoPaciente(long codigoPaciente) {
+        this.codigoPaciente = codigoPaciente;
     }
 
-    public String getCliente() {
-        return cliente;
+    public String getNomePaciente() {
+        return nomePaciente;
     }
 
-    public void setCliente(String cliente) {
-        this.cliente = cliente;
+    public void setNomePaciente(String nomePaciente) {
+        this.nomePaciente = nomePaciente;
     }
 
-    public LocalDateTime getDataVenda() {
-        return dataVenda;
+    public LocalDateTime getDataPagamento() {
+        return dataPagamento;
     }
 
-    public void setDataVenda(LocalDateTime dataVenda) {
-        this.dataVenda = dataVenda;
+    public void setDataPagamento(LocalDateTime dataPagamento) {
+        this.dataPagamento = dataPagamento;
     }
 
-    public String getProduto() {
-        return produto;
+    public BigDecimal getConsultaValor() {
+        return consultaValor;
     }
 
-    public void setProduto(String produto) {
-        this.produto = produto;
+    public void setConsultaValor(BigDecimal consultaValor) {
+        this.consultaValor = consultaValor;
     }
-
-    public BigDecimal getValorUnitario() {
-        return valorUnitario;
-    }
-
-    public void setValorUnitario(BigDecimal valorUnitario) {
-        this.valorUnitario = valorUnitario;
-    }
-
-    public BigDecimal getQuantidade() {
-        return quantidade;
-    }
-
-    public void setQuantidade(BigDecimal quantidade) {
-        this.quantidade = quantidade;
-    }
-
-    public BigDecimal getSubtotal() {
-        return subtotal;
-    }
-
-    public void setSubtotal(BigDecimal subtotal) {
-        this.subtotal = subtotal;
-    }
-
+ 
+       
     public Date getDataVendaRelatorio() {
 
-        if (dataVenda == null) {
+        if (dataPagamento == null) {
             return null;
         }
 
-        return Date.from(
-                dataVenda.atZone(ZoneId.systemDefault()).toInstant()
+        return Date.from(dataPagamento.atZone(ZoneId.systemDefault()).toInstant()
         );
     }
 }

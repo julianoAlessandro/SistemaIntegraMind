@@ -12,25 +12,16 @@ import java.time.LocalDate;
  */
 public class FinanceiroFiltro {
 
-    private String clienteNome;
-    private String produto;
+    private String Paciente;
     private LocalDate dataInicial;
     private LocalDate dataFinal;
 
-    public String getClienteNome() {
-        return clienteNome;
+    public String getPaciente() {
+        return Paciente;
     }
 
-    public void setClienteNome(String clienteNome) {
-        this.clienteNome = clienteNome;
-    }
-
-    public String getProduto() {
-        return produto;
-    }
-
-    public void setProduto(String produto) {
-        this.produto = produto;
+    public void setPaciente(String Paciente) {
+        this.Paciente = Paciente;
     }
 
     public LocalDate getDataInicial() {
@@ -49,5 +40,4 @@ public class FinanceiroFiltro {
         this.dataFinal = dataFinal;
     }
 
-    
 }
