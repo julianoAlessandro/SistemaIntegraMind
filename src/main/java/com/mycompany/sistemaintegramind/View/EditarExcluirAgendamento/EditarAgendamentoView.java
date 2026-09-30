@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -186,7 +187,7 @@ public class EditarAgendamentoView extends javax.swing.JPanel {
 
     private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarActionPerformed
         AgendamentoJPA agendamentojpa = new AgendamentoJPA();
-        agendamento.setHorario(LocalTime.MIN);
+        //agendamento.setHorario(LocalTime.MIN);
         agendamento.setStatuspagamento((StatusPagamento) jcListarStatusPagamento.getSelectedItem());
         agendamento.setTipoatendimento((TipoAtendimento) jcListarAtendimentos.getSelectedItem());
         agendamento.setStatusagendamento((StatusAgendamento) jcListarStatus.getSelectedItem());
@@ -198,16 +199,23 @@ public class EditarAgendamentoView extends javax.swing.JPanel {
         String horario = txtHorario.getText();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         LocalTime novoHorario = LocalTime.parse(horario, formatter);
-        agendamento.setHorario(novoHorario);
-        
+        LocalTime horarioAtual = agendamento.getHorario();
+
+        System.out.println("=================================");
+        System.out.println("Horário atual: " + horarioAtual);
+        System.out.println("Novo horário: " + novoHorario);
+        System.out.println("Horário foi alterado? "  + !horarioAtual.equals(novoHorario));
+
         //2026-09-22 Juliano: Validação dos agendamentos não é possível realizar um agendamento de um dia e um horário que já está agendado
-        if (agendamentojpa.horarioOcupado(agendamento.getDataAgendamento(), novoHorario)) {
+        if (!horarioAtual.equals(novoHorario) && agendamentojpa.horarioOcupado(agendamento.getDataAgendamento(), novoHorario)) {
+
             JOptionPane.showMessageDialog(
                     this,
-                    "Este horário e está data já está agendado, escolha outro para continuar."
+                    "Este horário e esta data já estão agendados, escolha outro para continuar."
             );
             return;
         }
+        agendamento.setHorario(novoHorario);
         agendamentojpa.atualizarAgendamento(agendamento);
         System.out.println("Dados do Agendamento do Paciente --> " + agendamento.getPaciente().getNome() + " atualizados!!!");
         JOptionPane.showMessageDialog(

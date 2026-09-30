@@ -23,6 +23,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -138,18 +139,39 @@ public class AgendaView extends javax.swing.JPanel {
     private void carregarAgendamento(DefaultTableModel modelo, List<Agendamento> ListarAgendamentos) {
         for (Agendamento agendamentos : ListarAgendamentos) {
             String statuspagamento = agendamentos.getStatuspagamento().toString();
-            String pagamentoformatado;
+            String statusagendamento = agendamentos.getStatusagendamento().toString();
+            String pagamentoformatado, statusagendamentoformatado = null;
+            LocalDate dataAtualConsulta = agendamentos.getDataAgendamento();
             if (statuspagamento.equals("PENDENTE")) {
                 pagamentoformatado = "<html><font color='red'><b>PENDENTE</b></font></html>";
             } else {
                 pagamentoformatado = "<html><font color='green'><b>PAGO</b></font></html>";
+            }
+            //2026-09-30 Juliano: Validação da mudança automática do status de AGENDADO para REALIZADO,quando a data da consulta já tiver passado e o status da consulta esteja como AGENDADO
+            if (dataAtualConsulta.isBefore(LocalDate.now()) & statusagendamento.equals("AGENDADO")) {
+                statusagendamentoformatado = "<html><font color='green'><b>REALIZADO</b></font></html>";
+            } else {
+                if (statusagendamento.equals("REALIZADO")) {
+                    statusagendamentoformatado = "<html><font color='green'><b>REALIZADO</b></font></html>";
+                }
+                if (statusagendamento.equals("AGENDADO")) {
+                    statusagendamentoformatado = "<html><font color='blue'><b>AGENDADO</b></font></html>";
+                }
+
+                if (statusagendamento.equals("CANCELADO")) {
+                    statusagendamentoformatado = "<html><font color='gray'><b>CANCELADO</b></font></html>";
+                }
+                if (statusagendamento.equals("FALTOU")) {
+                    statusagendamentoformatado = "<html><font color='yellow'><b>FALTOU</b></font></html>";
+                }
+
             }
 
             modelo.addRow(new Object[]{
                 agendamentos.getId(),
                 agendamentos.getPaciente().getNome(),
                 agendamentos.getHorario(),
-                agendamentos.getStatusagendamento(),
+                statusagendamentoformatado,
                 agendamentos.getTipoatendimento(),
                 pagamentoformatado,
                 "",
@@ -160,7 +182,8 @@ public class AgendaView extends javax.swing.JPanel {
                 "",
                 ""
 
-            });
+            }
+            );
         }
     }
 
@@ -215,6 +238,8 @@ public class AgendaView extends javax.swing.JPanel {
     private void cadastrarAgendamento(LocalDate data, BigDecimal valorConsulta, LocalTime horario, Paciente paciente, AgendamentoJPA agendamentojpa) {
         //2026-09-22 Juliano: criação de um novo objeto para cada novo agendamento posterior
         Agendamento novoagendamento = new Agendamento();
+        // ALTERE PARA CORRIGIR:
+    
 
         novoagendamento.setDataAgendamento(data);
         novoagendamento.setObservacao(txtObservacao.getText());
@@ -223,7 +248,20 @@ public class AgendaView extends javax.swing.JPanel {
         novoagendamento.setTipoatendimento((TipoAtendimento) cmbTipoAtendimento.getSelectedItem());
         novoagendamento.setPaciente(paciente);
         novoagendamento.setStatuspagamento((StatusPagamento) cmbStatusPagamento.getSelectedItem());
-        novoagendamento.setStatusagendamento(StatusAgendamento.AGENDADO);
+         
+        System.out.println("");
+        
+        //2026-09-30 Juliano: garantido que ao realizar um agendamento o status inicial será AGENDADO
+        if (data.isBefore(LocalDate.now()) ) {
+            
+            novoagendamento.setStatusagendamento(StatusAgendamento.REALIZADO);
+            System.out.println("Data posterior a consulta portanto atendimento já foi realizado.");
+
+        } else {
+            novoagendamento.setStatusagendamento(StatusAgendamento.AGENDADO);
+            System.out.println("Data inferior a hoje ainda não foi realizada");
+        }
+
         novoagendamento.setFrequenciaatendimento((FrequenciaAtendimento) cmbFrequenciaAtendimento.getSelectedItem());
         novoagendamento.setStatusPacienteAgendamento(StatusPacienteAgendamento.ATIVO);
 
@@ -265,6 +303,7 @@ public class AgendaView extends javax.swing.JPanel {
         jLabel8 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblListarAgendamentosDoDia = new javax.swing.JTable();
+        lblDataHoje = new javax.swing.JLabel();
         btnRealizarAgendamento = new javax.swing.JButton();
         btnLimparDadosAgendamento = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -327,7 +366,7 @@ public class AgendaView extends javax.swing.JPanel {
         jPanel1.setForeground(new java.awt.Color(153, 153, 255));
 
         jLabel8.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
-        jLabel8.setText("Horários do dia 22/09/2026");
+        jLabel8.setText("Horários do dia");
 
         tblListarAgendamentosDoDia.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -351,24 +390,40 @@ public class AgendaView extends javax.swing.JPanel {
         });
         jScrollPane2.setViewportView(tblListarAgendamentosDoDia);
 
+        lblDataHoje.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        lblDataHoje.setText("30/09/2026");
+        lblDataHoje.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                lblDataHojeAncestorAdded(evt);
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel8)
-                .addGap(108, 108, 108))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 459, Short.MAX_VALUE)
                 .addContainerGap())
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(92, 92, 92)
+                .addComponent(jLabel8)
+                .addGap(18, 18, 18)
+                .addComponent(lblDataHoje)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(56, 56, 56)
-                .addComponent(jLabel8)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(lblDataHoje))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 481, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(157, Short.MAX_VALUE))
@@ -723,7 +778,6 @@ public class AgendaView extends javax.swing.JPanel {
         PacienteJPA pacientejpa = new PacienteJPA();
 
         //=============================================2026-09-22 Juliano: Validações necessarias no  agendamento para evitar erros e excessoes(INICIO)=================================================================
-      
         //2026-09-14 Juliano: Validação de data, para poder evitar cadastrar um agendamento sem data
         if (dtDataAgendamento.getDate() == null) {
             JOptionPane.showMessageDialog(
@@ -769,9 +823,9 @@ public class AgendaView extends javax.swing.JPanel {
         LocalDate dataInicial = dtDataAgendamento.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
         //2026-09-22 Juliano: Pegando o nome do paciente para poder associar ao seu respectivo agendamento
-        Paciente PacienteNome =  (Paciente)cmbListarPacientes.getSelectedItem();        
+        Paciente PacienteNome = (Paciente) cmbListarPacientes.getSelectedItem();
         Paciente paciente = pacientejpa.buscarPorId(PacienteNome.getId());
-        
+
         //2026-09-22 Juliano: Validação dos agendamentos não é possível realizar um agendamento de um dia e um horário que já está agendado
         if (agendamentojpa.horarioOcupado(dataInicial, horario)) {
             JOptionPane.showMessageDialog(
@@ -973,7 +1027,7 @@ public class AgendaView extends javax.swing.JPanel {
         }
         if (!cmbFiltrarPaciente.getSelectedItem().toString().trim().isEmpty()) {
 
-            filtro.setPaciente((Paciente)cmbFiltrarPaciente.getSelectedItem());
+            filtro.setPaciente((Paciente) cmbFiltrarPaciente.getSelectedItem());
 
         }
         if (!cmbFiltrarStatusPagamento.getSelectedItem().toString().trim().isEmpty()) {
@@ -989,9 +1043,8 @@ public class AgendaView extends javax.swing.JPanel {
         if (!cmbFiltrarFrequenciaAtendimento.getSelectedItem().toString().trim().isEmpty()) {
 
             filtro.setFrequenciaAtendimento((FrequenciaAtendimento) cmbFiltrarFrequenciaAtendimento.getSelectedItem());
-           
-    
-       }
+
+        }
 
         List<Agendamento> ListarAgendamentosFiltrados = agendamentojpa.filtrarPacientes(filtro);
 
@@ -1076,6 +1129,10 @@ public class AgendaView extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtHorarioActionPerformed
 
+    private void lblDataHojeAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_lblDataHojeAncestorAdded
+        lblDataHoje.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+    }//GEN-LAST:event_lblDataHojeAncestorAdded
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAtualizarTabela;
@@ -1114,6 +1171,7 @@ public class AgendaView extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lblDataHoje;
     private javax.swing.JTable tblAgendamentos;
     private javax.swing.JTable tblListarAgendamentosDoDia;
     private javax.swing.JTextField txtHorario;
