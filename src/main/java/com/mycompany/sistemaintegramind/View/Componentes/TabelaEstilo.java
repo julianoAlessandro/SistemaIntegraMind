@@ -25,7 +25,7 @@ public class TabelaEstilo {
         // 2. Cabeçalho
         JTableHeader header = tabela.getTableHeader();
         header.setFont(new Font("Segoe UI Semibold", Font.BOLD, 14));
-        header.setBackground(new Color(0, 138, 59));
+        header.setBackground(new Color(3, 62, 29));
         header.setForeground(Color.WHITE);
         header.setPreferredSize(new Dimension(header.getWidth(), 40));
 

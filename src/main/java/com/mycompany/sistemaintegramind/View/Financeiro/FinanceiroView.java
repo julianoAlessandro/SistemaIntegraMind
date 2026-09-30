@@ -4,14 +4,15 @@
  */
 package com.mycompany.sistemaintegramind.View.Financeiro;
 
-
 import com.mycompany.sistemaintegramind.Model.dao.impl.FinanceiroJPA;
 import com.mycompany.sistemaintegramind.Model.dto.FinanceiroDTO;
 import com.mycompany.sistemaintegramind.Model.entidades.FinanceiroFiltro;
 import com.mycompany.sistemaintegramind.View.Componentes.TabelaEstilo;
+import com.mycompany.sistemaintegramind.util.Utilitarios.FormatarTabelas;
 import com.mycompany.sistemaintegramind.util.Utilitarios.JPAUtil;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
@@ -20,11 +21,9 @@ import javax.swing.table.DefaultTableModel;
 
 public class FinanceiroView extends javax.swing.JPanel {
 
- 
-    
     public FinanceiroView() {
         initComponents();
-      
+        calcularfaturamentoTotalConsulta();
 
     }
 
@@ -172,7 +171,7 @@ public class FinanceiroView extends javax.swing.JPanel {
             .addGroup(container1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSeparator3, javax.swing.GroupLayout.DEFAULT_SIZE, 914, Short.MAX_VALUE)
+                    .addComponent(jSeparator3, javax.swing.GroupLayout.DEFAULT_SIZE, 968, Short.MAX_VALUE)
                     .addComponent(jLabel15)
                     .addGroup(container1Layout.createSequentialGroup()
                         .addComponent(txtBuscarOpcoesFiltradas, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -242,7 +241,7 @@ public class FinanceiroView extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 992, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -280,10 +279,58 @@ public class FinanceiroView extends javax.swing.JPanel {
     }//GEN-LAST:event_txttotalfinanceiroActionPerformed
 
     //====================2026-06-19 Juliano: Métodos para serem utilizados ao longo do código(INICIO)==============
-   
+    private void calcularfaturamentoTotalConsulta() {
+        FinanceiroJPA jpa = new FinanceiroJPA();
+        List<FinanceiroDTO> listarFinanceiroRelatorio = jpa.listarRelatorioFinanceiroDTO();
+        BigDecimal saldo = BigDecimal.ZERO;
+
+        for (FinanceiroDTO fi : listarFinanceiroRelatorio) {
+            saldo = saldo.add(fi.getConsultaValor());
+        }
+        //2026-09-24 Juliano: Verifica se o faturamento não é nulo para evitar erros
+        if (saldo == null) {
+            saldo = BigDecimal.ZERO;
+        }
+
+        //2026-09-24 Juliano: cria o formato da moeda brasileira
+        java.text.NumberFormat nf = java.text.NumberFormat.getCurrencyInstance(new java.util.Locale("pt", "BR"));
+
+        //2026-09-24 Juliano: Formata o BigDecimal (ele já adiciona o "R$" e ajusta os pontos e vírgulas)
+        String faturamentototal = nf.format(saldo);
+
+
+        txttotalfinanceiro.setText(faturamentototal);
+    }
+
+    private void carregarFinanceiroPaciente() {
+        FinanceiroJPA financeirojpa = new FinanceiroJPA();
+        List<FinanceiroDTO> listarMovimentacaoFinanceira = financeirojpa.listarRelatorioFinanceiroDTO();
+        // Imprima o tamanho da lista no Output do NetBeans para depuração:
+        DefaultTableModel modelo = FormatarTabelas.formatarTabelaListarMovimentacaoFinanceiraPaciente();
+        modelo.setRowCount(0);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        for (FinanceiroDTO f : listarMovimentacaoFinanceira) {
+            LocalDateTime data = f.getDataPagamento();
+            String dataformatada = data.format(formatter);
+
+            modelo.addRow(new Object[]{
+                f.getCodigoPaciente(),
+                f.getNomePaciente(),
+                dataformatada,
+                f.getConsultaValor()
+            });
+        }
+
+        TabMovimentoFinanceiro.setModel(modelo);
+        TabelaEstilo.aplicar(TabMovimentoFinanceiro);
+        calcularfaturamentoTotalConsulta();
+    }
+
     //===========2026-06-19 Juliano: Métodos para serem utilizados ao longo do código(FINAL)=================
     private void TabMovimentoFinanceiroAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_TabMovimentoFinanceiroAncestorAdded
-
+        //2025-11-22 Juliano definindo o nome das colunas da tabela
+        carregarFinanceiroPaciente();
     }//GEN-LAST:event_TabMovimentoFinanceiroAncestorAdded
 
 

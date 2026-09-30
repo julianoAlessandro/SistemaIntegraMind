@@ -266,7 +266,7 @@ public class LoginView extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 30, 0, 30);
         container1.add(txtUsuario, gridBagConstraints);
 
-        btnEntrarSistema.setBackground(new java.awt.Color(63, 112, 235));
+        btnEntrarSistema.setBackground(new java.awt.Color(0, 204, 51));
         btnEntrarSistema.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         btnEntrarSistema.setForeground(new java.awt.Color(255, 255, 255));
         btnEntrarSistema.setText("Entrar");

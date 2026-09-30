@@ -268,5 +268,8 @@ public class Paciente extends Entidade implements Serializable {
 
     
     
-
+@Override
+public String toString() {
+    return nome;
+}
 }
