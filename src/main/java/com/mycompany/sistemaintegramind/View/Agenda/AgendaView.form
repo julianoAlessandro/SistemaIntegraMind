@@ -607,5 +607,7 @@
         <Property name="text" type="java.lang.String" value="Frequ&#xea;ncia"/>
       </Properties>
     </Component>
+    <Component class="com.toedter.calendar.JDateChooser" name="btnData">
+    </Component>
   </SubComponents>
 </Form>

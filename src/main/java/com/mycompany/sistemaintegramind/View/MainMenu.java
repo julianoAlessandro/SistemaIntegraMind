@@ -50,6 +50,12 @@ public class MainMenu extends javax.swing.JFrame {
         initComponents();
         //2026-01-13 Guilherme: Define o padrão brasileiro para toda a aplicação
         Locale.setDefault(new Locale("pt", "BR"));
+        
+        // Carrega a imagem do seu diretório ou resource
+        ImageIcon icone = new ImageIcon(getClass().getResource("/imagens/folhas.png"));
+        
+        // Define a imagem no seu painel customizado (substitua pelo nome da variável gerada pelo NetBeans)
+        painelImagemGradiente1.setImagem(icone); 
 
         //2025-12-22 Guilherme: Define o tamanho padrão da janela principal do sistema
         this.setSize(1280, 720);
@@ -64,9 +70,9 @@ public class MainMenu extends javax.swing.JFrame {
         this.setTitle("IntegraMind");
 
         //2025-11-08 Juliano: Define um tamahho fixo para o Menu, para o mesmo não quebrar os botões das páginas
-        menu1.setMaximumSize(new Dimension(200, Integer.MAX_VALUE));
-        menu1.setMinimumSize(new Dimension(200, 0));
-        menu1.setPreferredSize(new Dimension(210, getHeight()));
+        menu1.setMaximumSize(new Dimension(225, Integer.MAX_VALUE));
+        menu1.setMinimumSize(new Dimension(225, 0));
+        menu1.setPreferredSize(new Dimension(225, getHeight()));
 
         //2025-11-08 Juliano: Cria um layout para poder adicionar várias paginas juntas como se fosse um baralho
         cardlayout = new CardLayout();
@@ -135,6 +141,7 @@ public class MainMenu extends javax.swing.JFrame {
         tblDashboard = new javax.swing.JButton();
         tblPacientes = new javax.swing.JButton();
         btnBackup = new javax.swing.JButton();
+        painelImagemGradiente1 = new com.mycompany.sistemaintegramind.View.Componentes.PainelImagemGradiente();
         MenuPrincipal = new javax.swing.JPanel();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -257,13 +264,27 @@ public class MainMenu extends javax.swing.JFrame {
         });
 
         btnBackup.setBackground(new java.awt.Color(242, 242, 242));
+        btnBackup.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnBackup.setForeground(new java.awt.Color(255, 255, 255));
         btnBackup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Backup_1.png"))); // NOI18N
+        btnBackup.setText("Backup");
         btnBackup.setContentAreaFilled(false);
         btnBackup.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnBackupActionPerformed(evt);
             }
         });
+
+        javax.swing.GroupLayout painelImagemGradiente1Layout = new javax.swing.GroupLayout(painelImagemGradiente1);
+        painelImagemGradiente1.setLayout(painelImagemGradiente1Layout);
+        painelImagemGradiente1Layout.setHorizontalGroup(
+            painelImagemGradiente1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 163, Short.MAX_VALUE)
+        );
+        painelImagemGradiente1Layout.setVerticalGroup(
+            painelImagemGradiente1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 281, Short.MAX_VALUE)
+        );
 
         javax.swing.GroupLayout menu1Layout = new javax.swing.GroupLayout(menu1);
         menu1.setLayout(menu1Layout);
@@ -272,21 +293,27 @@ public class MainMenu extends javax.swing.JFrame {
             .addGroup(menu1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(menu1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tblDashboard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(tblPainel, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+                    .addGroup(menu1Layout.createSequentialGroup()
+                        .addGap(70, 70, 70)
+                        .addComponent(btnBackup)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(tblAgenda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(tblRecursos, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(tblFinanceiro, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(tblPacientes, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE))
-                .addContainerGap())
-            .addGroup(menu1Layout.createSequentialGroup()
-                .addComponent(btnBackup)
-                .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, menu1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(menu1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(tblDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(menu1Layout.createSequentialGroup()
+                                .addGap(42, 42, 42)
+                                .addComponent(painelImagemGradiente1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addComponent(tblPainel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(tblPacientes, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
             .addGroup(menu1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(menu1Layout.createSequentialGroup()
                     .addContainerGap()
                     .addComponent(jLabel4)
-                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addContainerGap(44, Short.MAX_VALUE)))
         );
         menu1Layout.setVerticalGroup(
             menu1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -295,15 +322,17 @@ public class MainMenu extends javax.swing.JFrame {
                 .addComponent(tblPainel, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tblPacientes, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(7, 7, 7)
-                .addComponent(tblDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tblAgenda, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tblFinanceiro, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tblRecursos, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 374, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tblDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 72, Short.MAX_VALUE)
+                .addComponent(painelImagemGradiente1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(40, 40, 40)
                 .addComponent(btnBackup))
             .addGroup(menu1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(menu1Layout.createSequentialGroup()
@@ -623,6 +652,7 @@ public class MainMenu extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollBar jScrollBar1;
     private com.mycompany.sistemaintegramind.View.Componentes.Menu menu1;
+    private com.mycompany.sistemaintegramind.View.Componentes.PainelImagemGradiente painelImagemGradiente1;
     private javax.swing.JButton tblAgenda;
     private javax.swing.JButton tblDashboard;
     private javax.swing.JButton tblFinanceiro;
