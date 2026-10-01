@@ -23,7 +23,6 @@ public class FinanceiroView extends javax.swing.JPanel {
 
     public FinanceiroView() {
         initComponents();
-        calcularfaturamentoTotalConsulta();
 
     }
 
@@ -41,7 +40,7 @@ public class FinanceiroView extends javax.swing.JPanel {
         container1 = new com.mycompany.sistemaintegramind.View.Componentes.Container();
         jLabel15 = new javax.swing.JLabel();
         jSeparator3 = new javax.swing.JSeparator();
-        txtCliente = new javax.swing.JTextField();
+        txtPaciente = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         txtDataInicial = new javax.swing.JTextField();
@@ -114,9 +113,9 @@ public class FinanceiroView extends javax.swing.JPanel {
         jLabel15.setText("Filtros de Pesquisa");
         jLabel15.setIconTextGap(6);
 
-        txtCliente.addActionListener(new java.awt.event.ActionListener() {
+        txtPaciente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtClienteActionPerformed(evt);
+                txtPacienteActionPerformed(evt);
             }
         });
 
@@ -181,7 +180,7 @@ public class FinanceiroView extends javax.swing.JPanel {
                         .addComponent(jButton1))
                     .addGroup(container1Layout.createSequentialGroup()
                         .addGroup(container1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtPaciente, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(container1Layout.createSequentialGroup()
                                 .addGap(6, 6, 6)
                                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -211,7 +210,7 @@ public class FinanceiroView extends javax.swing.JPanel {
                                     .addComponent(jLabel1)
                                     .addComponent(jLabel4))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(txtPaciente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(container1Layout.createSequentialGroup()
                         .addComponent(jLabel5)
@@ -241,7 +240,7 @@ public class FinanceiroView extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 992, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -255,10 +254,46 @@ public class FinanceiroView extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void txtLimparPesquisaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtLimparPesquisaActionPerformed
+        //2026-09-30 Juliano: Realizando a limpeza dos dados filtrados
+        System.out.println("Limpando pesquisa e recarregando a tabela.");
+        txtPaciente.setText("");
+        txtDataInicial.setText("");
+        txtDataFinal.setText("");
+        FinanceiroJPA jpa = new FinanceiroJPA();
+        List<FinanceiroDTO> listarFinanceiroRelatorio = jpa.listarRelatorioFinanceiroDTO();
 
+        carregarFinanceiroPaciente(listarFinanceiroRelatorio);
     }//GEN-LAST:event_txtLimparPesquisaActionPerformed
 
     private void txtBuscarOpcoesFiltradasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscarOpcoesFiltradasActionPerformed
+        //2026-09-30 Juliano: Instâncias necessárias para manipulação dos valores e dos filtros
+        FinanceiroJPA financeirojpa = new FinanceiroJPA();
+        FinanceiroFiltro filtro = new FinanceiroFiltro();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        if (!txtPaciente.getText().trim().isEmpty()) {
+            filtro.setPaciente(txtPaciente.getText().trim());
+        }
+
+        if (!txtDataInicial.getText().trim().isEmpty()) {
+
+            LocalDate dataInicial = LocalDate.parse(
+                    txtDataInicial.getText().trim(),
+                    formatter);
+
+            filtro.setDataInicial(dataInicial);
+        }
+
+        if (!txtDataFinal.getText().trim().isEmpty()) {
+
+            LocalDate dataFinal = LocalDate.parse(
+                    txtDataFinal.getText().trim(),
+                    formatter);
+
+            filtro.setDataFinal(dataFinal);
+        }
+       
+        carregarFinanceiroPaciente(listarRelatorioFinanceiroFiltrado(filtro));
 
     }//GEN-LAST:event_txtBuscarOpcoesFiltradasActionPerformed
 
@@ -270,21 +305,20 @@ public class FinanceiroView extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtDataInicialActionPerformed
 
-    private void txtClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtClienteActionPerformed
+    private void txtPacienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPacienteActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtClienteActionPerformed
+    }//GEN-LAST:event_txtPacienteActionPerformed
 
     private void txttotalfinanceiroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txttotalfinanceiroActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txttotalfinanceiroActionPerformed
 
     //====================2026-06-19 Juliano: Métodos para serem utilizados ao longo do código(INICIO)==============
-    private void calcularfaturamentoTotalConsulta() {
-        FinanceiroJPA jpa = new FinanceiroJPA();
-        List<FinanceiroDTO> listarFinanceiroRelatorio = jpa.listarRelatorioFinanceiroDTO();
+    private void calcularFaturamentoTotalDasConsultas(List<FinanceiroDTO> listarRelatorioFinanceiroPaciente) {
+
         BigDecimal saldo = BigDecimal.ZERO;
 
-        for (FinanceiroDTO fi : listarFinanceiroRelatorio) {
+        for (FinanceiroDTO fi : listarRelatorioFinanceiroPaciente) {
             saldo = saldo.add(fi.getConsultaValor());
         }
         //2026-09-24 Juliano: Verifica se o faturamento não é nulo para evitar erros
@@ -298,19 +332,30 @@ public class FinanceiroView extends javax.swing.JPanel {
         //2026-09-24 Juliano: Formata o BigDecimal (ele já adiciona o "R$" e ajusta os pontos e vírgulas)
         String faturamentototal = nf.format(saldo);
 
-
         txttotalfinanceiro.setText(faturamentototal);
     }
 
-    private void carregarFinanceiroPaciente() {
+    private  List<FinanceiroDTO> listarRelatorioFinanceiro() {
+        FinanceiroJPA jpa = new FinanceiroJPA();
+        List<FinanceiroDTO> listarFinanceiroRelatorio = jpa.listarRelatorioFinanceiroDTO();
+        return listarFinanceiroRelatorio;
+
+    }
+
+    private List<FinanceiroDTO> listarRelatorioFinanceiroFiltrado(FinanceiroFiltro filtro) {
+
         FinanceiroJPA financeirojpa = new FinanceiroJPA();
-        List<FinanceiroDTO> listarMovimentacaoFinanceira = financeirojpa.listarRelatorioFinanceiroDTO();
-        // Imprima o tamanho da lista no Output do NetBeans para depuração:
+        List<FinanceiroDTO> listarMovimentacaoFinanceira = financeirojpa.FiltrarRelatorio(filtro);
+        return listarMovimentacaoFinanceira;
+    }
+
+    private void carregarFinanceiroPaciente(List<FinanceiroDTO> listarRelatorioFinanceiroPaciente) {
+
         DefaultTableModel modelo = FormatarTabelas.formatarTabelaListarMovimentacaoFinanceiraPaciente();
         modelo.setRowCount(0);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-        for (FinanceiroDTO f : listarMovimentacaoFinanceira) {
+        for (FinanceiroDTO f : listarRelatorioFinanceiroPaciente) {
             LocalDateTime data = f.getDataPagamento();
             String dataformatada = data.format(formatter);
 
@@ -324,13 +369,13 @@ public class FinanceiroView extends javax.swing.JPanel {
 
         TabMovimentoFinanceiro.setModel(modelo);
         TabelaEstilo.aplicar(TabMovimentoFinanceiro);
-        calcularfaturamentoTotalConsulta();
+        calcularFaturamentoTotalDasConsultas(listarRelatorioFinanceiroPaciente);
     }
 
     //===========2026-06-19 Juliano: Métodos para serem utilizados ao longo do código(FINAL)=================
     private void TabMovimentoFinanceiroAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_TabMovimentoFinanceiroAncestorAdded
-        //2025-11-22 Juliano definindo o nome das colunas da tabela
-        carregarFinanceiroPaciente();
+        
+        carregarFinanceiroPaciente(listarRelatorioFinanceiro());
     }//GEN-LAST:event_TabMovimentoFinanceiroAncestorAdded
 
 
@@ -348,10 +393,10 @@ public class FinanceiroView extends javax.swing.JPanel {
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JButton txtBuscarOpcoesFiltradas;
-    private javax.swing.JTextField txtCliente;
     private javax.swing.JTextField txtDataFinal;
     private javax.swing.JTextField txtDataInicial;
     private javax.swing.JButton txtLimparPesquisa;
+    private javax.swing.JTextField txtPaciente;
     private javax.swing.JTextField txttotalfinanceiro;
     // End of variables declaration//GEN-END:variables
 }
