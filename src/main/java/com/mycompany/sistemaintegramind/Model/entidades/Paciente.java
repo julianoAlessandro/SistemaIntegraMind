@@ -10,6 +10,7 @@ import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacie
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -17,6 +18,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -46,7 +49,6 @@ public class Paciente extends Entidade implements Serializable {
 
     private LocalDate dataNascimento;
 
-
     private String telefoneCelular;
 
     private String telefoneUrgencia;
@@ -66,23 +68,26 @@ public class Paciente extends Entidade implements Serializable {
     private String complemento;
 
     private String cidade;
-    
+
     private String profissao;
-    
+
     private String idade;
 
     @Enumerated(EnumType.STRING)
     private EstadosBrasileiros estado;
-    
-    
+
     @Enumerated(EnumType.STRING)
     private StatusPacienteAgendamento statuspaciente;
+
+  
+    @OneToMany(mappedBy = "paciente")
+    private List<Agendamento> agendamentos;
 
     public Paciente() {
 
     }
 
-    public Paciente(Long id, String nome, Sexo sexo, String cpf, LocalDate dataNascimento, String telefoneCelular, String telefoneUrgencia, String telefoneFixo, String email, String cep, String bairro, String rua, String numero, String complemento, String cidade, String profissao, String idade, EstadosBrasileiros estado, StatusPacienteAgendamento statuspaciente) {
+    public Paciente(Long id, String nome, Sexo sexo, String cpf, LocalDate dataNascimento, String telefoneCelular, String telefoneUrgencia, String telefoneFixo, String email, String cep, String bairro, String rua, String numero, String complemento, String cidade, String profissao, String idade, EstadosBrasileiros estado, StatusPacienteAgendamento statuspaciente, Agendamento agendamento) {
         this.id = id;
         this.nome = nome;
         this.sexo = sexo;
@@ -102,10 +107,9 @@ public class Paciente extends Entidade implements Serializable {
         this.idade = idade;
         this.estado = estado;
         this.statuspaciente = statuspaciente;
-        
-    }
+        this.agendamentos = agendamentos;
 
-    
+    }
 
     public Long getId() {
         return id;
@@ -146,6 +150,7 @@ public class Paciente extends Entidade implements Serializable {
     public void setDataNascimento(LocalDate dataNascimento) {
         this.dataNascimento = dataNascimento;
     }
+
     public String getTelefoneCelular() {
         return telefoneCelular;
     }
@@ -266,10 +271,16 @@ public class Paciente extends Entidade implements Serializable {
         this.idade = idade;
     }
 
-    
-    
-@Override
-public String toString() {
-    return nome;
-}
+    public List<Agendamento> getAgendamentos() {
+        return agendamentos;
+    }
+
+    public void setAgendamentos(List<Agendamento> agendamentos) {
+        this.agendamentos = agendamentos;
+    }
+
+    @Override
+    public String toString() {
+        return nome;
+    }
 }
