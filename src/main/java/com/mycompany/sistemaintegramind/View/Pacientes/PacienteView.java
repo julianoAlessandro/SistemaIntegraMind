@@ -1272,6 +1272,9 @@ public class PacienteView extends javax.swing.JPanel {
                             //2026-09-03 Juliano:  Realizando a criação do modal
                             javax.swing.JDialog modal = new javax.swing.JDialog((java.awt.Frame) null, "Ficha do Paciente - " + pacienteSelecionado.getNome(), true);
 
+                            //2026-10-05 Juliano:  Define que o X deve realmente destruir o diálogo para nao ficar criando várias
+                            modal.setDefaultCloseOperation(javax.swing.JDialog.DISPOSE_ON_CLOSE);
+
                             //2026-09-04 Juliano: Adicionando um icone ao lado do título do modal
                             modal.setIconImage(
                                     new javax.swing.ImageIcon(

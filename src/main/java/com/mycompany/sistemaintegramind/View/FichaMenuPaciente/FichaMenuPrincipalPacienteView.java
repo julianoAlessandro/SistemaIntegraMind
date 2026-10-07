@@ -1,5 +1,6 @@
 package com.mycompany.sistemaintegramind.View.FichaMenuPaciente;
 
+import com.mycompany.sistemaintegramind.Model.entidades.Agendamento;
 import com.mycompany.sistemaintegramind.Model.entidades.Paciente;
 import com.mycompany.sistemaintegramind.util.Utilitarios.AlternarEntreJanelasMenu;
 import com.mycompany.sistemaintegramind.util.Utilitarios.MenuButtonUtils;
@@ -23,9 +24,9 @@ public class FichaMenuPrincipalPacienteView extends javax.swing.JPanel {
         MenuPrincipal.setLayout(cardlayout);
         MenuPrincipal.add(new FichaPerfilPacienteView(paciente), "PerfilPaciente");
         MenuPrincipal.add(new FichaAnaminaseView(), "Anaminase");
-        MenuPrincipal.add(new FichaProntuarioPacienteView(), "Prontuario");
-        MenuPrincipal.add(new FichaAgendamentoView(), "Agendamento");
-        MenuPrincipal.add(new FichaDocumentosView(), "Documentos");
+        MenuPrincipal.add(new FichaProntuarioPacienteView(paciente), "Prontuario");
+        MenuPrincipal.add(new FichaAgendamentoView(paciente), "Agendamento");
+        MenuPrincipal.add(new FichaDocumentosView(paciente), "Documentos");
 
         //2025-11-08 Juliano: Mostra a tela inicial de vendas antes de Clicar
         cardlayout.show(MenuPrincipal, "Painel");

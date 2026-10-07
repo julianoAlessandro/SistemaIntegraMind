@@ -78,6 +78,40 @@ public class AgendamentoJPA implements AgendamentoDAO {
 
     }
 
+   
+    public List<Agendamento> listarAgendamentosPorPacientes(Paciente paciente) {
+        EntityManager em = JPAUtil.getEntityManager();
+        List<Agendamento> listAgendamento = new ArrayList<>();
+
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<Agendamento> cq = cb.createQuery(Agendamento.class); // 2025-11-20 Juliano montou a query aqui vai
+            // pegar os operadores do SQL(SELECT,INSERT
+            // etc)
+            Root<Agendamento> RootAgendamento = cq.from(Agendamento.class);
+
+            //2026-02-26 Juliano: mostrando na listagem todos os pacientes que são ativos
+            Predicate somenteClienteAtivo = cb.equal(RootAgendamento.get("statuspacienteagendamento"), StatusPacienteAgendamento.ATIVO);
+            Predicate PacienteFicha = cb.equal(RootAgendamento.get("paciente"), paciente);
+            cq.select(RootAgendamento).where(somenteClienteAtivo,PacienteFicha);
+
+            listAgendamento = em.createQuery(cq).getResultList();
+
+        } catch (Exception e) {
+            if (em != null && em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            if (em != null) {
+                em.close(); // 2025-11-20 Juliano fecha o EntityManager, para não travar o sistema e não
+                // consumir memoria precisa fechar
+            }
+        }
+        return listAgendamento;
+
+    }
+
     public List<Agendamento> listarAgendamentosDoDia() {
         EntityManager em = JPAUtil.getEntityManager();
         List<Agendamento> listAgendamento = new ArrayList<>();
@@ -280,10 +314,32 @@ public class AgendamentoJPA implements AgendamentoDAO {
                     + "AND a.dataAgendamento = :dataagendamento ",
                     Long.class)
                     .setParameter("statuspaciente", StatusPacienteAgendamento.ATIVO)
-                    .setParameter("dataagendamento",LocalDate.now())
+                    .setParameter("dataagendamento", LocalDate.now())
                     .getSingleResult();
 
             return totalPacientesAtivos.intValue();
+
+        } finally {
+            em.close();
+        }
+    }
+
+    public Agendamento buscarAgendamentoDoDia(Paciente paciente) {
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+
+            return em.createQuery(
+                    "SELECT a FROM Agendamento a "
+                    + "WHERE a.paciente = :paciente "
+                    + "AND a.dataAgendamento = :data",
+                    Agendamento.class)
+                    .setParameter("paciente", paciente)
+                    .setParameter("data", LocalDate.now())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
 
         } finally {
             em.close();

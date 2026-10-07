@@ -8,23 +8,49 @@ import java.awt.Color;
 import javax.swing.BorderFactory;
 import com.mycompany.sistemaintegramind.Model.entidades.Paciente;
 
-
 /**
  *
  * @author guilh
  */
 public class FichaPerfilPacienteView extends javax.swing.JPanel {
 
-   private Paciente paciente;
+    private Paciente paciente;
+
     public FichaPerfilPacienteView(Paciente paciente) {
         this.paciente = paciente;
         initComponents();
+
+        //2026-10-01 Juliano: Tratando informaçoes de entrada(INICIO)
+        String datanascimento = String.valueOf(paciente.getDataNascimento());
+        String sexo = String.valueOf(paciente.getSexo());
+        String estado = String.valueOf(paciente.getEstado());
+        //2026-10-01 Juliano: Tratando informaçoes de entrada(FIM)
+        
+        //2026-10-01 Juliano: Informações básicas
         txtNome.setText(paciente.getNome());
-        txtIdade.setText(paciente.getIdade());
-        txtProfissao.setText(paciente.getProfissao());
+        txtDataNascimento.setText(datanascimento);
         txtCPF.setText(paciente.getCpf());
+        txtSexo.setText(sexo);
+        txtProfissao.setText(paciente.getProfissao());
+        
+        //2026-10-01 Juliano: Contatos
+        txtTelefoneCelular.setText(paciente.getTelefoneCelular());
+        txtTelefoneFixo.setText(paciente.getTelefoneFixo());
+        txtEmail.setText(paciente.getEmail());
+        
+        //2026-10-01 Juliano: Contatos de Emergência
+        txtTelefoneCelularEmergencia01.setText(paciente.getTelefoneUrgencia());
         
         
+        //2026-10-01 Juliano: Endereço
+        txtCEP.setText(paciente.getCep());
+        txtComplemento.setText(paciente.getComplemento());
+        txtBairro.setText(paciente.getBairro());
+        txtRua.setText(paciente.getRua());
+        txtNumero.setText(paciente.getNome());
+        txtCidade.setText(paciente.getCidade());
+        txtEstado.setText(estado);
+
     }
 
     /**
@@ -39,12 +65,12 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
 
         container1 = new com.mycompany.sistemaintegramind.View.Componentes.Container();
         jLabel5 = new javax.swing.JLabel();
-        txtProfissao1 = new javax.swing.JTextField();
+        txtSexo = new javax.swing.JTextField();
         txtNome = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         txtProfissao = new javax.swing.JTextField();
-        txtIdade = new javax.swing.JTextField();
+        txtDataNascimento = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         txtCPF = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
@@ -53,34 +79,34 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        txtProfissao2 = new javax.swing.JTextField();
-        txtProfissao3 = new javax.swing.JTextField();
-        txtProfissao4 = new javax.swing.JTextField();
+        txtTelefoneFixo = new javax.swing.JTextField();
+        txtTelefoneCelular = new javax.swing.JTextField();
+        txtEmail = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         container3 = new com.mycompany.sistemaintegramind.View.Componentes.Container();
         jLabel18 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
-        txtProfissao5 = new javax.swing.JTextField();
+        txtCEP = new javax.swing.JTextField();
         jLabel12 = new javax.swing.JLabel();
-        txtProfissao6 = new javax.swing.JTextField();
+        txtBairro = new javax.swing.JTextField();
         jLabel13 = new javax.swing.JLabel();
-        txtProfissao7 = new javax.swing.JTextField();
+        txtNumero = new javax.swing.JTextField();
         jLabel14 = new javax.swing.JLabel();
-        txtProfissao8 = new javax.swing.JTextField();
-        txtProfissao11 = new javax.swing.JTextField();
+        txtEstado = new javax.swing.JTextField();
+        txtRua = new javax.swing.JTextField();
         jLabel17 = new javax.swing.JLabel();
-        txtProfissao10 = new javax.swing.JTextField();
+        txtCidade = new javax.swing.JTextField();
         jLabel16 = new javax.swing.JLabel();
-        txtProfissao9 = new javax.swing.JTextField();
+        txtComplemento = new javax.swing.JTextField();
         jLabel15 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         container4 = new com.mycompany.sistemaintegramind.View.Componentes.Container();
         jLabel21 = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
-        txtProfissao12 = new javax.swing.JTextField();
+        txtTelefoneCelularEmergencia01 = new javax.swing.JTextField();
         jLabel20 = new javax.swing.JLabel();
-        txtProfissao13 = new javax.swing.JTextField();
+        txtTelefoneCelularEmergencia02 = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
 
@@ -98,7 +124,7 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 5);
         container1.add(jLabel5, gridBagConstraints);
 
-        txtProfissao1.addActionListener(this::txtProfissao1ActionPerformed);
+        txtSexo.addActionListener(this::txtSexoActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
@@ -106,7 +132,7 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
         gridBagConstraints.ipady = 8;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 15);
-        container1.add(txtProfissao1, gridBagConstraints);
+        container1.add(txtSexo, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -149,7 +175,7 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
         gridBagConstraints.ipady = 8;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 15);
-        container1.add(txtIdade, gridBagConstraints);
+        container1.add(txtDataNascimento, gridBagConstraints);
 
         jLabel3.setText("CPF");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -240,7 +266,7 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 5);
         container2.add(jLabel8, gridBagConstraints);
 
-        txtProfissao2.addActionListener(this::txtProfissao2ActionPerformed);
+        txtTelefoneFixo.addActionListener(this::txtTelefoneFixoActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
@@ -248,9 +274,9 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
         gridBagConstraints.ipady = 8;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 15);
-        container2.add(txtProfissao2, gridBagConstraints);
+        container2.add(txtTelefoneFixo, gridBagConstraints);
 
-        txtProfissao3.addActionListener(this::txtProfissao3ActionPerformed);
+        txtTelefoneCelular.addActionListener(this::txtTelefoneCelularActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -258,9 +284,9 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
         gridBagConstraints.ipady = 8;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 15);
-        container2.add(txtProfissao3, gridBagConstraints);
+        container2.add(txtTelefoneCelular, gridBagConstraints);
 
-        txtProfissao4.addActionListener(this::txtProfissao4ActionPerformed);
+        txtEmail.addActionListener(this::txtEmailActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 6;
@@ -268,7 +294,7 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
         gridBagConstraints.ipady = 8;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 15);
-        container2.add(txtProfissao4, gridBagConstraints);
+        container2.add(txtEmail, gridBagConstraints);
 
         jLabel9.setText("Telefone Celular");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -336,7 +362,7 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 5);
         container3.add(jLabel11, gridBagConstraints);
 
-        txtProfissao5.addActionListener(this::txtProfissao5ActionPerformed);
+        txtCEP.addActionListener(this::txtCEPActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -344,7 +370,7 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
         gridBagConstraints.ipady = 8;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 15);
-        container3.add(txtProfissao5, gridBagConstraints);
+        container3.add(txtCEP, gridBagConstraints);
 
         jLabel12.setText("Rua");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -354,7 +380,7 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 5);
         container3.add(jLabel12, gridBagConstraints);
 
-        txtProfissao6.addActionListener(this::txtProfissao6ActionPerformed);
+        txtBairro.addActionListener(this::txtBairroActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
@@ -362,7 +388,7 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
         gridBagConstraints.ipady = 8;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 15);
-        container3.add(txtProfissao6, gridBagConstraints);
+        container3.add(txtBairro, gridBagConstraints);
 
         jLabel13.setText("Número");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -372,7 +398,7 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 5);
         container3.add(jLabel13, gridBagConstraints);
 
-        txtProfissao7.addActionListener(this::txtProfissao7ActionPerformed);
+        txtNumero.addActionListener(this::txtNumeroActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 6;
@@ -380,7 +406,7 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
         gridBagConstraints.ipady = 8;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 15);
-        container3.add(txtProfissao7, gridBagConstraints);
+        container3.add(txtNumero, gridBagConstraints);
 
         jLabel14.setText("UF");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -390,7 +416,7 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 5);
         container3.add(jLabel14, gridBagConstraints);
 
-        txtProfissao8.addActionListener(this::txtProfissao8ActionPerformed);
+        txtEstado.addActionListener(this::txtEstadoActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 8;
@@ -398,9 +424,9 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
         gridBagConstraints.ipady = 8;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 15);
-        container3.add(txtProfissao8, gridBagConstraints);
+        container3.add(txtEstado, gridBagConstraints);
 
-        txtProfissao11.addActionListener(this::txtProfissao11ActionPerformed);
+        txtRua.addActionListener(this::txtRuaActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 4;
@@ -408,7 +434,7 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
         gridBagConstraints.ipady = 8;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 15);
-        container3.add(txtProfissao11, gridBagConstraints);
+        container3.add(txtRua, gridBagConstraints);
 
         jLabel17.setText("Cidade");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -418,7 +444,7 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 5);
         container3.add(jLabel17, gridBagConstraints);
 
-        txtProfissao10.addActionListener(this::txtProfissao10ActionPerformed);
+        txtCidade.addActionListener(this::txtCidadeActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 6;
@@ -426,7 +452,7 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
         gridBagConstraints.ipady = 8;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 15);
-        container3.add(txtProfissao10, gridBagConstraints);
+        container3.add(txtCidade, gridBagConstraints);
 
         jLabel16.setText("Bairro");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -436,7 +462,7 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 5);
         container3.add(jLabel16, gridBagConstraints);
 
-        txtProfissao9.addActionListener(this::txtProfissao9ActionPerformed);
+        txtComplemento.addActionListener(this::txtComplementoActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
@@ -444,7 +470,7 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
         gridBagConstraints.ipady = 8;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 15);
-        container3.add(txtProfissao9, gridBagConstraints);
+        container3.add(txtComplemento, gridBagConstraints);
 
         jLabel15.setText("Complemento");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -507,7 +533,7 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 5);
         container4.add(jLabel19, gridBagConstraints);
 
-        txtProfissao12.addActionListener(this::txtProfissao12ActionPerformed);
+        txtTelefoneCelularEmergencia01.addActionListener(this::txtTelefoneCelularEmergencia01ActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -515,7 +541,7 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
         gridBagConstraints.ipady = 8;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 15);
-        container4.add(txtProfissao12, gridBagConstraints);
+        container4.add(txtTelefoneCelularEmergencia01, gridBagConstraints);
 
         jLabel20.setText("Telefone Celular");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -525,7 +551,7 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 5);
         container4.add(jLabel20, gridBagConstraints);
 
-        txtProfissao13.addActionListener(this::txtProfissao13ActionPerformed);
+        txtTelefoneCelularEmergencia02.addActionListener(this::txtTelefoneCelularEmergencia02ActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
@@ -533,7 +559,7 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
         gridBagConstraints.ipady = 8;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 15);
-        container4.add(txtProfissao13, gridBagConstraints);
+        container4.add(txtTelefoneCelularEmergencia02, gridBagConstraints);
 
         jPanel1.setOpaque(false);
 
@@ -588,57 +614,57 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtProfissaoActionPerformed
 
-    private void txtProfissao1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProfissao1ActionPerformed
+    private void txtSexoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSexoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtProfissao1ActionPerformed
+    }//GEN-LAST:event_txtSexoActionPerformed
 
-    private void txtProfissao2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProfissao2ActionPerformed
+    private void txtTelefoneFixoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTelefoneFixoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtProfissao2ActionPerformed
+    }//GEN-LAST:event_txtTelefoneFixoActionPerformed
 
-    private void txtProfissao3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProfissao3ActionPerformed
+    private void txtTelefoneCelularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTelefoneCelularActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtProfissao3ActionPerformed
+    }//GEN-LAST:event_txtTelefoneCelularActionPerformed
 
-    private void txtProfissao4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProfissao4ActionPerformed
+    private void txtEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEmailActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtProfissao4ActionPerformed
+    }//GEN-LAST:event_txtEmailActionPerformed
 
-    private void txtProfissao5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProfissao5ActionPerformed
+    private void txtCEPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCEPActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtProfissao5ActionPerformed
+    }//GEN-LAST:event_txtCEPActionPerformed
 
-    private void txtProfissao6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProfissao6ActionPerformed
+    private void txtBairroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBairroActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtProfissao6ActionPerformed
+    }//GEN-LAST:event_txtBairroActionPerformed
 
-    private void txtProfissao7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProfissao7ActionPerformed
+    private void txtNumeroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNumeroActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtProfissao7ActionPerformed
+    }//GEN-LAST:event_txtNumeroActionPerformed
 
-    private void txtProfissao8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProfissao8ActionPerformed
+    private void txtEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEstadoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtProfissao8ActionPerformed
+    }//GEN-LAST:event_txtEstadoActionPerformed
 
-    private void txtProfissao9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProfissao9ActionPerformed
+    private void txtComplementoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtComplementoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtProfissao9ActionPerformed
+    }//GEN-LAST:event_txtComplementoActionPerformed
 
-    private void txtProfissao10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProfissao10ActionPerformed
+    private void txtCidadeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCidadeActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtProfissao10ActionPerformed
+    }//GEN-LAST:event_txtCidadeActionPerformed
 
-    private void txtProfissao11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProfissao11ActionPerformed
+    private void txtRuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtRuaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtProfissao11ActionPerformed
+    }//GEN-LAST:event_txtRuaActionPerformed
 
-    private void txtProfissao12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProfissao12ActionPerformed
+    private void txtTelefoneCelularEmergencia01ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTelefoneCelularEmergencia01ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtProfissao12ActionPerformed
+    }//GEN-LAST:event_txtTelefoneCelularEmergencia01ActionPerformed
 
-    private void txtProfissao13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProfissao13ActionPerformed
+    private void txtTelefoneCelularEmergencia02ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTelefoneCelularEmergencia02ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtProfissao13ActionPerformed
+    }//GEN-LAST:event_txtTelefoneCelularEmergencia02ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -671,22 +697,22 @@ public class FichaPerfilPacienteView extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JTextField txtBairro;
+    private javax.swing.JTextField txtCEP;
     private javax.swing.JTextField txtCPF;
-    private javax.swing.JTextField txtIdade;
+    private javax.swing.JTextField txtCidade;
+    private javax.swing.JTextField txtComplemento;
+    private javax.swing.JTextField txtDataNascimento;
+    private javax.swing.JTextField txtEmail;
+    private javax.swing.JTextField txtEstado;
     private javax.swing.JTextField txtNome;
+    private javax.swing.JTextField txtNumero;
     private javax.swing.JTextField txtProfissao;
-    private javax.swing.JTextField txtProfissao1;
-    private javax.swing.JTextField txtProfissao10;
-    private javax.swing.JTextField txtProfissao11;
-    private javax.swing.JTextField txtProfissao12;
-    private javax.swing.JTextField txtProfissao13;
-    private javax.swing.JTextField txtProfissao2;
-    private javax.swing.JTextField txtProfissao3;
-    private javax.swing.JTextField txtProfissao4;
-    private javax.swing.JTextField txtProfissao5;
-    private javax.swing.JTextField txtProfissao6;
-    private javax.swing.JTextField txtProfissao7;
-    private javax.swing.JTextField txtProfissao8;
-    private javax.swing.JTextField txtProfissao9;
+    private javax.swing.JTextField txtRua;
+    private javax.swing.JTextField txtSexo;
+    private javax.swing.JTextField txtTelefoneCelular;
+    private javax.swing.JTextField txtTelefoneCelularEmergencia01;
+    private javax.swing.JTextField txtTelefoneCelularEmergencia02;
+    private javax.swing.JTextField txtTelefoneFixo;
     // End of variables declaration//GEN-END:variables
 }

@@ -13,6 +13,7 @@ import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.FrequenciaA
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamento;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPagamento;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.TipoAtendimento;
+import com.mycompany.sistemaintegramind.Model.entidades.GerenciadorDeCarregamentoEFormatacaoDaTabelaDeAgendamentos;
 import com.mycompany.sistemaintegramind.Model.entidades.Paciente;
 import com.mycompany.sistemaintegramind.View.Componentes.TabelaEstilo;
 import com.mycompany.sistemaintegramind.View.EditarExcluirAgendamento.EditarAgendamentoView;
@@ -136,57 +137,6 @@ public class AgendaView extends javax.swing.JPanel {
 
     }
 
-    private void carregarAgendamento(DefaultTableModel modelo, List<Agendamento> ListarAgendamentos) {
-        for (Agendamento agendamentos : ListarAgendamentos) {
-            String statuspagamento = agendamentos.getStatuspagamento().toString();
-            String statusagendamento = agendamentos.getStatusagendamento().toString();
-            String pagamentoformatado, statusagendamentoformatado = null;
-            LocalDate dataAtualConsulta = agendamentos.getDataAgendamento();
-            if (statuspagamento.equals("PENDENTE")) {
-                pagamentoformatado = "<html><font color='red'><b>PENDENTE</b></font></html>";
-            } else {
-                pagamentoformatado = "<html><font color='green'><b>PAGO</b></font></html>";
-            }
-            //2026-09-30 Juliano: Validação da mudança automática do status de AGENDADO para REALIZADO,quando a data da consulta já tiver passado e o status da consulta esteja como AGENDADO
-            if (dataAtualConsulta.isBefore(LocalDate.now()) & statusagendamento.equals("AGENDADO")) {
-                statusagendamentoformatado = "<html><font color='green'><b>REALIZADO</b></font></html>";
-            } else {
-                if (statusagendamento.equals("REALIZADO")) {
-                    statusagendamentoformatado = "<html><font color='green'><b>REALIZADO</b></font></html>";
-                }
-                if (statusagendamento.equals("AGENDADO")) {
-                    statusagendamentoformatado = "<html><font color='blue'><b>AGENDADO</b></font></html>";
-                }
-
-                if (statusagendamento.equals("CANCELADO")) {
-                    statusagendamentoformatado = "<html><font color='gray'><b>CANCELADO</b></font></html>";
-                }
-                if (statusagendamento.equals("FALTOU")) {
-                    statusagendamentoformatado = "<html><font color='yellow'><b>FALTOU</b></font></html>";
-                }
-
-            }
-
-            modelo.addRow(new Object[]{
-                agendamentos.getId(),
-                agendamentos.getPaciente().getNome(),
-                agendamentos.getHorario(),
-                statusagendamentoformatado,
-                agendamentos.getTipoatendimento(),
-                pagamentoformatado,
-                "",
-                agendamentos.getDataAgendamento().format(
-                DateTimeFormatter.ofPattern("dd/MM/yyyy")
-                ),
-                agendamentos.getValorDaConsulta(),
-                "",
-                ""
-
-            }
-            );
-        }
-    }
-
     private void carregarAgendamentosDoDIa(DefaultTableModel modelo, List<Agendamento> ListarAgendamentos) {
         for (Agendamento agendamentos : ListarAgendamentos) {
             String statuspagamento = agendamentos.getStatuspagamento().toString();
@@ -230,7 +180,7 @@ public class AgendaView extends javax.swing.JPanel {
     private void atualizartabelaAgendamento() {
         agendamentos = ListarAgendamentos();
         modeloTabelaListarTodosAgendamentos.setRowCount(0);
-        carregarAgendamento(modeloTabelaListarTodosAgendamentos, agendamentos);
+        GerenciadorDeCarregamentoEFormatacaoDaTabelaDeAgendamentos.carregarAgendamento(modeloTabelaListarTodosAgendamentos, agendamentos);
         tblAgendamentos.revalidate();
         tblAgendamentos.repaint();
     }
@@ -239,7 +189,6 @@ public class AgendaView extends javax.swing.JPanel {
         //2026-09-22 Juliano: criação de um novo objeto para cada novo agendamento posterior
         Agendamento novoagendamento = new Agendamento();
         // ALTERE PARA CORRIGIR:
-    
 
         novoagendamento.setDataAgendamento(data);
         novoagendamento.setObservacao(txtObservacao.getText());
@@ -248,12 +197,12 @@ public class AgendaView extends javax.swing.JPanel {
         novoagendamento.setTipoatendimento((TipoAtendimento) cmbTipoAtendimento.getSelectedItem());
         novoagendamento.setPaciente(paciente);
         novoagendamento.setStatuspagamento((StatusPagamento) cmbStatusPagamento.getSelectedItem());
-         
+
         System.out.println("");
-        
+
         //2026-09-30 Juliano: garantido que ao realizar um agendamento o status inicial será AGENDADO
-        if (data.isBefore(LocalDate.now()) ) {
-            
+        if (data.isBefore(LocalDate.now())) {
+
             novoagendamento.setStatusagendamento(StatusAgendamento.REALIZADO);
             System.out.println("Data posterior a consulta portanto atendimento já foi realizado.");
 
@@ -725,44 +674,20 @@ public class AgendaView extends javax.swing.JPanel {
     }//GEN-LAST:event_cmbTipoAtendimentoActionPerformed
 
     private void tblAgendamentosAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_tblAgendamentosAncestorAdded
-        //2025-11-22 Juliano definindo o nome das colunas da tabela
-        modeloTabelaListarTodosAgendamentos = new DefaultTableModel(
-                new Object[]{
-                    "Código",
-                    "Paciente",
-                    "Horário",
-                    "Status",
-                    "Tipo de Atendimento",
-                    "Pagamento",
-                    "Situação",
-                    "Data",
-                    "Valor da Consulta",
-                    "Editar",
-                    "Excluir"
-                },
-                0
-        );
+        //2026-10-03 Juliano: definindo os campos que estarão na minha tabela
+        modeloTabelaListarTodosAgendamentos = GerenciadorDeCarregamentoEFormatacaoDaTabelaDeAgendamentos.formatarTabelaAgendamento(modeloTabelaListarTodosAgendamentos);
 
+        //2026-10-03 Juliano: Utilizando a definição criada anteriormente, para ser adicionada em tblAgendamentos
         tblAgendamentos.setModel(modeloTabelaListarTodosAgendamentos);
 
-        tblAgendamentos.getColumnModel()
-                .getColumn(6).setMaxWidth(50);
-        tblAgendamentos.getColumnModel().getColumn(6)
-                .setCellRenderer(new BotaoRenderizarIcones("/imagens/PENDENTE.png"));
-
-        tblAgendamentos.getColumnModel().getColumn(9).setMaxWidth(50);
-        tblAgendamentos.getColumnModel().getColumn(9)
-                .setCellRenderer(new BotaoRenderizarIcones("/imagens/empate.png"));
-
-        tblAgendamentos.getColumnModel().getColumn(10).setMaxWidth(50);
-        tblAgendamentos.getColumnModel().getColumn(10)
-                .setCellRenderer(new BotaoRenderizarIcones("/imagens/excluir.png"));
+        //2026-10-03 Juliano: Definindo os icones presentes na minha tabela
+        GerenciadorDeCarregamentoEFormatacaoDaTabelaDeAgendamentos.configurarIconesDasColunasDaTabelaAgendamento(tblAgendamentos);
 
         AgendamentoJPA agendamentojpa = new AgendamentoJPA();
-        List<Agendamento> ListarAgendamentos = agendamentojpa.listarAgendamentos();
+        agendamentos = agendamentojpa.listarAgendamentos();
         modeloTabelaListarTodosAgendamentos.setRowCount(0);
 
-        carregarAgendamento(modeloTabelaListarTodosAgendamentos, ListarAgendamentos);
+        GerenciadorDeCarregamentoEFormatacaoDaTabelaDeAgendamentos.carregarAgendamento(modeloTabelaListarTodosAgendamentos, agendamentos);
 
 
     }//GEN-LAST:event_tblAgendamentosAncestorAdded
@@ -849,7 +774,7 @@ public class AgendaView extends javax.swing.JPanel {
                 System.out.println("Já cadastrei as datas");
                 modeloTabelaListarTodosAgendamentos.setRowCount(0);
                 agendamentos = ListarAgendamentos();
-                carregarAgendamento(modeloTabelaListarTodosAgendamentos, agendamentos);
+                GerenciadorDeCarregamentoEFormatacaoDaTabelaDeAgendamentos.carregarAgendamento(modeloTabelaListarTodosAgendamentos, agendamentos);
                 LimparDadosAgendamento();
 
                 data = data.plusWeeks(1);
@@ -875,7 +800,7 @@ public class AgendaView extends javax.swing.JPanel {
                 cadastrarAgendamento(data, valorConsulta, horario, paciente, agendamentojpa);
                 modeloTabelaListarTodosAgendamentos.setRowCount(0);
                 agendamentos = ListarAgendamentos();
-                carregarAgendamento(modeloTabelaListarTodosAgendamentos, agendamentos);
+                GerenciadorDeCarregamentoEFormatacaoDaTabelaDeAgendamentos.carregarAgendamento(modeloTabelaListarTodosAgendamentos, agendamentos);
                 LimparDadosAgendamento();
 
                 data = data.plusDays(15);
@@ -894,7 +819,7 @@ public class AgendaView extends javax.swing.JPanel {
             cadastrarAgendamento(dataInicial, valorConsulta, horario, paciente, agendamentojpa);
             modeloTabelaListarTodosAgendamentos.setRowCount(0);
             agendamentos = ListarAgendamentos();
-            carregarAgendamento(modeloTabelaListarTodosAgendamentos, agendamentos);
+            GerenciadorDeCarregamentoEFormatacaoDaTabelaDeAgendamentos.carregarAgendamento(modeloTabelaListarTodosAgendamentos, agendamentos);
             LimparDadosAgendamento();
             JOptionPane.showMessageDialog(
                     this,
@@ -934,6 +859,7 @@ public class AgendaView extends javax.swing.JPanel {
             dialog.pack();
             dialog.setLocationRelativeTo(this);
             dialog.setVisible(true);
+            atualizartabelaAgendamento();
 
         } //2026-09-18 Juliano: Excluindo um registro já cadastrado
         else if (linha >= 0 && coluna == 10) {
