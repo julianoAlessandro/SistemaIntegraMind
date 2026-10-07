@@ -239,7 +239,6 @@ public class AgendaView extends javax.swing.JPanel {
         //2026-09-22 Juliano: criação de um novo objeto para cada novo agendamento posterior
         Agendamento novoagendamento = new Agendamento();
         // ALTERE PARA CORRIGIR:
-    
 
         novoagendamento.setDataAgendamento(data);
         novoagendamento.setObservacao(txtObservacao.getText());
@@ -248,12 +247,12 @@ public class AgendaView extends javax.swing.JPanel {
         novoagendamento.setTipoatendimento((TipoAtendimento) cmbTipoAtendimento.getSelectedItem());
         novoagendamento.setPaciente(paciente);
         novoagendamento.setStatuspagamento((StatusPagamento) cmbStatusPagamento.getSelectedItem());
-         
+
         System.out.println("");
-        
+
         //2026-09-30 Juliano: garantido que ao realizar um agendamento o status inicial será AGENDADO
-        if (data.isBefore(LocalDate.now()) ) {
-            
+        if (data.isBefore(LocalDate.now())) {
+
             novoagendamento.setStatusagendamento(StatusAgendamento.REALIZADO);
             System.out.println("Data posterior a consulta portanto atendimento já foi realizado.");
 
@@ -287,161 +286,54 @@ public class AgendaView extends javax.swing.JPanel {
     //===================================================(FIM)=========================
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        cmbTipoAtendimento = new javax.swing.JComboBox<>();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        txtObservacao = new javax.swing.JTextField();
-        cmbListarPacientes = new javax.swing.JComboBox<>();
-        dtDataAgendamento = new com.toedter.calendar.JDateChooser();
-        jPanel1 = new javax.swing.JPanel();
-        jLabel8 = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        tblListarAgendamentosDoDia = new javax.swing.JTable();
-        lblDataHoje = new javax.swing.JLabel();
-        btnRealizarAgendamento = new javax.swing.JButton();
-        btnLimparDadosAgendamento = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblAgendamentos = new javax.swing.JTable();
         jLabel9 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
-        cmbStatusPagamento = new javax.swing.JComboBox<>();
-        txtValorConsulta = new javax.swing.JTextField();
-        btnAtualizarTabela = new javax.swing.JButton();
+        btnData = new com.toedter.calendar.JDateChooser();
+        container1 = new com.mycompany.sistemaintegramind.View.Componentes.Container();
+        cmbListarPacientes = new javax.swing.JComboBox<>();
+        jLabel3 = new javax.swing.JLabel();
+        dtDataAgendamento = new com.toedter.calendar.JDateChooser();
+        jLabel4 = new javax.swing.JLabel();
         txtHorario = new javax.swing.JTextField();
-        jLabel12 = new javax.swing.JLabel();
-        cmbFrequenciaAtendimento = new javax.swing.JComboBox<>();
-        jLabel13 = new javax.swing.JLabel();
-        dtFiltrarDataAgendamento = new com.toedter.calendar.JDateChooser();
-        btnLimparFiltroAgendamento = new javax.swing.JButton();
-        btnFiltroAgendamento = new javax.swing.JButton();
-        jLabel14 = new javax.swing.JLabel();
-        cmbFiltrarFrequenciaAtendimento = new javax.swing.JComboBox<>();
-        cmbFiltrarPaciente = new javax.swing.JComboBox<>();
-        cmbFiltrarStatusPagamento = new javax.swing.JComboBox<>();
-        cmbFiltrarTipoAtendimento = new javax.swing.JComboBox<>();
-        jLabel15 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        cmbStatusPagamento = new javax.swing.JComboBox<>();
         jLabel16 = new javax.swing.JLabel();
+        cmbFrequenciaAtendimento = new javax.swing.JComboBox<>();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        txtValorConsulta = new javax.swing.JTextField();
+        cmbTipoAtendimento = new javax.swing.JComboBox<>();
+        jLabel7 = new javax.swing.JLabel();
+        btnRealizarAgendamento = new javax.swing.JButton();
+        btnLimparDadosAgendamento = new javax.swing.JButton();
+        txtObservacao = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
+        container2 = new com.mycompany.sistemaintegramind.View.Componentes.Container();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
+        dtFiltrarDataAgendamento = new com.toedter.calendar.JDateChooser();
+        jLabel13 = new javax.swing.JLabel();
+        cmbFiltrarPaciente = new javax.swing.JComboBox<>();
+        jLabel11 = new javax.swing.JLabel();
+        cmbFiltrarStatusPagamento = new javax.swing.JComboBox<>();
         jLabel17 = new javax.swing.JLabel();
+        cmbFiltrarTipoAtendimento = new javax.swing.JComboBox<>();
         jLabel18 = new javax.swing.JLabel();
+        cmbFiltrarFrequenciaAtendimento = new javax.swing.JComboBox<>();
+        btnFiltroAgendamento = new javax.swing.JButton();
+        btnLimparFiltroAgendamento = new javax.swing.JButton();
+        container3 = new com.mycompany.sistemaintegramind.View.Componentes.Container();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblListarAgendamentosDoDia = new javax.swing.JTable();
+        lblDataHoje = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
 
-        jLabel2.setFont(new java.awt.Font("Dialog", 0, 36)); // NOI18N
-        jLabel2.setText("Agendamento ");
-
-        jLabel3.setText("Paciente");
-
-        jLabel4.setText("Data");
-
-        jLabel5.setText("Horário");
-
-        cmbTipoAtendimento.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmbTipoAtendimentoActionPerformed(evt);
-            }
-        });
-
-        jLabel6.setText("Observação");
-
-        jLabel7.setText("Tipo Atendimento");
-
-        txtObservacao.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtObservacaoActionPerformed(evt);
-            }
-        });
-
-        cmbListarPacientes.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmbListarPacientesActionPerformed(evt);
-            }
-        });
-
-        jPanel1.setBackground(new java.awt.Color(204, 255, 204));
-        jPanel1.setForeground(new java.awt.Color(153, 153, 255));
-
-        jLabel8.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
-        jLabel8.setText("Horários do dia");
-
-        tblListarAgendamentosDoDia.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        tblListarAgendamentosDoDia.addAncestorListener(new javax.swing.event.AncestorListener() {
-            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
-                tblListarAgendamentosDoDiaAncestorAdded(evt);
-            }
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
-            }
-            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
-            }
-        });
-        jScrollPane2.setViewportView(tblListarAgendamentosDoDia);
-
-        lblDataHoje.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
-        lblDataHoje.setText("30/09/2026");
-        lblDataHoje.addAncestorListener(new javax.swing.event.AncestorListener() {
-            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
-                lblDataHojeAncestorAdded(evt);
-            }
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
-            }
-            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
-            }
-        });
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 459, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(92, 92, 92)
-                .addComponent(jLabel8)
-                .addGap(18, 18, 18)
-                .addComponent(lblDataHoje)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(56, 56, 56)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(lblDataHoje))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 481, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(157, Short.MAX_VALUE))
-        );
-
-        btnRealizarAgendamento.setText("Agendar");
-        btnRealizarAgendamento.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRealizarAgendamentoActionPerformed(evt);
-            }
-        });
-
-        btnLimparDadosAgendamento.setText("Limpar");
-        btnLimparDadosAgendamento.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLimparDadosAgendamentoActionPerformed(evt);
-            }
-        });
+        setBackground(new java.awt.Color(244, 248, 247));
+        setLayout(new java.awt.GridBagLayout());
 
         tblAgendamentos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -470,25 +362,93 @@ public class AgendaView extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(tblAgendamentos);
 
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipady = 100;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(7, 7, 7, 7);
+        add(jScrollPane1, gridBagConstraints);
+
+        jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        jLabel9.setForeground(new java.awt.Color(13, 82, 65));
         jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/agendar.png"))); // NOI18N
+        jLabel9.setText("Agenda");
+        jLabel9.setIconTextGap(10);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 12;
+        gridBagConstraints.ipady = 15;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(7, 7, 7, 7);
+        add(jLabel9, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = -129;
+        gridBagConstraints.ipady = -22;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        add(btnData, gridBagConstraints);
 
-        jLabel10.setText("Valor da Consulta:");
+        container1.setBackground(new java.awt.Color(254, 254, 254));
+        container1.setLayout(new java.awt.GridBagLayout());
 
-        jLabel11.setText("Status Pagamento");
-
-        txtValorConsulta.addActionListener(new java.awt.event.ActionListener() {
+        cmbListarPacientes.setMaximumSize(new java.awt.Dimension(190, 32));
+        cmbListarPacientes.setMinimumSize(new java.awt.Dimension(140, 32));
+        cmbListarPacientes.setPreferredSize(new java.awt.Dimension(190, 32));
+        cmbListarPacientes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtValorConsultaActionPerformed(evt);
+                cmbListarPacientesActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 100;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 7);
+        container1.add(cmbListarPacientes, gridBagConstraints);
 
-        btnAtualizarTabela.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/reflesh.png"))); // NOI18N
-        btnAtualizarTabela.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAtualizarTabelaActionPerformed(evt);
-            }
-        });
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel3.setText("Paciente");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 5, 0);
+        container1.add(jLabel3, gridBagConstraints);
 
+        dtDataAgendamento.setMaximumSize(new java.awt.Dimension(190, 32));
+        dtDataAgendamento.setMinimumSize(new java.awt.Dimension(140, 32));
+        dtDataAgendamento.setPreferredSize(new java.awt.Dimension(190, 32));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 100;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 7);
+        container1.add(dtDataAgendamento, gridBagConstraints);
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel4.setText("Data");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 5, 0);
+        container1.add(jLabel4, gridBagConstraints);
+
+        txtHorario.setMaximumSize(new java.awt.Dimension(190, 32));
+        txtHorario.setMinimumSize(new java.awt.Dimension(140, 32));
+        txtHorario.setPreferredSize(new java.awt.Dimension(190, 32));
         txtHorario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtHorarioActionPerformed(evt);
@@ -499,221 +459,437 @@ public class AgendaView extends javax.swing.JPanel {
                 txtHorarioKeyReleased(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 100;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 7);
+        container1.add(txtHorario, gridBagConstraints);
 
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel5.setText("Horário");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 5, 0);
+        container1.add(jLabel5, gridBagConstraints);
+
+        cmbStatusPagamento.setMaximumSize(new java.awt.Dimension(190, 32));
+        cmbStatusPagamento.setMinimumSize(new java.awt.Dimension(140, 32));
+        cmbStatusPagamento.setPreferredSize(new java.awt.Dimension(190, 32));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 100;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 7);
+        container1.add(cmbStatusPagamento, gridBagConstraints);
+
+        jLabel16.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel16.setText("Status Pagamento");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 5, 0);
+        container1.add(jLabel16, gridBagConstraints);
+
+        cmbFrequenciaAtendimento.setMaximumSize(new java.awt.Dimension(190, 32));
+        cmbFrequenciaAtendimento.setMinimumSize(new java.awt.Dimension(140, 32));
+        cmbFrequenciaAtendimento.setPreferredSize(new java.awt.Dimension(190, 32));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 100;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 7);
+        container1.add(cmbFrequenciaAtendimento, gridBagConstraints);
+
+        jLabel12.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel12.setText("Frequência");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 5, 0);
+        container1.add(jLabel12, gridBagConstraints);
 
-        jLabel13.setText("Data da Agenda:");
+        jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel10.setText("Valor da Consulta:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 5, 0);
+        container1.add(jLabel10, gridBagConstraints);
 
-        btnLimparFiltroAgendamento.setText("Limpar Filtros");
-        btnLimparFiltroAgendamento.addActionListener(new java.awt.event.ActionListener() {
+        txtValorConsulta.setMaximumSize(new java.awt.Dimension(190, 32));
+        txtValorConsulta.setMinimumSize(new java.awt.Dimension(140, 32));
+        txtValorConsulta.setPreferredSize(new java.awt.Dimension(190, 32));
+        txtValorConsulta.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLimparFiltroAgendamentoActionPerformed(evt);
+                txtValorConsultaActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 100;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 7);
+        container1.add(txtValorConsulta, gridBagConstraints);
 
+        cmbTipoAtendimento.setMaximumSize(new java.awt.Dimension(190, 32));
+        cmbTipoAtendimento.setMinimumSize(new java.awt.Dimension(100, 32));
+        cmbTipoAtendimento.setPreferredSize(new java.awt.Dimension(190, 32));
+        cmbTipoAtendimento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbTipoAtendimentoActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 100;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 7);
+        container1.add(cmbTipoAtendimento, gridBagConstraints);
+
+        jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel7.setText("Tipo Atendimento");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 5, 0);
+        container1.add(jLabel7, gridBagConstraints);
+
+        btnRealizarAgendamento.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnRealizarAgendamento.setText("Agendar");
+        btnRealizarAgendamento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRealizarAgendamentoActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.ipadx = 100;
+        gridBagConstraints.ipady = 15;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 0);
+        container1.add(btnRealizarAgendamento, gridBagConstraints);
+
+        btnLimparDadosAgendamento.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnLimparDadosAgendamento.setText("Limpar");
+        btnLimparDadosAgendamento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimparDadosAgendamentoActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.ipadx = 100;
+        gridBagConstraints.ipady = 15;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        container1.add(btnLimparDadosAgendamento, gridBagConstraints);
+
+        txtObservacao.setMaximumSize(new java.awt.Dimension(0, 0));
+        txtObservacao.setMinimumSize(new java.awt.Dimension(0, 0));
+        txtObservacao.setPreferredSize(new java.awt.Dimension(0, 0));
+        txtObservacao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtObservacaoActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 140;
+        gridBagConstraints.ipady = 32;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 20, 15);
+        container1.add(txtObservacao, gridBagConstraints);
+
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel6.setText("Observação");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(20, 7, 5, 0);
+        container1.add(jLabel6, gridBagConstraints);
+
+        jLabel19.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        jLabel19.setForeground(new java.awt.Color(13, 82, 65));
+        jLabel19.setText("Agendar");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 7;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipady = 23;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 0);
+        container1.add(jLabel19, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 20;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(7, 7, 7, 7);
+        add(container1, gridBagConstraints);
+
+        container2.setBackground(new java.awt.Color(254, 254, 254));
+        container2.setLayout(new java.awt.GridBagLayout());
+
+        jLabel14.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        jLabel14.setForeground(new java.awt.Color(13, 82, 65));
+        jLabel14.setText("Filtrar tabela");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipady = 23;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 0);
+        container2.add(jLabel14, gridBagConstraints);
+
+        jLabel15.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel15.setText("Paciente");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 5, 0);
+        container2.add(jLabel15, gridBagConstraints);
+
+        dtFiltrarDataAgendamento.setPreferredSize(new java.awt.Dimension(190, 32));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 7);
+        container2.add(dtFiltrarDataAgendamento, gridBagConstraints);
+
+        jLabel13.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel13.setText("Data da Agenda:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 0);
+        container2.add(jLabel13, gridBagConstraints);
+
+        cmbFiltrarPaciente.setPreferredSize(new java.awt.Dimension(190, 32));
+        cmbFiltrarPaciente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbFiltrarPacienteActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 7);
+        container2.add(cmbFiltrarPaciente, gridBagConstraints);
+
+        jLabel11.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel11.setText("Status Pagamento");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 0);
+        container2.add(jLabel11, gridBagConstraints);
+
+        cmbFiltrarStatusPagamento.setPreferredSize(new java.awt.Dimension(190, 32));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 7);
+        container2.add(cmbFiltrarStatusPagamento, gridBagConstraints);
+
+        jLabel17.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel17.setText("Tipo Atendimento");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 0);
+        container2.add(jLabel17, gridBagConstraints);
+
+        cmbFiltrarTipoAtendimento.setPreferredSize(new java.awt.Dimension(190, 32));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 7);
+        container2.add(cmbFiltrarTipoAtendimento, gridBagConstraints);
+
+        jLabel18.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel18.setText("Frequência");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.ipadx = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 0);
+        container2.add(jLabel18, gridBagConstraints);
+
+        cmbFiltrarFrequenciaAtendimento.setPreferredSize(new java.awt.Dimension(190, 32));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 7);
+        container2.add(cmbFiltrarFrequenciaAtendimento, gridBagConstraints);
+
+        btnFiltroAgendamento.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnFiltroAgendamento.setText("Buscar ");
         btnFiltroAgendamento.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnFiltroAgendamentoActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.ipadx = 100;
+        gridBagConstraints.ipady = 10;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(20, 7, 0, 0);
+        container2.add(btnFiltroAgendamento, gridBagConstraints);
 
-        jLabel14.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
-        jLabel14.setText("Filtrar tabela");
+        btnLimparFiltroAgendamento.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnLimparFiltroAgendamento.setText("Limpar Filtros");
+        btnLimparFiltroAgendamento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimparFiltroAgendamentoActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.ipadx = 100;
+        gridBagConstraints.ipady = 10;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(20, 0, 0, 0);
+        container2.add(btnLimparFiltroAgendamento, gridBagConstraints);
 
-        jLabel15.setText("Paciente");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(7, 7, 7, 7);
+        add(container2, gridBagConstraints);
 
-        jLabel16.setText("Status Pagamento");
+        container3.setBackground(new java.awt.Color(236, 249, 242));
 
-        jLabel17.setText("Tipo Atendimento");
+        tblListarAgendamentosDoDia.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        tblListarAgendamentosDoDia.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                tblListarAgendamentosDoDiaAncestorAdded(evt);
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
+        jScrollPane2.setViewportView(tblListarAgendamentosDoDia);
 
-        jLabel18.setText("Frequência");
+        lblDataHoje.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        lblDataHoje.setForeground(new java.awt.Color(13, 82, 65));
+        lblDataHoje.setText("30/09/2026");
+        lblDataHoje.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                lblDataHojeAncestorAdded(evt);
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1)
-                        .addGap(3, 3, 3))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(50, 50, 50)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                    .addGroup(layout.createSequentialGroup()
-                                                        .addGap(6, 6, 6)
-                                                        .addComponent(cmbTipoAtendimento, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                    .addComponent(jLabel7)
-                                                    .addGroup(layout.createSequentialGroup()
-                                                        .addGap(33, 33, 33)
-                                                        .addComponent(btnRealizarAgendamento, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addGap(18, 18, 18)
-                                                        .addComponent(btnLimparDadosAgendamento, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                                .addGap(143, 143, 143)
-                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                    .addComponent(jLabel6)
-                                                    .addGroup(layout.createSequentialGroup()
-                                                        .addGap(151, 151, 151)
-                                                        .addComponent(txtObservacao, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addGap(48, 48, 48)
-                                                        .addComponent(btnAtualizarTabela, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                    .addGroup(layout.createSequentialGroup()
-                                                        .addGap(144, 144, 144)
-                                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                            .addComponent(cmbFiltrarTipoAtendimento, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                            .addComponent(jLabel17))
-                                                        .addGap(37, 37, 37)
-                                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                            .addGroup(layout.createSequentialGroup()
-                                                                .addComponent(cmbFiltrarFrequenciaAtendimento, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addGap(33, 33, 33)
-                                                                .addComponent(btnFiltroAgendamento)
-                                                                .addGap(26, 26, 26)
-                                                                .addComponent(btnLimparFiltroAgendamento))
-                                                            .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                    .addComponent(jLabel3)
-                                                    .addGroup(layout.createSequentialGroup()
-                                                        .addGap(162, 162, 162)
-                                                        .addComponent(jLabel4)
-                                                        .addGap(110, 110, 110)
-                                                        .addComponent(jLabel5))
-                                                    .addGroup(layout.createSequentialGroup()
-                                                        .addComponent(cmbListarPacientes, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addGap(37, 37, 37)
-                                                        .addComponent(dtDataAgendamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addGap(18, 18, 18)
-                                                        .addComponent(txtHorario, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                                .addGap(26, 26, 26)
-                                                .addComponent(cmbStatusPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(41, 41, 41)
-                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                    .addGroup(layout.createSequentialGroup()
-                                                        .addComponent(cmbFrequenciaAtendimento, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addGap(23, 23, 23)
-                                                        .addComponent(jLabel10)
-                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                        .addComponent(txtValorConsulta, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(jLabel13)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(dtFiltrarDataAgendamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(18, 18, 18)
-                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                    .addComponent(cmbFiltrarPaciente, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                    .addComponent(jLabel15))
-                                                .addGap(18, 18, 18)
-                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                    .addComponent(jLabel11)
-                                                    .addComponent(cmbFiltrarStatusPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel2))))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(32, 32, 32)
-                                .addComponent(jLabel14)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 137, Short.MAX_VALUE)))
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 868, Short.MAX_VALUE)
-                    .addComponent(jLabel1)
-                    .addGap(0, 868, Short.MAX_VALUE)))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(498, 498, 498)
-                    .addComponent(jLabel16)
-                    .addContainerGap(1136, Short.MAX_VALUE)))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel12))
+        jLabel8.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(13, 82, 65));
+        jLabel8.setText("Horários do dia");
+
+        javax.swing.GroupLayout container3Layout = new javax.swing.GroupLayout(container3);
+        container3.setLayout(container3Layout);
+        container3Layout.setHorizontalGroup(
+            container3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, container3Layout.createSequentialGroup()
+                .addGap(15, 15, 15)
+                .addComponent(jLabel8)
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(cmbListarPacientes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel10)
-                        .addComponent(txtValorConsulta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtHorario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(cmbFrequenciaAtendimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(cmbStatusPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(dtDataAgendamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(38, 38, 38)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(jLabel6))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(cmbTipoAtendimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(btnRealizarAgendamento)
-                                    .addComponent(btnLimparDadosAgendamento)))
-                            .addComponent(txtObservacao, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnAtualizarTabela, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel15)
-                        .addComponent(jLabel11)
-                        .addComponent(jLabel17)
-                        .addComponent(jLabel18)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel13)
-                    .addComponent(dtFiltrarDataAgendamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnFiltroAgendamento)
-                        .addComponent(btnLimparFiltroAgendamento)
-                        .addComponent(cmbFiltrarFrequenciaAtendimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(cmbFiltrarPaciente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(cmbFiltrarStatusPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(cmbFiltrarTipoAtendimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                .addGap(7, 7, 7))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 374, Short.MAX_VALUE)
-                    .addComponent(jLabel1)
-                    .addGap(0, 374, Short.MAX_VALUE)))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(75, 75, 75)
-                    .addComponent(jLabel16)
-                    .addContainerGap(657, Short.MAX_VALUE)))
+                .addComponent(lblDataHoje)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(container3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(container3Layout.createSequentialGroup()
+                    .addGap(9, 9, 9)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE)
+                    .addGap(10, 10, 10)))
         );
+        container3Layout.setVerticalGroup(
+            container3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(container3Layout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addGroup(container3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblDataHoje)
+                    .addComponent(jLabel8))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(container3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(container3Layout.createSequentialGroup()
+                    .addGap(81, 81, 81)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 406, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.ipadx = 100;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(7, 7, 7, 7);
+        add(container3, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtObservacaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtObservacaoActionPerformed
@@ -896,6 +1072,7 @@ public class AgendaView extends javax.swing.JPanel {
             agendamentos = ListarAgendamentos();
             carregarAgendamento(modeloTabelaListarTodosAgendamentos, agendamentos);
             LimparDadosAgendamento();
+
             JOptionPane.showMessageDialog(
                     this,
                     "Agendamento cadastrado com sucesso!",
@@ -962,12 +1139,6 @@ public class AgendaView extends javax.swing.JPanel {
 
         }
     }//GEN-LAST:event_tblAgendamentosMouseClicked
-
-    private void btnAtualizarTabelaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarTabelaActionPerformed
-        //2026-09-17 Juliano: Atualizando a listagem de pacientes agendados no sistema!!
-        System.out.println("Recarregando a tabela de agendameto!!!!");
-        atualizartabelaAgendamento();
-    }//GEN-LAST:event_btnAtualizarTabelaActionPerformed
 
     private void txtHorarioKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtHorarioKeyReleased
         String horario = txtHorario.getText();
@@ -1133,9 +1304,13 @@ public class AgendaView extends javax.swing.JPanel {
         lblDataHoje.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
     }//GEN-LAST:event_lblDataHojeAncestorAdded
 
+    private void cmbFiltrarPacienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbFiltrarPacienteActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmbFiltrarPacienteActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAtualizarTabela;
+    private com.toedter.calendar.JDateChooser btnData;
     private javax.swing.JButton btnFiltroAgendamento;
     private javax.swing.JButton btnLimparDadosAgendamento;
     private javax.swing.JButton btnLimparFiltroAgendamento;
@@ -1148,9 +1323,11 @@ public class AgendaView extends javax.swing.JPanel {
     private javax.swing.JComboBox<Paciente> cmbListarPacientes;
     private javax.swing.JComboBox<StatusPagamento> cmbStatusPagamento;
     private javax.swing.JComboBox<TipoAtendimento> cmbTipoAtendimento;
+    private com.mycompany.sistemaintegramind.View.Componentes.Container container1;
+    private com.mycompany.sistemaintegramind.View.Componentes.Container container2;
+    private com.mycompany.sistemaintegramind.View.Componentes.Container container3;
     private com.toedter.calendar.JDateChooser dtDataAgendamento;
     private com.toedter.calendar.JDateChooser dtFiltrarDataAgendamento;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -1160,7 +1337,7 @@ public class AgendaView extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -1168,7 +1345,6 @@ public class AgendaView extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lblDataHoje;
