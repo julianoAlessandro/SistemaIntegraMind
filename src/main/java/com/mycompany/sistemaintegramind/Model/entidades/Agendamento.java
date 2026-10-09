@@ -5,7 +5,7 @@
 package com.mycompany.sistemaintegramind.Model.entidades;
 
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.FrequenciaAtendimento;
-import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamento;
+import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamentoDocumento;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPagamento;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.TipoAtendimento;
 import com.mycompany.sistemaintegramind.util.Utilitarios.StatusAgendamento;
@@ -65,7 +65,7 @@ public class Agendamento extends Entidade implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "Status_Agendamento_Paciente")
-    private StatusPacienteAgendamento statuspacienteagendamento;
+    private StatusPacienteAgendamentoDocumento statuspacienteagendamento;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "Frequência_Atendimento_Paciente")
@@ -143,19 +143,19 @@ public class Agendamento extends Entidade implements Serializable {
         this.valorDaConsulta = valorDaConsulta;
     }
 
-    public StatusPacienteAgendamento getStatusPacienteAgendamento() {
+    public StatusPacienteAgendamentoDocumento getStatusPacienteAgendamento() {
         return statuspacienteagendamento;
     }
 
-    public void setStatusPacienteAgendamento(StatusPacienteAgendamento statuspacienteagendamento) {
+    public void setStatusPacienteAgendamento(StatusPacienteAgendamentoDocumento statuspacienteagendamento) {
         this.statuspacienteagendamento = statuspacienteagendamento;
     }
 
-    public StatusPacienteAgendamento getStatuspacienteagendamento() {
+    public StatusPacienteAgendamentoDocumento getStatuspacienteagendamento() {
         return statuspacienteagendamento;
     }
 
-    public void setStatuspacienteagendamento(StatusPacienteAgendamento statuspacienteagendamento) {
+    public void setStatuspacienteagendamento(StatusPacienteAgendamentoDocumento statuspacienteagendamento) {
         this.statuspacienteagendamento = statuspacienteagendamento;
     }
 

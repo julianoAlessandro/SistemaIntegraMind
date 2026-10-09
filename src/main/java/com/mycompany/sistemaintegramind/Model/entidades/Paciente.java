@@ -6,7 +6,7 @@ package com.mycompany.sistemaintegramind.Model.entidades;
 
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.EstadosBrasileiros;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.Sexo;
-import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamento;
+import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamentoDocumento;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -77,7 +77,7 @@ public class Paciente extends Entidade implements Serializable {
     private EstadosBrasileiros estado;
 
     @Enumerated(EnumType.STRING)
-    private StatusPacienteAgendamento statuspaciente;
+    private StatusPacienteAgendamentoDocumento statuspaciente;
 
   
     @OneToMany(mappedBy = "paciente")
@@ -87,7 +87,7 @@ public class Paciente extends Entidade implements Serializable {
 
     }
 
-    public Paciente(Long id, String nome, Sexo sexo, String cpf, LocalDate dataNascimento, String telefoneCelular, String telefoneUrgencia, String telefoneFixo, String email, String cep, String bairro, String rua, String numero, String complemento, String cidade, String profissao, String idade, EstadosBrasileiros estado, StatusPacienteAgendamento statuspaciente, Agendamento agendamento) {
+    public Paciente(Long id, String nome, Sexo sexo, String cpf, LocalDate dataNascimento, String telefoneCelular, String telefoneUrgencia, String telefoneFixo, String email, String cep, String bairro, String rua, String numero, String complemento, String cidade, String profissao, String idade, EstadosBrasileiros estado, StatusPacienteAgendamentoDocumento statuspaciente, Agendamento agendamento) {
         this.id = id;
         this.nome = nome;
         this.sexo = sexo;
@@ -239,11 +239,11 @@ public class Paciente extends Entidade implements Serializable {
         this.estado = estado;
     }
 
-    public StatusPacienteAgendamento getStatuspaciente() {
+    public StatusPacienteAgendamentoDocumento getStatuspaciente() {
         return statuspaciente;
     }
 
-    public void setStatuspaciente(StatusPacienteAgendamento statuspaciente) {
+    public void setStatuspaciente(StatusPacienteAgendamentoDocumento statuspaciente) {
         this.statuspaciente = statuspaciente;
     }
 

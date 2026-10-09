@@ -7,7 +7,7 @@ package com.mycompany.sistemaintegramind.Model.dao.impl;
 import com.mycompany.sistemaintegramind.Model.dao.AgendaFiltro;
 import com.mycompany.sistemaintegramind.Model.dao.AgendamentoDAO;
 import com.mycompany.sistemaintegramind.Model.entidades.Agendamento;
-import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamento;
+import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamentoDocumento;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPagamento;
 import com.mycompany.sistemaintegramind.Model.entidades.Paciente;
 import com.mycompany.sistemaintegramind.util.Utilitarios.JPAUtil;
@@ -58,7 +58,7 @@ public class AgendamentoJPA implements AgendamentoDAO {
             Root<Agendamento> RootAgendamento = cq.from(Agendamento.class);
 
             //2026-02-26 Juliano: mostrando na listagem todos os pacientes que são ativos
-            Predicate somenteClienteAtivo = cb.equal(RootAgendamento.get("statuspacienteagendamento"), StatusPacienteAgendamento.ATIVO);
+            Predicate somenteClienteAtivo = cb.equal(RootAgendamento.get("statuspacienteagendamento"), StatusPacienteAgendamentoDocumento.ATIVO);
             cq.select(RootAgendamento).where(somenteClienteAtivo);
 
             listAgendamento = em.createQuery(cq).getResultList();
@@ -91,7 +91,7 @@ public class AgendamentoJPA implements AgendamentoDAO {
             Root<Agendamento> RootAgendamento = cq.from(Agendamento.class);
 
             //2026-02-26 Juliano: mostrando na listagem todos os pacientes que são ativos
-            Predicate somenteClienteAtivo = cb.equal(RootAgendamento.get("statuspacienteagendamento"), StatusPacienteAgendamento.ATIVO);
+            Predicate somenteClienteAtivo = cb.equal(RootAgendamento.get("statuspacienteagendamento"), StatusPacienteAgendamentoDocumento.ATIVO);
             Predicate PacienteFicha = cb.equal(RootAgendamento.get("paciente"), paciente);
             cq.select(RootAgendamento).where(somenteClienteAtivo,PacienteFicha);
 
@@ -124,7 +124,7 @@ public class AgendamentoJPA implements AgendamentoDAO {
             Root<Agendamento> RootAgendamento = cq.from(Agendamento.class);
 
             //2026-02-26 Juliano: mostrando na listagem todos os pacientes que são ativos e que terão consulta na data de hoje
-            Predicate somenteClienteAtivo = cb.equal(RootAgendamento.get("statuspacienteagendamento"), StatusPacienteAgendamento.ATIVO);
+            Predicate somenteClienteAtivo = cb.equal(RootAgendamento.get("statuspacienteagendamento"), StatusPacienteAgendamentoDocumento.ATIVO);
             Predicate AgendamentosDeHoje = cb.equal(RootAgendamento.get("dataAgendamento"), LocalDate.now());
             cq.select(RootAgendamento).where(somenteClienteAtivo, AgendamentosDeHoje);
 
@@ -220,7 +220,7 @@ public class AgendamentoJPA implements AgendamentoDAO {
 
             //2026-08-04 Juliano: já definindo que está lista filtrada tera somente os clientes ATIVOS
             predicates.add(cb.equal(RootAgendamento.get("statuspacienteagendamento"),
-                    StatusPacienteAgendamento.ATIVO
+                    StatusPacienteAgendamentoDocumento.ATIVO
             )
             );
 
@@ -269,7 +269,7 @@ public class AgendamentoJPA implements AgendamentoDAO {
                     + "AND a.statusagendamento IN (:statusAgendamento1, :statusAgendamento2) "
                     + "AND a.statuspagamento = :statusPagamento ",
                     BigDecimal.class)
-                    .setParameter("statusPaciente", StatusPacienteAgendamento.ATIVO)
+                    .setParameter("statusPaciente", StatusPacienteAgendamentoDocumento.ATIVO)
                     .setParameter("statusAgendamento1", StatusAgendamento.AGENDADO)
                     .setParameter("statusAgendamento2", StatusAgendamento.REALIZADO)
                     .setParameter("statusPagamento", StatusPagamento.PAGO)
@@ -292,7 +292,7 @@ public class AgendamentoJPA implements AgendamentoDAO {
                     + "WHERE a.statuspacienteagendamento = :statuspaciente "
                     + "AND a.statuspagamento = :statuspagamento",
                     Long.class)
-                    .setParameter("statuspaciente", StatusPacienteAgendamento.ATIVO)
+                    .setParameter("statuspaciente", StatusPacienteAgendamentoDocumento.ATIVO)
                     .setParameter("statuspagamento", StatusPagamento.PENDENTE)
                     .getSingleResult();
 
@@ -313,7 +313,7 @@ public class AgendamentoJPA implements AgendamentoDAO {
                     + "WHERE a.statuspacienteagendamento = :statuspaciente "
                     + "AND a.dataAgendamento = :dataagendamento ",
                     Long.class)
-                    .setParameter("statuspaciente", StatusPacienteAgendamento.ATIVO)
+                    .setParameter("statuspaciente", StatusPacienteAgendamentoDocumento.ATIVO)
                     .setParameter("dataagendamento", LocalDate.now())
                     .getSingleResult();
 

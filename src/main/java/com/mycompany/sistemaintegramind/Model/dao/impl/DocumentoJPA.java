@@ -6,7 +6,7 @@ package com.mycompany.sistemaintegramind.Model.dao.impl;
 
 import com.mycompany.sistemaintegramind.Model.dao.DocumentoDAO;
 import com.mycompany.sistemaintegramind.Model.entidades.Documento;
-import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamento;
+import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamentoDocumento;
 import com.mycompany.sistemaintegramind.Model.entidades.Paciente;
 import com.mycompany.sistemaintegramind.util.Utilitarios.JPAUtil;
 import java.util.ArrayList;
@@ -52,9 +52,9 @@ public class DocumentoJPA implements DocumentoDAO {
             Root<Documento> RootDocumentos = cq.from(Documento.class);
 
             //2026-02-26 Juliano: mostrando na listagem todos os clientes que são ativos
-            //Predicate somenteClienteAtivo = cb.equal(RootCliente.get("statuspaciente"), StatusPacienteAgendamento.ATIVO);
+            Predicate somenteClienteAtivo = cb.equal(RootDocumentos.get("statusdocumento"), StatusPacienteAgendamentoDocumento.ATIVO);
             Predicate DocumentosPaciente = cb.equal(RootDocumentos.get("paciente"), paciente);
-            cq.select(RootDocumentos).where(DocumentosPaciente);
+            cq.select(RootDocumentos).where(DocumentosPaciente,somenteClienteAtivo);
 
             listDocumentos = em.createQuery(cq).getResultList();
 

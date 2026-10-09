@@ -6,7 +6,7 @@ package com.mycompany.sistemaintegramind.Model.dao.impl;
 
 import com.mycompany.sistemaintegramind.Model.dao.EvolucaoClinicaDAO;
 import com.mycompany.sistemaintegramind.Model.entidades.Agendamento;
-import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamento;
+import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamentoDocumento;
 import com.mycompany.sistemaintegramind.Model.entidades.EvolucaoClinica;
 import com.mycompany.sistemaintegramind.Model.entidades.Paciente;
 import com.mycompany.sistemaintegramind.util.Utilitarios.JPAUtil;

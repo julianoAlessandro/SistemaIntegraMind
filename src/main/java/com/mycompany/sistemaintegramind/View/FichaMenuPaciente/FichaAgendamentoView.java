@@ -6,7 +6,7 @@ package com.mycompany.sistemaintegramind.View.FichaMenuPaciente;
 
 import com.mycompany.sistemaintegramind.Model.dao.impl.AgendamentoJPA;
 import com.mycompany.sistemaintegramind.Model.entidades.Agendamento;
-import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamento;
+import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamentoDocumento;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPagamento;
 import com.mycompany.sistemaintegramind.Model.entidades.GerenciadorDeCarregamentoEFormatacaoDaTabelaDeAgendamentos;
 import com.mycompany.sistemaintegramind.Model.entidades.Paciente;
@@ -191,7 +191,7 @@ public class FichaAgendamentoView extends javax.swing.JPanel {
 
             if (confirmacao == YES_NO_OPTION) {
                 Agendamento agendamentoexclusao = agendamentojpa.buscarPorId(CodigoId);
-                agendamentoexclusao.setStatusPacienteAgendamento(StatusPacienteAgendamento.INATIVO);
+                agendamentoexclusao.setStatusPacienteAgendamento(StatusPacienteAgendamentoDocumento.INATIVO);
                 agendamentojpa.atualizarAgendamento(agendamentoexclusao);
                 GerenciadorDeCarregamentoEFormatacaoDaTabelaDeAgendamentos.atualizartabelaAgendamento(new ArrayList<>(), modeloTabelaListarTodosAgendamentos, tblListarAgendamentosDeUmPaciente, paciente);
                 JOptionPane.showMessageDialog(

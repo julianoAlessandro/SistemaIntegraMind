@@ -38,15 +38,14 @@ public class MainMenu extends javax.swing.JFrame {
     private JButton botaoSelecionado;
     private FinanceiroView financeiro;
     private CardLayout cardlayout; //2025-11-08 Juliano: Criação do atributo global da classe para poder ser chamado nos métodos de eventos do java
-    private Usuarios usuarioLogado;
     private AgendaView agenda;
+    Usuarios usuarioLogado;
 
     public MainMenu() {
         this(null);
     }
 
     public MainMenu(Usuarios usuarioLogado) {
-        this.usuarioLogado = usuarioLogado;
         initComponents();
         //2026-01-13 Guilherme: Define o padrão brasileiro para toda a aplicação
         Locale.setDefault(new Locale("pt", "BR"));
@@ -77,7 +76,7 @@ public class MainMenu extends javax.swing.JFrame {
         //2025-11-08 Juliano: Cria um layout para poder adicionar várias paginas juntas como se fosse um baralho
         cardlayout = new CardLayout();
         MenuPrincipal.setLayout(cardlayout);
-        MenuPrincipal.add(new PainelView(), "Painel");
+        MenuPrincipal.add(new PainelView(usuarioLogado), "Painel");
         MenuPrincipal.add(new PacienteView(), "Pacientes");
         MenuPrincipal.add(new DashboardView(), "Dashboard");
         MenuPrincipal.add(new AgendaView(), "Agenda");
@@ -108,7 +107,6 @@ public class MainMenu extends javax.swing.JFrame {
     }
 
     public void setUsuarioLogado(Usuarios usuarioLogado) {
-        this.usuarioLogado = usuarioLogado;
         if (usuarioLogado != null) {
             this.setTitle("IntegraMind - Usuário: " + usuarioLogado.getUsuario());
         }
