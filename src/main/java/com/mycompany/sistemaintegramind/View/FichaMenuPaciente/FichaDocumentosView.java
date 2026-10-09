@@ -8,6 +8,7 @@ import com.mycompany.sistemaintegramind.Model.dao.impl.DocumentoJPA;
 import com.mycompany.sistemaintegramind.Model.dao.impl.EvolucaoClinicaJPA;
 import com.mycompany.sistemaintegramind.Model.entidades.Agendamento;
 import com.mycompany.sistemaintegramind.Model.entidades.Documento;
+import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamentoDocumento;
 import com.mycompany.sistemaintegramind.Model.entidades.EvolucaoClinica;
 import com.mycompany.sistemaintegramind.Model.entidades.Paciente;
 import java.awt.BorderLayout;
@@ -30,11 +31,13 @@ import javax.swing.ImageIcon;
 import java.awt.Image;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import static javax.swing.JOptionPane.YES_NO_OPTION;
 
 public class FichaDocumentosView extends javax.swing.JPanel {
 
     private Paciente paciente;
     private FichaDocumentosView fichadocumentosview;
+    private DocumentoJPA documentojpa = new DocumentoJPA();
 
     public FichaDocumentosView(Paciente paciente) {
         this.paciente = paciente;
@@ -46,8 +49,6 @@ public class FichaDocumentosView extends javax.swing.JPanel {
                         javax.swing.BoxLayout.Y_AXIS
                 )
         );
-        DocumentoJPA documentojpa = new DocumentoJPA();
-
         List<Documento> documentos = documentojpa.listarDocumentosPorPaciente(paciente);
 
         for (Documento documento : documentos) {
@@ -164,33 +165,37 @@ public class FichaDocumentosView extends javax.swing.JPanel {
 
         JPanel card = new JPanel(new BorderLayout(15, 10));
 
-        // Dimensões do cartão
+        //2026-10-09 Juliano: Definindo as dimensões do cartão
         card.setPreferredSize(new Dimension(600, 150));
         card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
-        card.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.GRAY),
-                BorderFactory.createEmptyBorder(12, 12, 12, 12)
-        ));
+        card.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.GRAY),BorderFactory.createEmptyBorder(12, 12, 12, 12)));
 
-        // Painel para a imagem do documento
+        //2026-10-09 Juliano: Painel para colocar as imagens que são os tipos dos arquivos
         JLabel lblImagemDocumento = new JLabel();
         lblImagemDocumento.setPreferredSize(new Dimension(110, 110));
         lblImagemDocumento.setHorizontalAlignment(SwingConstants.CENTER);
         lblImagemDocumento.setVerticalAlignment(SwingConstants.CENTER);
 
-        // Por enquanto, utiliza um ícone conforme a extensão
+      
         String nomeArquivo = documento.getNomeArquivo().toLowerCase();
+        
+        //2026-10-09 Juliano: Pega o id do documento para poder utilizar como referencia para poder excluir o documento
+        Long documentoid = documento.getId();
 
         String caminhoImagem;
 
         if (nomeArquivo.endsWith(".pdf")) {
             caminhoImagem = "/imagens/pdf.png";
+            
         } else if (nomeArquivo.endsWith(".doc") || nomeArquivo.endsWith(".docx")) {
             caminhoImagem = "/imagens/word.JPEG";
+            
         } else if (nomeArquivo.endsWith(".jpg") || nomeArquivo.endsWith(".jpeg") || nomeArquivo.endsWith(".png")) {
             caminhoImagem = "/imagens/png.png";
+            
         } else if (nomeArquivo.endsWith(".txt")) {
             caminhoImagem = "/imagens/txt.JPEG";
+            
         } else {
             caminhoImagem = "/imagens/arquivo.png";
         }
@@ -211,18 +216,15 @@ public class FichaDocumentosView extends javax.swing.JPanel {
 
         card.add(lblImagemDocumento, BorderLayout.WEST);
 
-        // Painel central com as informações
+       
         JPanel painelInformacoes = new JPanel(new BorderLayout(5, 10));
 
         JLabel lblNomeArquivo = new JLabel(documento.getNomeArquivo());
         lblNomeArquivo.setFont(new Font("Arial", Font.BOLD, 14));
 
-        JLabel lblTipoDocumento = new JLabel(
-                documento.getTipoDocumento().toString()
-        );
+        JLabel lblTipoDocumento = new JLabel(documento.getTipoDocumento().toString());
 
-        JLabel lblData = new JLabel(
-                "Adicionado em: " + documento.getDataAtualizacao().format(DateTimeFormatter.ofPattern("dd/MM/YYYY", new Locale("pt", "BR"))));
+        JLabel lblData = new JLabel("Adicionado em: " + documento.getDataAtualizacao().format(DateTimeFormatter.ofPattern("dd/MM/YYYY", new Locale("pt", "BR"))));
 
         JPanel painelCabecalho = new JPanel(new BorderLayout(10, 0));
         painelCabecalho.add(lblNomeArquivo, BorderLayout.WEST);
@@ -231,16 +233,13 @@ public class FichaDocumentosView extends javax.swing.JPanel {
         painelInformacoes.add(painelCabecalho, BorderLayout.NORTH);
         painelInformacoes.add(lblData, BorderLayout.CENTER);
 
-        // Botões de operações
-        JPanel painelBotoes = new JPanel(
-                new FlowLayout(FlowLayout.RIGHT, 8, 0)
-        );
+        //2026-10-09 Juliano: Botões para as operações de VISUALIZAR E BAIXAR
+        JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
 
         JButton btnVisualizar = new JButton("Visualizar");
-        JButton btnBaixar = new JButton("Baixar");
-        JButton btnExcluir = new JButton("Excluir");
+        JButton btnRemover = new JButton("Remover Arquivo");
 
-        // Visualizar documento
+        //2026-10-09 Juliano: Visulaizar arquivo especifico
         btnVisualizar.addActionListener(e -> {
 
             try {
@@ -270,13 +269,53 @@ public class FichaDocumentosView extends javax.swing.JPanel {
             }
         });
 
-        // Operações futuras
-        btnBaixar.setEnabled(false);
-        btnExcluir.setEnabled(false);
+        // 2026-10-09 Juliano: Remover um arquivo específico da listagem
+        btnRemover.addActionListener(e -> {
+
+            int confirmacao = JOptionPane.showConfirmDialog(
+                    this,
+                    "Você realmente deseja excluir este documento?",
+                    "Confirmar Exclusão",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE
+            );
+
+            if (confirmacao == JOptionPane.YES_OPTION) {
+
+                DocumentoJPA documentojpa = new DocumentoJPA();
+
+                Documento removerDocumento = documentojpa.buscarPorId(documentoid);
+
+                if (removerDocumento != null) {
+
+                    removerDocumento.setStatusdocumento(
+                            StatusPacienteAgendamentoDocumento.INATIVO
+                    );
+
+                    documentojpa.atualizarPaciente(removerDocumento);
+
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "Documento excluído com sucesso!",
+                            "Sucesso",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
+                    atualizarListaDeDocumentos();
+
+                } else {
+
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "Documento não encontrado.",
+                            "Aviso",
+                            JOptionPane.WARNING_MESSAGE
+                    );
+                }
+            }
+        });
 
         painelBotoes.add(btnVisualizar);
-        painelBotoes.add(btnBaixar);
-        painelBotoes.add(btnExcluir);
+        painelBotoes.add(btnRemover);
 
         painelInformacoes.add(painelBotoes, BorderLayout.SOUTH);
 
@@ -284,6 +323,28 @@ public class FichaDocumentosView extends javax.swing.JPanel {
 
         return card;
     }
+
+    //2026-10-09 Juliano: Atualiza a listagem dos documentos do paciente
+    public void atualizarListaDeDocumentos() {
+
+        //2026-10-09 Juliano: Remove os cards que estão sendo exibidos, para evitar duplicatas ao recarregar a listagem
+        pnlListarDocumentosPaciente.removeAll();
+
+        //2026-10-09 Juliano: Buscando novamente os arquivos do paciente especifico no banco de dados
+        List<Documento> documentos = documentojpa.listarDocumentosPorPaciente(paciente);
+
+        //2026-10-09 Juliano: Adicionando os cards atualizados novamente na listagem
+        for (Documento documento : documentos) {
+            pnlListarDocumentosPaciente.add(
+                    carregarDocumentosDoPaciente(documento)
+            );
+        }
+
+        //2026-10-09 Juliano: Atualiza a exibição do painel
+        pnlListarDocumentosPaciente.revalidate();
+        pnlListarDocumentosPaciente.repaint();
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdicionarDocumentos;
     private javax.swing.JLabel jLabel1;

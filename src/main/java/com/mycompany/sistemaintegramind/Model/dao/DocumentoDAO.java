@@ -13,5 +13,7 @@ public interface DocumentoDAO {
     public void CadastrarDocumento(Documento documento);
 
      public List<Documento> listarDocumentosPorPaciente(Paciente paciente);
+     public void atualizarPaciente(Documento documento);
+     public Documento buscarPorId(Long id);
 
 }

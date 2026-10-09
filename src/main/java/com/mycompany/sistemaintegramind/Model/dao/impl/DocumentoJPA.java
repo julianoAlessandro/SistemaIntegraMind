@@ -54,7 +54,7 @@ public class DocumentoJPA implements DocumentoDAO {
             //2026-02-26 Juliano: mostrando na listagem todos os clientes que são ativos
             Predicate somenteClienteAtivo = cb.equal(RootDocumentos.get("statusdocumento"), StatusPacienteAgendamentoDocumento.ATIVO);
             Predicate DocumentosPaciente = cb.equal(RootDocumentos.get("paciente"), paciente);
-            cq.select(RootDocumentos).where(DocumentosPaciente,somenteClienteAtivo);
+            cq.select(RootDocumentos).where(DocumentosPaciente, somenteClienteAtivo);
 
             listDocumentos = em.createQuery(cq).getResultList();
 
@@ -69,6 +69,48 @@ public class DocumentoJPA implements DocumentoDAO {
             }
         }
         return listDocumentos;
+
+    }
+
+    @Override
+    public Documento buscarPorId(Long id) {
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+
+            return em.find(Documento.class, id);
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            return null;
+
+        } finally {
+
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
+    }
+
+    @Override
+    public void atualizarPaciente(Documento documento) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.merge(documento);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em != null && em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
 
     }
 

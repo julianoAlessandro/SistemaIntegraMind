@@ -179,6 +179,7 @@ public class AdicionarDocumentoPacienteView extends javax.swing.JPanel {
         Window janela = SwingUtilities.getWindowAncestor(this);
         janela.dispose();
         fichadocumentosview.carregarDocumentosDoPaciente(documento);
+        fichadocumentosview.atualizarListaDeDocumentos();
         this.getTopLevelAncestor().setVisible(false);
 
     }//GEN-LAST:event_btnSalvarActionPerformed
