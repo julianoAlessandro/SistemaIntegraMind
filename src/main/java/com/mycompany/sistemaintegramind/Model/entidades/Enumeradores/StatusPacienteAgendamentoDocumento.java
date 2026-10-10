@@ -8,7 +8,7 @@ package com.mycompany.sistemaintegramind.Model.entidades.Enumeradores;
  *
  * @author Micro
  */
-public enum  StatusPacienteAgendamento {
+public enum  StatusPacienteAgendamentoDocumento {
     ATIVO,
     INATIVO
             

@@ -15,7 +15,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import com.mycompany.sistemaintegramind.Model.dao.PacienteDAO;
-import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamento;
+import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamentoDocumento;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPagamento;
 import com.mycompany.sistemaintegramind.util.Utilitarios.StatusAgendamento;
 import java.math.BigDecimal;
@@ -86,7 +86,7 @@ public class PacienteJPA implements PacienteDAO {
             Root<Paciente> RootCliente = cq.from(Paciente.class);
 
             //2026-02-26 Juliano: mostrando na listagem todos os clientes que são ativos
-            Predicate somenteClienteAtivo = cb.equal(RootCliente.get("statuspaciente"), StatusPacienteAgendamento.ATIVO);
+            Predicate somenteClienteAtivo = cb.equal(RootCliente.get("statuspaciente"), StatusPacienteAgendamentoDocumento.ATIVO);
             cq.select(RootCliente).where(somenteClienteAtivo);
 
             listClientes = em.createQuery(cq).getResultList();
@@ -119,7 +119,7 @@ public class PacienteJPA implements PacienteDAO {
 
             //2026-08-04 Juliano: já definindo que está lista filtrada tera somente os clientes ATIVOS
             predicates.add(cb.equal(RootClientes.get("statuspaciente"),
-                    StatusPacienteAgendamento.ATIVO
+                    StatusPacienteAgendamentoDocumento.ATIVO
             )
             );
 
@@ -253,7 +253,7 @@ public class PacienteJPA implements PacienteDAO {
                     "SELECT COUNT(p) FROM Paciente p "
                     + "WHERE p.statuspaciente = :statuspaciente",
                     Long.class)
-                    .setParameter("statuspaciente", StatusPacienteAgendamento.ATIVO)
+                    .setParameter("statuspaciente", StatusPacienteAgendamentoDocumento.ATIVO)
                     .getSingleResult();
 
             return totalPacientesAtivos.intValue();

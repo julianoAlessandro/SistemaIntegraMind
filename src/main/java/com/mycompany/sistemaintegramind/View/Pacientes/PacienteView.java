@@ -12,7 +12,7 @@ import com.mycompany.sistemaintegramind.Model.dto.FinanceiroDTO;
 import com.mycompany.sistemaintegramind.Model.entidades.Paciente;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.EstadosBrasileiros;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.Sexo;
-import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamento;
+import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamentoDocumento;
 import com.mycompany.sistemaintegramind.View.Componentes.BotaoEstilo;
 import com.mycompany.sistemaintegramind.View.Componentes.ComponenteUtil;
 import com.mycompany.sistemaintegramind.View.Componentes.TabelaEstilo;
@@ -1045,7 +1045,7 @@ public class PacienteView extends javax.swing.JPanel {
             paciente.setNumero(txtNumero.getText());
             paciente.setComplemento(txtComplemento.getText());
             paciente.setCidade(txtCidade.getText());
-            paciente.setStatuspaciente(StatusPacienteAgendamento.ATIVO);
+            paciente.setStatuspaciente(StatusPacienteAgendamentoDocumento.ATIVO);
 
             pacientejpa.CadastrarCliente(paciente);
 
@@ -1120,7 +1120,7 @@ public class PacienteView extends javax.swing.JPanel {
         paciente.setNumero(txtNumero.getText());
         paciente.setCidade(txtCidade.getText());
         paciente.setCep(txtBuscaCep.getText());
-        paciente.setStatuspaciente(StatusPacienteAgendamento.ATIVO);
+        paciente.setStatuspaciente(StatusPacienteAgendamentoDocumento.ATIVO);
         paciente.setProfissao(txtProfissao.getText());
         paciente.setIdade(txtIdade.getText());
 
@@ -1442,7 +1442,7 @@ public class PacienteView extends javax.swing.JPanel {
             Paciente paciente = pacientejpa.buscarPorId(idPaciente);
             filtro.setId(idPaciente);
             if (paciente != null) {
-                paciente.setStatuspaciente(StatusPacienteAgendamento.INATIVO);
+                paciente.setStatuspaciente(StatusPacienteAgendamentoDocumento.INATIVO);
                 pacientejpa.atualizarPaciente(paciente);
                 JOptionPane.showMessageDialog(
                         this,
