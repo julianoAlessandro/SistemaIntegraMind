@@ -6,11 +6,15 @@ package com.mycompany.sistemaintegramind.View.Painel;
 
 import com.mycompany.sistemaintegramind.Model.dao.impl.AgendamentoJPA;
 import com.mycompany.sistemaintegramind.Model.dao.impl.PacienteJPA;
+import com.mycompany.sistemaintegramind.Model.entidades.Usuarios;
 import com.mycompany.sistemaintegramind.View.Componentes.Container;
 import com.mycompany.sistemaintegramind.util.Utilitarios.ImagemUtil;
 import java.awt.Color;
 import java.awt.Image;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import javax.swing.ImageIcon;
 
 /**
@@ -18,17 +22,18 @@ import javax.swing.ImageIcon;
  * @author Micro
  */
 public class PainelView extends javax.swing.JPanel {
-
-    /**
-     * Creates new form PainelView
-     */
-    public PainelView() {
+    
+    private Usuarios usuarioLogado;
+    
+    public PainelView(Usuarios usuariologado) {
         initComponents();
+        this.usuarioLogado = usuariologado;
+        lblUsuario.setText(usuariologado.getUsuario());
+        
         container6.setCardStyle();
         container8.setCardStyle();
         container9.setCardStyle();
-
-
+        
         Color PacienteBgColor = new Color(179, 255, 193);
         Color HojeBgColor = new Color(179, 218, 255);
         Color ReceitaBgColor = new Color(255, 237, 179);
@@ -109,8 +114,9 @@ public class PainelView extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         container4 = new com.mycompany.sistemaintegramind.View.Componentes.Container();
         jLabel4 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        jLabel13 = new javax.swing.JLabel();
+        lblDia = new javax.swing.JLabel();
+        lblDataHoje = new javax.swing.JLabel();
+        lblUsuario = new javax.swing.JLabel();
         container9 = new com.mycompany.sistemaintegramind.View.Componentes.Container();
 
         setBackground(new java.awt.Color(251, 251, 253));
@@ -123,7 +129,7 @@ public class PainelView extends javax.swing.JPanel {
         container6.setLayout(container6Layout);
         container6Layout.setHorizontalGroup(
             container6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 2204, Short.MAX_VALUE)
+            .addGap(0, 2207, Short.MAX_VALUE)
         );
         container6Layout.setVerticalGroup(
             container6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -146,7 +152,7 @@ public class PainelView extends javax.swing.JPanel {
         container8.setLayout(container8Layout);
         container8Layout.setHorizontalGroup(
             container8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1102, Short.MAX_VALUE)
+            .addGap(0, 1104, Short.MAX_VALUE)
         );
         container8Layout.setVerticalGroup(
             container8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -212,7 +218,7 @@ public class PainelView extends javax.swing.JPanel {
                     .addGroup(containerHojeLayout.createSequentialGroup()
                         .addGap(50, 50, 50)
                         .addComponent(jLabel14)))
-                .addContainerGap(157, Short.MAX_VALUE))
+                .addContainerGap(162, Short.MAX_VALUE))
         );
         containerHojeLayout.setVerticalGroup(
             containerHojeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -282,10 +288,10 @@ public class PainelView extends javax.swing.JPanel {
                 .addGroup(containerReceitaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5)
                     .addComponent(lblFaturamento, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(198, Short.MAX_VALUE))
+                .addContainerGap(199, Short.MAX_VALUE))
             .addGroup(containerReceitaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, containerReceitaLayout.createSequentialGroup()
-                    .addContainerGap(289, Short.MAX_VALUE)
+                    .addContainerGap(292, Short.MAX_VALUE)
                     .addComponent(jLabel17)
                     .addGap(122, 122, 122)))
         );
@@ -362,7 +368,7 @@ public class PainelView extends javax.swing.JPanel {
                     .addComponent(jLabel7)
                     .addComponent(lblPendente, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel16))
-                .addContainerGap(146, Short.MAX_VALUE))
+                .addContainerGap(151, Short.MAX_VALUE))
         );
         containerPendentesLayout.setVerticalGroup(
             containerPendentesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -464,19 +470,30 @@ public class PainelView extends javax.swing.JPanel {
         jPanel1.setOpaque(false);
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        jLabel6.setText("Olá, Nome!");
+        jLabel6.setForeground(new java.awt.Color(4, 73, 32));
+        jLabel6.setText("Olá,");
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabel1.setText("Olá, Nome!");
+        jLabel1.setForeground(new java.awt.Color(4, 73, 32));
+        jLabel1.setText("Seja bem-vindo(a) ao IntegraMind!");
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/agendar.png"))); // NOI18N
 
-        jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabel8.setText("Terça");
+        lblDia.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lblDia.setText("Terça");
 
-        jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel13.setText("30 de setembro de 2020");
+        lblDataHoje.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lblDataHoje.setText("30 de setembro de 2020");
+        lblDataHoje.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                lblDataHojeAncestorAdded(evt);
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
 
         javax.swing.GroupLayout container4Layout = new javax.swing.GroupLayout(container4);
         container4.setLayout(container4Layout);
@@ -487,8 +504,8 @@ public class PainelView extends javax.swing.JPanel {
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(container4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel8)
-                    .addComponent(jLabel13))
+                    .addComponent(lblDia)
+                    .addComponent(lblDataHoje))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         container4Layout.setVerticalGroup(
@@ -497,14 +514,27 @@ public class PainelView extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(container4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(container4Layout.createSequentialGroup()
-                        .addComponent(jLabel13)
+                        .addComponent(lblDataHoje)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel8))
+                        .addComponent(lblDia))
                     .addGroup(container4Layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
+
+        lblUsuario.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        lblUsuario.setForeground(new java.awt.Color(4, 73, 32));
+        lblUsuario.setText("JULIANO ALESSANDRO DOS SANTOS");
+        lblUsuario.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                lblUsuarioAncestorAdded(evt);
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -513,9 +543,12 @@ public class PainelView extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel6)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblUsuario))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 1242, Short.MAX_VALUE)
                 .addComponent(container4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -526,7 +559,9 @@ public class PainelView extends javax.swing.JPanel {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(container4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel6)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(lblUsuario))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel1)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -546,7 +581,7 @@ public class PainelView extends javax.swing.JPanel {
         container9.setLayout(container9Layout);
         container9Layout.setHorizontalGroup(
             container9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1102, Short.MAX_VALUE)
+            .addGap(0, 1103, Short.MAX_VALUE)
         );
         container9Layout.setVerticalGroup(
             container9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -585,7 +620,7 @@ public class PainelView extends javax.swing.JPanel {
 
         //2026-09-24 Juliano: Formata o BigDecimal (ele já adiciona o "R$" e ajusta os pontos e vírgulas)
         String faturamentoTexto = nf.format(faturamento);
-
+        
         lblFaturamento.setText(faturamentoTexto);
 
     }//GEN-LAST:event_lblFaturamentoAncestorAdded
@@ -604,6 +639,15 @@ public class PainelView extends javax.swing.JPanel {
         lblTotalAgendamentosDoDia.setText(totalAgendamentosDoDiaTexto);
     }//GEN-LAST:event_lblTotalAgendamentosDoDiaAncestorAdded
 
+    private void lblUsuarioAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_lblUsuarioAncestorAdded
+     
+    }//GEN-LAST:event_lblUsuarioAncestorAdded
+
+    private void lblDataHojeAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_lblDataHojeAncestorAdded
+         lblDataHoje.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy", new Locale("pt", "BR"))));
+         lblDia.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("EEEE", new Locale("pt", "BR"))));
+    }//GEN-LAST:event_lblDataHojeAncestorAdded
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.mycompany.sistemaintegramind.util.Utilitarios.CircularIconLabel circularIconLabel2;
@@ -620,7 +664,6 @@ public class PainelView extends javax.swing.JPanel {
     private com.mycompany.sistemaintegramind.View.Componentes.Container containerPendentes;
     private com.mycompany.sistemaintegramind.View.Componentes.Container containerReceita;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
@@ -631,11 +674,13 @@ public class PainelView extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel lblDataHoje;
+    private javax.swing.JLabel lblDia;
     private javax.swing.JLabel lblFaturamento;
     private javax.swing.JLabel lblPendente;
     private javax.swing.JLabel lblTotalAgendamentosDoDia;
     private javax.swing.JLabel lblTotalPacientesSistema;
+    private javax.swing.JLabel lblUsuario;
     // End of variables declaration//GEN-END:variables
 }

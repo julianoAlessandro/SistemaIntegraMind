@@ -6,7 +6,7 @@ package com.mycompany.sistemaintegramind.View.EditarExcluirAgendamento;
 
 import com.mycompany.sistemaintegramind.Model.dao.impl.AgendamentoJPA;
 import com.mycompany.sistemaintegramind.Model.entidades.Agendamento;
-import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamento;
+import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamentoDocumento;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPagamento;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.TipoAtendimento;
 import com.mycompany.sistemaintegramind.util.Utilitarios.StatusAgendamento;

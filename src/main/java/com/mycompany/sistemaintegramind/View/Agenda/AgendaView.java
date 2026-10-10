@@ -10,7 +10,7 @@ import com.mycompany.sistemaintegramind.Model.dao.impl.AgendamentoJPA;
 import com.mycompany.sistemaintegramind.Model.dao.impl.PacienteJPA;
 import com.mycompany.sistemaintegramind.Model.entidades.Agendamento;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.FrequenciaAtendimento;
-import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamento;
+import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamentoDocumento;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPagamento;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.TipoAtendimento;
 import com.mycompany.sistemaintegramind.Model.entidades.GerenciadorDeCarregamentoEFormatacaoDaTabelaDeAgendamentos;
@@ -216,7 +216,7 @@ public class AgendaView extends javax.swing.JPanel {
         }
 
         novoagendamento.setFrequenciaatendimento((FrequenciaAtendimento) cmbFrequenciaAtendimento.getSelectedItem());
-        novoagendamento.setStatusPacienteAgendamento(StatusPacienteAgendamento.ATIVO);
+        novoagendamento.setStatusPacienteAgendamento(StatusPacienteAgendamentoDocumento.ATIVO);
 
         System.out.println(" Agendamentos do Paciente --> " + novoagendamento.getPaciente().getNome() + " datas --> " + novoagendamento.getDataAgendamento());
         System.out.println("Agendamento cadastrado com sucesso!!!");
@@ -1182,7 +1182,7 @@ public class AgendaView extends javax.swing.JPanel {
 
             if (confirmacao == YES_NO_OPTION) {
                 Agendamento agendamentoexclusao = agendamentojpa.buscarPorId(CodigoId);
-                agendamentoexclusao.setStatusPacienteAgendamento(StatusPacienteAgendamento.INATIVO);
+                agendamentoexclusao.setStatusPacienteAgendamento(StatusPacienteAgendamentoDocumento.INATIVO);
                 agendamentojpa.atualizarAgendamento(agendamentoexclusao);
                 atualizartabelaAgendamento();
                 JOptionPane.showMessageDialog(

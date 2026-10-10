@@ -6,6 +6,7 @@ package com.mycompany.sistemaintegramind.View.FichaMenuPaciente;
 
 import com.mycompany.sistemaintegramind.Model.dao.impl.DocumentoJPA;
 import com.mycompany.sistemaintegramind.Model.entidades.Documento;
+import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamentoDocumento;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.TipoAtendimento;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.TipoDocumentoPaciente;
 import com.mycompany.sistemaintegramind.Model.entidades.Paciente;
@@ -27,9 +28,10 @@ public class AdicionarDocumentoPacienteView extends javax.swing.JPanel {
 
     private File arquivoSelecionado;
     private Paciente paciente;
-
-    public AdicionarDocumentoPacienteView(Paciente paciente) {
+    private FichaDocumentosView fichadocumentosview;
+    public AdicionarDocumentoPacienteView(Paciente paciente, FichaDocumentosView fichadocumentosview) {
         this.paciente = paciente;
+        this.fichadocumentosview = fichadocumentosview;
         initComponents();
         txtArquivo.putClientProperty("JTextField.placeholderText", "Nenhum arquivo selecionado");
         cmbTipoDocumento.setModel(new DefaultComboBoxModel<>(TipoDocumentoPaciente.values()));
@@ -168,6 +170,7 @@ public class AdicionarDocumentoPacienteView extends javax.swing.JPanel {
         documento.setTipoDocumento((TipoDocumentoPaciente) cmbTipoDocumento.getSelectedItem());
         documento.setPaciente(paciente);
         documento.setCaminhoArquivo(arquivoDestino.getAbsolutePath());
+        documento.setStatusdocumento(StatusPacienteAgendamentoDocumento.ATIVO);
         documentojpa.CadastrarDocumento(documento);
         JOptionPane.showMessageDialog(this,
                 "Arquivo adicionado com sucesso ao histórico do paciente!",
@@ -175,6 +178,9 @@ public class AdicionarDocumentoPacienteView extends javax.swing.JPanel {
                 JOptionPane.INFORMATION_MESSAGE);
         Window janela = SwingUtilities.getWindowAncestor(this);
         janela.dispose();
+        fichadocumentosview.carregarDocumentosDoPaciente(documento);
+        fichadocumentosview.atualizarListaDeDocumentos();
+        this.getTopLevelAncestor().setVisible(false);
 
     }//GEN-LAST:event_btnSalvarActionPerformed
 

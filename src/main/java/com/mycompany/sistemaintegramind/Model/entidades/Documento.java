@@ -4,7 +4,7 @@
  */
 package com.mycompany.sistemaintegramind.Model.entidades;
 
-import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamento;
+import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamentoDocumento;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.TipoDocumentoPaciente;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -37,6 +37,10 @@ public class Documento extends Entidade {
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_documento")
     private TipoDocumentoPaciente tipoDocumento;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status_documento")
+    private StatusPacienteAgendamentoDocumento statusdocumento;
 
     @ManyToOne
     @JoinColumn(name = "paciente_id", nullable = false)
@@ -93,7 +97,14 @@ public class Documento extends Entidade {
     public void setPaciente(Paciente paciente) {
         this.paciente = paciente;
     }
-    
-    
 
+    public StatusPacienteAgendamentoDocumento getStatusdocumento() {
+        return statusdocumento;
+    }
+
+    public void setStatusdocumento(StatusPacienteAgendamentoDocumento statusdocumento) {
+        this.statusdocumento = statusdocumento;
+    }
+
+    
 }
