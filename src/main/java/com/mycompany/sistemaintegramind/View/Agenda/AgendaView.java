@@ -52,6 +52,10 @@ public class AgendaView extends javax.swing.JPanel {
 
     public AgendaView() {
         initComponents();
+        container1.setCardStyle();
+        container2.setCardStyle();
+        container3.setCardStyle();
+
         //2026-09-11 Juliano: Definindo os estilos da tabelas
         TabelaEstilo.aplicar(tblAgendamentos);
         TabelaEstilo.aplicar(tblListarAgendamentosDoDia);
@@ -257,25 +261,32 @@ public class AgendaView extends javax.swing.JPanel {
         txtValorConsulta = new javax.swing.JTextField();
         cmbTipoAtendimento = new javax.swing.JComboBox<>();
         jLabel7 = new javax.swing.JLabel();
-        btnRealizarAgendamento = new javax.swing.JButton();
-        btnLimparDadosAgendamento = new javax.swing.JButton();
         txtObservacao = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        btnRealizarAgendamento = new javax.swing.JButton();
+        btnLimparDadosAgendamento = new javax.swing.JButton();
         container2 = new com.mycompany.sistemaintegramind.View.Componentes.Container();
         jLabel14 = new javax.swing.JLabel();
-        jLabel15 = new javax.swing.JLabel();
-        dtFiltrarDataAgendamento = new com.toedter.calendar.JDateChooser();
-        jLabel13 = new javax.swing.JLabel();
-        cmbFiltrarPaciente = new javax.swing.JComboBox<>();
+        jPanel3 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
-        cmbFiltrarStatusPagamento = new javax.swing.JComboBox<>();
-        jLabel17 = new javax.swing.JLabel();
         cmbFiltrarTipoAtendimento = new javax.swing.JComboBox<>();
+        jLabel15 = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
         cmbFiltrarFrequenciaAtendimento = new javax.swing.JComboBox<>();
-        btnFiltroAgendamento = new javax.swing.JButton();
+        dtFiltrarDataAgendamento = new com.toedter.calendar.JDateChooser();
+        cmbFiltrarStatusPagamento = new javax.swing.JComboBox<>();
+        cmbFiltrarPaciente = new javax.swing.JComboBox<>();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel17 = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        jPanel5 = new javax.swing.JPanel();
+        jPanel6 = new javax.swing.JPanel();
+        jPanel7 = new javax.swing.JPanel();
         btnLimparFiltroAgendamento = new javax.swing.JButton();
+        btnFiltroAgendamento = new javax.swing.JButton();
         container3 = new com.mycompany.sistemaintegramind.View.Componentes.Container();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblListarAgendamentosDoDia = new javax.swing.JTable();
@@ -320,7 +331,6 @@ public class AgendaView extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(7, 7, 7, 7);
         add(jScrollPane1, gridBagConstraints);
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
@@ -334,7 +344,6 @@ public class AgendaView extends javax.swing.JPanel {
         gridBagConstraints.ipadx = 12;
         gridBagConstraints.ipady = 15;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(7, 7, 7, 7);
         add(jLabel9, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -362,7 +371,7 @@ public class AgendaView extends javax.swing.JPanel {
         gridBagConstraints.ipadx = 100;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 7);
+        gridBagConstraints.insets = new java.awt.Insets(0, 15, 0, 7);
         container1.add(cmbListarPacientes, gridBagConstraints);
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -371,7 +380,7 @@ public class AgendaView extends javax.swing.JPanel {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 7, 5, 0);
+        gridBagConstraints.insets = new java.awt.Insets(0, 15, 5, 0);
         container1.add(jLabel3, gridBagConstraints);
 
         dtDataAgendamento.setMaximumSize(new java.awt.Dimension(190, 32));
@@ -514,7 +523,7 @@ public class AgendaView extends javax.swing.JPanel {
         gridBagConstraints.ipadx = 100;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 7);
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 15);
         container1.add(cmbTipoAtendimento, gridBagConstraints);
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -525,37 +534,6 @@ public class AgendaView extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 7, 5, 0);
         container1.add(jLabel7, gridBagConstraints);
-
-        btnRealizarAgendamento.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btnRealizarAgendamento.setText("Agendar");
-        btnRealizarAgendamento.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRealizarAgendamentoActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.ipadx = 100;
-        gridBagConstraints.ipady = 15;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 0);
-        container1.add(btnRealizarAgendamento, gridBagConstraints);
-
-        btnLimparDadosAgendamento.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btnLimparDadosAgendamento.setText("Limpar");
-        btnLimparDadosAgendamento.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLimparDadosAgendamentoActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.ipadx = 100;
-        gridBagConstraints.ipady = 15;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        container1.add(btnLimparDadosAgendamento, gridBagConstraints);
 
         txtObservacao.setMaximumSize(new java.awt.Dimension(0, 0));
         txtObservacao.setMinimumSize(new java.awt.Dimension(0, 0));
@@ -573,7 +551,7 @@ public class AgendaView extends javax.swing.JPanel {
         gridBagConstraints.ipadx = 140;
         gridBagConstraints.ipady = 32;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 7, 20, 15);
+        gridBagConstraints.insets = new java.awt.Insets(0, 15, 20, 15);
         container1.add(txtObservacao, gridBagConstraints);
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -582,10 +560,10 @@ public class AgendaView extends javax.swing.JPanel {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(20, 7, 5, 0);
+        gridBagConstraints.insets = new java.awt.Insets(20, 15, 5, 0);
         container1.add(jLabel6, gridBagConstraints);
 
-        jLabel19.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        jLabel19.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         jLabel19.setForeground(new java.awt.Color(13, 82, 65));
         jLabel19.setText("Agendar");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -596,8 +574,63 @@ public class AgendaView extends javax.swing.JPanel {
         gridBagConstraints.ipady = 23;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 0);
+        gridBagConstraints.insets = new java.awt.Insets(0, 15, 5, 0);
         container1.add(jLabel19, gridBagConstraints);
+
+        jPanel2.setOpaque(false);
+        jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
+
+        jPanel1.setOpaque(false);
+        jPanel1.setLayout(new java.awt.GridBagLayout());
+
+        btnRealizarAgendamento.setBackground(new java.awt.Color(13, 82, 65));
+        btnRealizarAgendamento.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        btnRealizarAgendamento.setForeground(new java.awt.Color(255, 255, 255));
+        btnRealizarAgendamento.setText("Agendar");
+        btnRealizarAgendamento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRealizarAgendamentoActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 100;
+        gridBagConstraints.ipady = 15;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 15, 0, 20);
+        jPanel1.add(btnRealizarAgendamento, gridBagConstraints);
+
+        btnLimparDadosAgendamento.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnLimparDadosAgendamento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/limpar.png"))); // NOI18N
+        btnLimparDadosAgendamento.setText("Limpar");
+        btnLimparDadosAgendamento.setIconTextGap(10);
+        btnLimparDadosAgendamento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimparDadosAgendamentoActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 100;
+        gridBagConstraints.ipady = 15;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        jPanel1.add(btnLimparDadosAgendamento, gridBagConstraints);
+
+        jPanel2.add(jPanel1);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridwidth = 7;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 15, 0);
+        container1.add(jPanel2, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -606,53 +639,107 @@ public class AgendaView extends javax.swing.JPanel {
         gridBagConstraints.ipadx = 20;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(7, 7, 7, 7);
         add(container1, gridBagConstraints);
 
         container2.setBackground(new java.awt.Color(254, 254, 254));
         container2.setLayout(new java.awt.GridBagLayout());
 
-        jLabel14.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        jLabel14.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         jLabel14.setForeground(new java.awt.Color(13, 82, 65));
         jLabel14.setText("Filtrar tabela");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 5;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.ipadx = 2097;
         gridBagConstraints.ipady = 23;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 15, 0, 28);
+        container2.add(jLabel14, gridBagConstraints);
+
+        jPanel3.setMinimumSize(new java.awt.Dimension(0, 59));
+        jPanel3.setOpaque(false);
+        jPanel3.setPreferredSize(new java.awt.Dimension(0, 59));
+        jPanel3.setLayout(new java.awt.GridBagLayout());
+
+        jLabel11.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel11.setText("Status Pagamento");
+        jLabel11.setMaximumSize(new java.awt.Dimension(51, 20));
+        jLabel11.setMinimumSize(new java.awt.Dimension(0, 20));
+        jLabel11.setPreferredSize(new java.awt.Dimension(115, 20));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        jPanel3.add(jLabel11, gridBagConstraints);
+
+        cmbFiltrarTipoAtendimento.setMinimumSize(new java.awt.Dimension(0, 32));
+        cmbFiltrarTipoAtendimento.setPreferredSize(new java.awt.Dimension(0, 32));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 0);
-        container2.add(jLabel14, gridBagConstraints);
+        jPanel3.add(cmbFiltrarTipoAtendimento, gridBagConstraints);
 
         jLabel15.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel15.setText("Paciente");
+        jLabel15.setMinimumSize(new java.awt.Dimension(0, 20));
+        jLabel15.setPreferredSize(new java.awt.Dimension(115, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 7, 5, 0);
-        container2.add(jLabel15, gridBagConstraints);
+        jPanel3.add(jLabel15, gridBagConstraints);
 
-        dtFiltrarDataAgendamento.setPreferredSize(new java.awt.Dimension(190, 32));
+        jLabel18.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel18.setText("Frequência");
+        jLabel18.setMaximumSize(new java.awt.Dimension(51, 20));
+        jLabel18.setMinimumSize(new java.awt.Dimension(0, 20));
+        jLabel18.setPreferredSize(new java.awt.Dimension(115, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        jPanel3.add(jLabel18, gridBagConstraints);
+
+        cmbFiltrarFrequenciaAtendimento.setMinimumSize(new java.awt.Dimension(0, 32));
+        cmbFiltrarFrequenciaAtendimento.setPreferredSize(new java.awt.Dimension(0, 32));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 7);
-        container2.add(dtFiltrarDataAgendamento, gridBagConstraints);
+        jPanel3.add(cmbFiltrarFrequenciaAtendimento, gridBagConstraints);
 
-        jLabel13.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel13.setText("Data da Agenda:");
+        dtFiltrarDataAgendamento.setMinimumSize(new java.awt.Dimension(0, 32));
+        dtFiltrarDataAgendamento.setPreferredSize(new java.awt.Dimension(0, 32));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 0);
-        container2.add(jLabel13, gridBagConstraints);
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 7);
+        jPanel3.add(dtFiltrarDataAgendamento, gridBagConstraints);
 
-        cmbFiltrarPaciente.setPreferredSize(new java.awt.Dimension(190, 32));
+        cmbFiltrarStatusPagamento.setMinimumSize(new java.awt.Dimension(0, 32));
+        cmbFiltrarStatusPagamento.setPreferredSize(new java.awt.Dimension(0, 32));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 7);
+        jPanel3.add(cmbFiltrarStatusPagamento, gridBagConstraints);
+
+        cmbFiltrarPaciente.setMinimumSize(new java.awt.Dimension(0, 32));
+        cmbFiltrarPaciente.setPreferredSize(new java.awt.Dimension(0, 32));
         cmbFiltrarPaciente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbFiltrarPacienteActionPerformed(evt);
@@ -660,81 +747,97 @@ public class AgendaView extends javax.swing.JPanel {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 7);
-        container2.add(cmbFiltrarPaciente, gridBagConstraints);
-
-        jLabel11.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel11.setText("Status Pagamento");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 0);
-        container2.add(jLabel11, gridBagConstraints);
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 7);
+        jPanel3.add(cmbFiltrarPaciente, gridBagConstraints);
 
-        cmbFiltrarStatusPagamento.setPreferredSize(new java.awt.Dimension(190, 32));
+        jLabel13.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel13.setText("Data da Agenda:");
+        jLabel13.setMaximumSize(new java.awt.Dimension(51, 20));
+        jLabel13.setMinimumSize(new java.awt.Dimension(0, 20));
+        jLabel13.setPreferredSize(new java.awt.Dimension(115, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 7);
-        container2.add(cmbFiltrarStatusPagamento, gridBagConstraints);
+        jPanel3.add(jLabel13, gridBagConstraints);
 
         jLabel17.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel17.setText("Tipo Atendimento");
+        jLabel17.setMaximumSize(new java.awt.Dimension(51, 20));
+        jLabel17.setMinimumSize(new java.awt.Dimension(0, 20));
+        jLabel17.setPreferredSize(new java.awt.Dimension(115, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 0);
-        container2.add(jLabel17, gridBagConstraints);
+        jPanel3.add(jLabel17, gridBagConstraints);
 
-        cmbFiltrarTipoAtendimento.setPreferredSize(new java.awt.Dimension(190, 32));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 7);
-        container2.add(cmbFiltrarTipoAtendimento, gridBagConstraints);
-
-        jLabel18.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel18.setText("Frequência");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.ipadx = 5;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 0);
-        container2.add(jLabel18, gridBagConstraints);
-
-        cmbFiltrarFrequenciaAtendimento.setPreferredSize(new java.awt.Dimension(190, 32));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 7);
-        container2.add(cmbFiltrarFrequenciaAtendimento, gridBagConstraints);
-
-        btnFiltroAgendamento.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btnFiltroAgendamento.setText("Buscar ");
-        btnFiltroAgendamento.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnFiltroAgendamentoActionPerformed(evt);
-            }
-        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.ipadx = 100;
-        gridBagConstraints.ipady = 10;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(20, 7, 0, 0);
-        container2.add(btnFiltroAgendamento, gridBagConstraints);
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 15, 0, 15);
+        container2.add(jPanel3, gridBagConstraints);
+
+        jPanel4.setOpaque(false);
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        container2.add(jPanel4, gridBagConstraints);
+
+        jPanel5.setOpaque(false);
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        container2.add(jPanel5, gridBagConstraints);
+
+        jPanel6.setOpaque(false);
+        jPanel6.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        jPanel7.setOpaque(false);
+        jPanel7.setLayout(new java.awt.GridBagLayout());
 
         btnLimparFiltroAgendamento.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnLimparFiltroAgendamento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/limpar.png"))); // NOI18N
         btnLimparFiltroAgendamento.setText("Limpar Filtros");
+        btnLimparFiltroAgendamento.setMaximumSize(new java.awt.Dimension(110, 39));
+        btnLimparFiltroAgendamento.setMinimumSize(new java.awt.Dimension(110, 39));
+        btnLimparFiltroAgendamento.setPreferredSize(new java.awt.Dimension(110, 39));
         btnLimparFiltroAgendamento.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnLimparFiltroAgendamentoActionPerformed(evt);
@@ -742,12 +845,41 @@ public class AgendaView extends javax.swing.JPanel {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.ipadx = 100;
-        gridBagConstraints.ipady = 10;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 106;
+        gridBagConstraints.ipady = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(20, 0, 0, 0);
-        container2.add(btnLimparFiltroAgendamento, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(0, 15, 0, 0);
+        jPanel7.add(btnLimparFiltroAgendamento, gridBagConstraints);
+
+        btnFiltroAgendamento.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnFiltroAgendamento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/lupa-32.png"))); // NOI18N
+        btnFiltroAgendamento.setText("Buscar ");
+        btnFiltroAgendamento.setMaximumSize(new java.awt.Dimension(110, 39));
+        btnFiltroAgendamento.setMinimumSize(new java.awt.Dimension(110, 39));
+        btnFiltroAgendamento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFiltroAgendamentoActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 65;
+        gridBagConstraints.ipady = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        jPanel7.add(btnFiltroAgendamento, gridBagConstraints);
+
+        jPanel6.add(jPanel7);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(15, 15, 15, 0);
+        container2.add(jPanel6, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -755,7 +887,6 @@ public class AgendaView extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(7, 7, 7, 7);
         add(container2, gridBagConstraints);
 
         container3.setBackground(new java.awt.Color(236, 249, 242));
@@ -838,7 +969,6 @@ public class AgendaView extends javax.swing.JPanel {
         gridBagConstraints.ipadx = 100;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(7, 7, 7, 7);
         add(container3, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -1272,6 +1402,13 @@ public class AgendaView extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lblDataHoje;
