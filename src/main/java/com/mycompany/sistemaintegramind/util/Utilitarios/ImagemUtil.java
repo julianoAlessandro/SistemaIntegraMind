@@ -24,8 +24,8 @@ public class ImagemUtil {
     // 1. ALTERAR A COR DA IMAGEM (ÍCONE PRETO/MONOCROMÁTICO)
     // =========================================================
     /**
-     * Altera a cor de uma imagem monocromática (ex: silhueta preta em PNG transparente)
-     * preservando a transparência original do canal Alpha.
+     * Altera a cor de uma imagem monocromática (ex: silhueta preta em PNG
+     * transparente) preservando a transparência original do canal Alpha.
      *
      * @param imagemOriginal Imagem base
      * @param novaCor Cor desejada para a imagem
@@ -74,7 +74,8 @@ public class ImagemUtil {
     // 2. REDIMENSIONAR IMAGEM
     // =========================================================
     /**
-     * Redimensiona uma imagem mantendo alta qualidade de renderização (Bicubic).
+     * Redimensiona uma imagem mantendo alta qualidade de renderização
+     * (Bicubic).
      *
      * @param imagemOriginal Imagem base
      * @param largura Nova largura em pixels
@@ -165,5 +166,28 @@ public class ImagemUtil {
         g2.dispose();
 
         return bimage;
+    }
+
+    /**
+     * Converte um Icon genérico em ImageIcon.
+     */
+    public static ImageIcon converterIconeParaImageIcon(Icon icon) {
+        if (icon instanceof ImageIcon) {
+            return (ImageIcon) icon;
+        } else if (icon != null) {
+            Image img = converterIconeParaImagem(icon);
+            return new ImageIcon(img);
+        }
+        return null;
+    }
+
+    /**
+     * Converte um Image em ImageIcon.
+     */
+    public static ImageIcon converterImageParaImageIcon(Image img) {
+        if (img != null) {
+            return new ImageIcon(img);
+        }
+        return null;
     }
 }

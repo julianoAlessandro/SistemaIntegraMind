@@ -213,7 +213,7 @@ public class LoginView extends javax.swing.JPanel {
         container1.setLayout(new java.awt.GridBagLayout());
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(0, 204, 51));
+        jLabel4.setForeground(new java.awt.Color(3, 62, 29));
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LogoLoginV2_60x60.png"))); // NOI18N
         jLabel4.setText("IntegraMind");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -266,7 +266,7 @@ public class LoginView extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 30, 0, 30);
         container1.add(txtUsuario, gridBagConstraints);
 
-        btnEntrarSistema.setBackground(new java.awt.Color(0, 204, 51));
+        btnEntrarSistema.setBackground(new java.awt.Color(3, 62, 29));
         btnEntrarSistema.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         btnEntrarSistema.setForeground(new java.awt.Color(255, 255, 255));
         btnEntrarSistema.setText("Entrar");

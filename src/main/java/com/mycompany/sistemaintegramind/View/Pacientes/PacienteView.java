@@ -79,11 +79,11 @@ public class PacienteView extends javax.swing.JPanel {
 
         ComponenteUtil.formatarScrollInvisivel(jScrollPane3);
         container1.setBorder(new javax.swing.border.EmptyBorder(10, 10, 10, 10));
-        BotaoEstilo.aplicarEfeito(btnSalvar,
+      /*  BotaoEstilo.aplicarEfeito(btnSalvar,
                 new Color(106, 218, 160),
                 new Color(87, 179, 131),
                 new Color(72, 148, 109)
-        );
+        );*/
         TabelaEstilo.aplicar(tblPacientes);
 
         //2025-12-22 Guilherme: Define placeholders dos campos
@@ -212,6 +212,9 @@ public class PacienteView extends javax.swing.JPanel {
         jLabel21 = new javax.swing.JLabel();
         txtEmail = new javax.swing.JTextField();
         jLabel26 = new javax.swing.JLabel();
+        jLabel31 = new javax.swing.JLabel();
+        jLabel27 = new javax.swing.JLabel();
+        txtTelefoneComercial1 = new javax.swing.JTextField();
         jPanel9 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         txtNomeCliente = new javax.swing.JTextField();
@@ -303,7 +306,7 @@ public class PacienteView extends javax.swing.JPanel {
         jPanel7.setOpaque(false);
         jPanel7.setLayout(new java.awt.GridBagLayout());
 
-        btnSalvar.setBackground(new java.awt.Color(106, 218, 160));
+        btnSalvar.setBackground(new java.awt.Color(3, 62, 29));
         btnSalvar.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
         btnSalvar.setForeground(new java.awt.Color(255, 255, 255));
         btnSalvar.setText("SALVAR");
@@ -513,7 +516,7 @@ public class PacienteView extends javax.swing.JPanel {
         jLabel10.setText("Telefone de Urgência");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
         jPanel6.add(jLabel10, gridBagConstraints);
@@ -521,7 +524,7 @@ public class PacienteView extends javax.swing.JPanel {
         jLabel30.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/whatsapp_icon-icons.com_62680.png"))); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 30, 0, 0);
         jPanel6.add(jLabel30, gridBagConstraints);
@@ -536,7 +539,7 @@ public class PacienteView extends javax.swing.JPanel {
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 5, 0);
         jPanel6.add(txtTelefoneComercial, gridBagConstraints);
 
         jLabel11.setFont(new java.awt.Font("Arial", 0, 16)); // NOI18N
@@ -604,6 +607,36 @@ public class PacienteView extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 30, 0, 0);
         jPanel6.add(jLabel26, gridBagConstraints);
+
+        jLabel31.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/whatsapp_icon-icons.com_62680.png"))); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 30, 0, 0);
+        jPanel6.add(jLabel31, gridBagConstraints);
+
+        jLabel27.setFont(new java.awt.Font("Arial", 0, 16)); // NOI18N
+        jLabel27.setText("Telefone de Urgência");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel6.add(jLabel27, gridBagConstraints);
+
+        txtTelefoneComercial1.setPreferredSize(new java.awt.Dimension(210, 30));
+        txtTelefoneComercial1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtTelefoneComercial1ActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 5, 0);
+        jPanel6.add(txtTelefoneComercial1, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1546,6 +1579,10 @@ public class PacienteView extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtProfissaoActionPerformed
 
+    private void txtTelefoneComercial1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTelefoneComercial1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtTelefoneComercial1ActionPerformed
+
     public class MascaraData extends DocumentFilter {
 
         @Override
@@ -2019,10 +2056,12 @@ public class PacienteView extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel30;
+    private javax.swing.JLabel jLabel31;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -2058,6 +2097,7 @@ public class PacienteView extends javax.swing.JPanel {
     private javax.swing.JTextField txtRua;
     private javax.swing.JTextField txtTelefoneCelular;
     private javax.swing.JTextField txtTelefoneComercial;
+    private javax.swing.JTextField txtTelefoneComercial1;
     private javax.swing.JTextField txtTelefoneFixo;
     private javax.swing.JTextField txtcpf;
     // End of variables declaration//GEN-END:variables

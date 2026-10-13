@@ -14,6 +14,8 @@ import com.mycompany.sistemaintegramind.View.Agenda.AgendaView;
 import com.mycompany.sistemaintegramind.View.Painel.PainelView;
 import com.mycompany.sistemaintegramind.View.Recursos.RecursoView;
 import com.mycompany.sistemaintegramind.util.Utilitarios.AlternarEntreJanelasMenu;
+import com.mycompany.sistemaintegramind.util.Utilitarios.ImagemUtil;
+
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
@@ -49,13 +51,12 @@ public class MainMenu extends javax.swing.JFrame {
         initComponents();
         //2026-01-13 Guilherme: Define o padrão brasileiro para toda a aplicação
         Locale.setDefault(new Locale("pt", "BR"));
-        
+
         // Carrega a imagem do seu diretório ou resource
         ImageIcon icone = new ImageIcon(getClass().getResource("/imagens/folhas.png"));
-        
-        // Define a imagem no seu painel customizado (substitua pelo nome da variável gerada pelo NetBeans)
-        painelImagemGradiente1.setImagem(icone); 
 
+        // Define a imagem no seu painel customizado (substitua pelo nome da variável gerada pelo NetBeans)
+        painelImagemGradiente1.setImagem((ImageIcon) ImagemUtil.recolorir(icone, new Color(5, 150, 69)));
         //2025-12-22 Guilherme: Define o tamanho padrão da janela principal do sistema
         this.setSize(1280, 720);
 
@@ -90,7 +91,7 @@ public class MainMenu extends javax.swing.JFrame {
         //2025-12-22 Guilherme: Faz os botões do menu lateral ficarem transparentes
         configurarHover(tblPainel);
         configurarHover(tblPacientes);
-        configurarHover(tblDashboard);
+        // configurarHover(tblDashboard);
         configurarHover(tblFinanceiro);
         configurarHover(tblAgenda);
         configurarHover(tblRecursos);
@@ -136,7 +137,6 @@ public class MainMenu extends javax.swing.JFrame {
         tblFinanceiro = new javax.swing.JButton();
         tblAgenda = new javax.swing.JButton();
         tblRecursos = new javax.swing.JButton();
-        tblDashboard = new javax.swing.JButton();
         tblPacientes = new javax.swing.JButton();
         btnBackup = new javax.swing.JButton();
         painelImagemGradiente1 = new com.mycompany.sistemaintegramind.View.Componentes.PainelImagemGradiente();
@@ -232,20 +232,6 @@ public class MainMenu extends javax.swing.JFrame {
             }
         });
 
-        tblDashboard.setBackground(new java.awt.Color(58, 58, 191));
-        tblDashboard.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
-        tblDashboard.setForeground(new java.awt.Color(255, 255, 255));
-        tblDashboard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuIcones/Dashboard_Icon_48x48.png"))); // NOI18N
-        tblDashboard.setText("DASHBOARD");
-        tblDashboard.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        tblDashboard.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        tblDashboard.setIconTextGap(10);
-        tblDashboard.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tblDashboardActionPerformed(evt);
-            }
-        });
-
         tblPacientes.setBackground(new java.awt.Color(58, 58, 191));
         tblPacientes.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         tblPacientes.setForeground(new java.awt.Color(255, 255, 255));
@@ -264,9 +250,10 @@ public class MainMenu extends javax.swing.JFrame {
         btnBackup.setBackground(new java.awt.Color(242, 242, 242));
         btnBackup.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnBackup.setForeground(new java.awt.Color(255, 255, 255));
-        btnBackup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Backup_1.png"))); // NOI18N
+        btnBackup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Backup_2.png"))); // NOI18N
         btnBackup.setText("Backup");
         btnBackup.setContentAreaFilled(false);
+        btnBackup.setIconTextGap(20);
         btnBackup.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnBackupActionPerformed(evt);
@@ -288,30 +275,26 @@ public class MainMenu extends javax.swing.JFrame {
         menu1.setLayout(menu1Layout);
         menu1Layout.setHorizontalGroup(
             menu1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, menu1Layout.createSequentialGroup()
+                .addContainerGap(43, Short.MAX_VALUE)
+                .addComponent(painelImagemGradiente1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(44, 44, 44))
             .addGroup(menu1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(menu1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(menu1Layout.createSequentialGroup()
-                        .addGap(70, 70, 70)
-                        .addComponent(btnBackup)
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(tblAgenda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(tblRecursos, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(tblFinanceiro, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, menu1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(menu1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(tblDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(menu1Layout.createSequentialGroup()
-                                .addGap(42, 42, 42)
-                                .addComponent(painelImagemGradiente1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addComponent(tblPainel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(tblPacientes, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(tblPacientes, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(menu1Layout.createSequentialGroup()
+                        .addComponent(btnBackup, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))))
             .addGroup(menu1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(menu1Layout.createSequentialGroup()
                     .addContainerGap()
                     .addComponent(jLabel4)
-                    .addContainerGap(44, Short.MAX_VALUE)))
+                    .addContainerGap(37, Short.MAX_VALUE)))
         );
         menu1Layout.setVerticalGroup(
             menu1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -326,12 +309,11 @@ public class MainMenu extends javax.swing.JFrame {
                 .addComponent(tblFinanceiro, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tblRecursos, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tblDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 72, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 158, Short.MAX_VALUE)
                 .addComponent(painelImagemGradiente1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(40, 40, 40)
-                .addComponent(btnBackup))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnBackup)
+                .addGap(44, 44, 44))
             .addGroup(menu1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(menu1Layout.createSequentialGroup()
                     .addContainerGap()
@@ -484,12 +466,6 @@ public class MainMenu extends javax.swing.JFrame {
 
     }//GEN-LAST:event_tblAgendaActionPerformed
 
-    private void tblDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tblDashboardActionPerformed
-        cardlayout.show(MenuPrincipal, "Dashboard");
-        AlternarEntreJanelasMenu.selecionarBotao(tblDashboard, botaoSelecionado);
-
-    }//GEN-LAST:event_tblDashboardActionPerformed
-
     private void tblFinanceiroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tblFinanceiroActionPerformed
         cardlayout.show(MenuPrincipal, "Financeiro");
         AlternarEntreJanelasMenu.selecionarBotao(tblFinanceiro, botaoSelecionado);
@@ -502,7 +478,7 @@ public class MainMenu extends javax.swing.JFrame {
 
     private void tblPacientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tblPacientesActionPerformed
         cardlayout.show(MenuPrincipal, "Pacientes");
-        AlternarEntreJanelasMenu.selecionarBotao(tblPacientes, botaoSelecionado);      
+        AlternarEntreJanelasMenu.selecionarBotao(tblPacientes, botaoSelecionado);
     }//GEN-LAST:event_tblPacientesActionPerformed
 
     private void btnBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackupActionPerformed
@@ -652,7 +628,6 @@ public class MainMenu extends javax.swing.JFrame {
     private com.mycompany.sistemaintegramind.View.Componentes.Menu menu1;
     private com.mycompany.sistemaintegramind.View.Componentes.PainelImagemGradiente painelImagemGradiente1;
     private javax.swing.JButton tblAgenda;
-    private javax.swing.JButton tblDashboard;
     private javax.swing.JButton tblFinanceiro;
     private javax.swing.JButton tblPacientes;
     private javax.swing.JButton tblPainel;

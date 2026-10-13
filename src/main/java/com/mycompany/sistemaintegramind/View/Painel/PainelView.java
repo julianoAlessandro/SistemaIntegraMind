@@ -231,7 +231,7 @@ public class PainelView extends javax.swing.JPanel {
                 .addComponent(jLabel14)
                 .addContainerGap())
             .addGroup(containerHojeLayout.createSequentialGroup()
-                .addGap(14, 14, 14)
+                .addGap(32, 32, 32)
                 .addComponent(circularIconLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
