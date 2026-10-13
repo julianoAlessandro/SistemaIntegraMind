@@ -19,6 +19,7 @@ import com.mycompany.sistemaintegramind.View.Componentes.TabelaEstilo;
 import com.mycompany.sistemaintegramind.View.EditarExcluirAgendamento.EditarAgendamentoView;
 import com.mycompany.sistemaintegramind.util.Utilitarios.BotaoRenderizarIcones;
 import com.mycompany.sistemaintegramind.util.Utilitarios.StatusAgendamento;
+import com.mycompany.sistemaintegramind.util.Utilitarios.StatusCellRenderer;
 import com.toedter.calendar.JDateChooser;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -55,10 +56,13 @@ public class AgendaView extends javax.swing.JPanel {
         container1.setCardStyle();
         container2.setCardStyle();
         container3.setCardStyle();
+        
 
         //2026-09-11 Juliano: Definindo os estilos da tabelas
-        TabelaEstilo.aplicar(tblAgendamentos);
+        TabelaEstilo.aplicarEstiloDois(tblAgendamentos);
         TabelaEstilo.aplicar(tblListarAgendamentosDoDia);
+        
+       
 
         //2026-09-23 Juliano: Não irá aparecer as datas anteriores a hoje
         dtDataAgendamento.setMinSelectableDate(new Date());
@@ -307,6 +311,7 @@ public class AgendaView extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tblAgendamentos.setRowHeight(50);
         tblAgendamentos.addAncestorListener(new javax.swing.event.AncestorListener() {
             public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
                 tblAgendamentosAncestorAdded(evt);
@@ -331,6 +336,7 @@ public class AgendaView extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 7);
         add(jScrollPane1, gridBagConstraints);
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
@@ -671,6 +677,7 @@ public class AgendaView extends javax.swing.JPanel {
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 0);
         jPanel3.add(jLabel11, gridBagConstraints);
 
         cmbFiltrarTipoAtendimento.setMinimumSize(new java.awt.Dimension(0, 32));
@@ -703,6 +710,7 @@ public class AgendaView extends javax.swing.JPanel {
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 0);
         jPanel3.add(jLabel18, gridBagConstraints);
 
         cmbFiltrarFrequenciaAtendimento.setMinimumSize(new java.awt.Dimension(0, 32));
@@ -763,6 +771,7 @@ public class AgendaView extends javax.swing.JPanel {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 0);
         jPanel3.add(jLabel13, gridBagConstraints);
 
         jLabel17.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -774,6 +783,7 @@ public class AgendaView extends javax.swing.JPanel {
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 0);
         jPanel3.add(jLabel17, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -855,8 +865,6 @@ public class AgendaView extends javax.swing.JPanel {
         btnFiltroAgendamento.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnFiltroAgendamento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/lupa-32.png"))); // NOI18N
         btnFiltroAgendamento.setText("Buscar ");
-        btnFiltroAgendamento.setMaximumSize(new java.awt.Dimension(110, 39));
-        btnFiltroAgendamento.setMinimumSize(new java.awt.Dimension(110, 39));
         btnFiltroAgendamento.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnFiltroAgendamentoActionPerformed(evt);
