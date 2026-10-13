@@ -589,10 +589,13 @@ public class AgendaView extends javax.swing.JPanel {
         jPanel1.setOpaque(false);
         jPanel1.setLayout(new java.awt.GridBagLayout());
 
-        btnRealizarAgendamento.setBackground(new java.awt.Color(13, 82, 65));
+        btnRealizarAgendamento.setBackground(new java.awt.Color(3, 62, 29));
         btnRealizarAgendamento.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         btnRealizarAgendamento.setForeground(new java.awt.Color(255, 255, 255));
         btnRealizarAgendamento.setText("Agendar");
+        btnRealizarAgendamento.setMaximumSize(new java.awt.Dimension(96, 40));
+        btnRealizarAgendamento.setMinimumSize(new java.awt.Dimension(96, 40));
+        btnRealizarAgendamento.setPreferredSize(new java.awt.Dimension(96, 40));
         btnRealizarAgendamento.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRealizarAgendamentoActionPerformed(evt);
