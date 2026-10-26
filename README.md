@@ -1,4 +1,4 @@
-# Padronização do Commit para o Sistema IntegraERP
+# Padronização do Commit para o Sistema IntegraMind
 
 Para realizar um commit no sistema primeiramente precisamos definir onde estamos, ou seja qual tela estamos trabalhando, então toda vez que  for gerado um commit para um novo recurso que é adicionado/ajustado, no sistema é preciso informar onde você está, então começamos informando em qual tela você está e qual guia da mesma você está trabalhando.<br>
 **Exemplo:** adição do novo recurso tornar o campo nome obrigatório para ser cadastrado. Começamos informando a tela, no caso Clientes e depois em qual guia de clientes será adicionado esse novo recurso, nesse caso em Cadastrar Clientes, portanto o commit, irá iniciar assim:<br>
