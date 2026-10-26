@@ -513,9 +513,16 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
     private void iniciarConstrutorComFormulario(FormularioAnamnese base) {
         this.modoEdicaoQuestionario = true;
         this.formularioAtual = new FormularioAnamnese();
-        this.formularioAtual.setTitulo(base != null && base.getTitulo() != null ? base.getTitulo() : "Titulo");
-        this.formularioAtual.setTipoModelo(TipoModeloAnamnese.PERSONALIZADO);
-        this.formularioAtual.setStatusFormulario(StatusPacienteAgendamentoDocumento.ATIVO);
+        if (base != null) {
+            this.formularioAtual.setId(base.getId());
+            this.formularioAtual.setTitulo(base.getTitulo() != null ? base.getTitulo() : "Titulo");
+            this.formularioAtual.setTipoModelo(base.getTipoModelo() != null ? base.getTipoModelo() : TipoModeloAnamnese.PERSONALIZADO);
+            this.formularioAtual.setStatusFormulario(base.getStatusFormulario() != null ? base.getStatusFormulario() : StatusPacienteAgendamentoDocumento.ATIVO);
+        } else {
+            this.formularioAtual.setTitulo("Titulo");
+            this.formularioAtual.setTipoModelo(TipoModeloAnamnese.PERSONALIZADO);
+            this.formularioAtual.setStatusFormulario(StatusPacienteAgendamentoDocumento.ATIVO);
+        }
 
         if (base != null && base.getPerguntas() != null) {
             int ordem = 1;
@@ -901,7 +908,9 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
         btnEditarEstrutura.setBorderPainted(false);
         btnEditarEstrutura.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnEditarEstrutura.addActionListener(e -> {
-            atualizarEstadoBarra(AbaBarraAnamnese.CRIAR_PERSONALIZADO);
+            if (form.getId() != null && form.getTipoModelo() == TipoModeloAnamnese.PERSONALIZADO) {
+                atualizarEstadoBarra(AbaBarraAnamnese.DROPDOWN_SELECIONAR);
+            }
             iniciarConstrutorComFormulario(form);
         });
         barraEditarEstrutura.add(btnEditarEstrutura);
@@ -1335,23 +1344,33 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
                 return;
             }
 
+            boolean editandoExistente = (formularioAtual.getId() != null);
             formularioAtual.setTitulo(titulo.trim());
-            formularioAtual.setTipoModelo(TipoModeloAnamnese.PERSONALIZADO);
-            formularioAtual.setStatusFormulario(StatusPacienteAgendamentoDocumento.ATIVO);
+            if (formularioAtual.getTipoModelo() == null) {
+                formularioAtual.setTipoModelo(TipoModeloAnamnese.PERSONALIZADO);
+            }
+            if (formularioAtual.getStatusFormulario() == null) {
+                formularioAtual.setStatusFormulario(StatusPacienteAgendamentoDocumento.ATIVO);
+            }
 
-            if (formularioAtual.getId() == null) {
+            if (!editandoExistente) {
                 anamneseDAO.cadastrarFormulario(formularioAtual);
             } else {
                 anamneseDAO.atualizarFormulario(formularioAtual);
             }
 
-            carregarDropdownFormularios(formularioAtual);
-            abrirPreenchimentoFormulario(formularioAtual, true);
+            boolean ehPersonalizado = (formularioAtual.getTipoModelo() == TipoModeloAnamnese.PERSONALIZADO);
+            carregarDropdownFormularios(ehPersonalizado ? formularioAtual : null);
+            abrirPreenchimentoFormulario(formularioAtual, ehPersonalizado);
+
+            String msgSucesso = editandoExistente
+                    ? "Formulário de anamnese \"" + formularioAtual.getTitulo() + "\" atualizado com sucesso!"
+                    : "Formulário de anamnese \"" + formularioAtual.getTitulo() + "\" salvo e adicionado à lista!";
 
             JOptionPane.showMessageDialog(
                     this,
-                    "Formulário de anamnese \"" + formularioAtual.getTitulo() + "\" salvo e adicionado à lista!",
-                    "Anamnese Salva",
+                    msgSucesso,
+                    editandoExistente ? "Anamnese Atualizada" : "Anamnese Salva",
                     JOptionPane.INFORMATION_MESSAGE
             );
         } else {

@@ -144,6 +144,14 @@ public class AnamneseJPA implements AnamneseDAO {
 
     @Override
     public void atualizarFormulario(FormularioAnamnese formulario) {
+        if (formulario == null) {
+            return;
+        }
+        if (formulario.getId() == null) {
+            cadastrarFormulario(formulario);
+            return;
+        }
+
         int ordem = 1;
         for (PerguntaAnamnese p : formulario.getPerguntas()) {
             p.setFormulario(formulario);
@@ -154,10 +162,36 @@ public class AnamneseJPA implements AnamneseDAO {
         if (em != null) {
             try {
                 em.getTransaction().begin();
-                FormularioAnamnese atualizado = em.merge(formulario);
-                em.getTransaction().commit();
-                sincronizarMemoria(atualizado);
-                return;
+                FormularioAnamnese gerenciado = em.find(FormularioAnamnese.class, formulario.getId());
+                if (gerenciado != null) {
+                    gerenciado.setTitulo(formulario.getTitulo());
+                    if (formulario.getTipoModelo() != null) {
+                        gerenciado.setTipoModelo(formulario.getTipoModelo());
+                    }
+                    if (formulario.getStatusFormulario() != null) {
+                        gerenciado.setStatusFormulario(formulario.getStatusFormulario());
+                    }
+                    gerenciado.getPerguntas().clear();
+                    int ord = 1;
+                    for (PerguntaAnamnese p : formulario.getPerguntas()) {
+                        PerguntaAnamnese novaPergunta = new PerguntaAnamnese(
+                                p.getEnunciado(),
+                                ord++,
+                                p.getTipoPergunta(),
+                                p.getOpcoes()
+                        );
+                        gerenciado.adicionarPergunta(novaPergunta);
+                    }
+                    FormularioAnamnese atualizado = em.merge(gerenciado);
+                    em.getTransaction().commit();
+                    sincronizarMemoria(atualizado);
+                    return;
+                } else {
+                    FormularioAnamnese atualizado = em.merge(formulario);
+                    em.getTransaction().commit();
+                    sincronizarMemoria(atualizado);
+                    return;
+                }
             } catch (Exception e) {
                 if (em.getTransaction().isActive()) {
                     em.getTransaction().rollback();
