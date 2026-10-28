@@ -3,6 +3,7 @@ package com.mycompany.sistemaintegramind.Model.entidades;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamentoDocumento;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.TipoModeloAnamnese;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -31,6 +32,9 @@ public class FormularioAnamnese extends Entidade implements Serializable {
     @Column(name = "titulo", nullable = false)
     private String titulo;
 
+    @Column(name = "data_abertura")
+    private LocalDate dataAbertura = LocalDate.now();
+
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_modelo", nullable = false)
     private TipoModeloAnamnese tipoModelo;
@@ -50,6 +54,7 @@ public class FormularioAnamnese extends Entidade implements Serializable {
         this.id = id;
         this.titulo = titulo;
         this.tipoModelo = tipoModelo;
+        this.dataAbertura = LocalDate.now();
         this.statusFormulario = StatusPacienteAgendamentoDocumento.ATIVO;
     }
 
@@ -84,6 +89,14 @@ public class FormularioAnamnese extends Entidade implements Serializable {
 
     public void setTitulo(String titulo) {
         this.titulo = titulo;
+    }
+
+    public LocalDate getDataAbertura() {
+        return dataAbertura;
+    }
+
+    public void setDataAbertura(LocalDate dataAbertura) {
+        this.dataAbertura = dataAbertura;
     }
 
     public TipoModeloAnamnese getTipoModelo() {

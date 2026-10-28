@@ -1,6 +1,7 @@
 package com.mycompany.sistemaintegramind.Model.entidades;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,6 +21,9 @@ public class RespostaAnamnese extends Entidade implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "data_abertura", nullable = false)
+    private LocalDate dataAbertura = LocalDate.now();
+
     @ManyToOne
     @JoinColumn(name = "formulario_id", nullable = false)
     private FormularioAnamnese formulario;
@@ -34,10 +38,15 @@ public class RespostaAnamnese extends Entidade implements Serializable {
     public RespostaAnamnese() {
     }
 
-    public RespostaAnamnese(FormularioAnamnese formulario, Paciente paciente, String conteudoRespostas) {
+    public RespostaAnamnese(FormularioAnamnese formulario, Paciente paciente, LocalDate dataAbertura, String conteudoRespostas) {
         this.formulario = formulario;
         this.paciente = paciente;
+        this.dataAbertura = dataAbertura != null ? dataAbertura : LocalDate.now();
         this.conteudoRespostas = conteudoRespostas;
+    }
+
+    public RespostaAnamnese(FormularioAnamnese formulario, Paciente paciente, String conteudoRespostas) {
+        this(formulario, paciente, LocalDate.now(), conteudoRespostas);
     }
 
     public Long getId() {
@@ -46,6 +55,14 @@ public class RespostaAnamnese extends Entidade implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public LocalDate getDataAbertura() {
+        return dataAbertura;
+    }
+
+    public void setDataAbertura(LocalDate dataAbertura) {
+        this.dataAbertura = dataAbertura;
     }
 
     public FormularioAnamnese getFormulario() {
