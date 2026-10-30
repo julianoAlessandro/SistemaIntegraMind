@@ -43,6 +43,8 @@ public class FichaDocumentosView extends javax.swing.JPanel {
         this.paciente = paciente;
         initComponents();
 
+        txtPesquisarDocumentos.putClientProperty("JTextField.placeholderText","Digite o nome do documento que deseja encontrar...");
+
         pnlListarDocumentosPaciente.setLayout(
                 new javax.swing.BoxLayout(
                         pnlListarDocumentosPaciente,
@@ -68,6 +70,7 @@ public class FichaDocumentosView extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         scroDocumentos = new javax.swing.JScrollPane();
         pnlListarDocumentosPaciente = new javax.swing.JPanel();
+        btnBuscarDocumentos = new javax.swing.JButton();
 
         jLabel1.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         jLabel1.setText("Documentos");
@@ -92,31 +95,40 @@ public class FichaDocumentosView extends javax.swing.JPanel {
         pnlListarDocumentosPaciente.setLayout(pnlListarDocumentosPacienteLayout);
         pnlListarDocumentosPacienteLayout.setHorizontalGroup(
             pnlListarDocumentosPacienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 781, Short.MAX_VALUE)
+            .addGap(0, 903, Short.MAX_VALUE)
         );
         pnlListarDocumentosPacienteLayout.setVerticalGroup(
             pnlListarDocumentosPacienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 538, Short.MAX_VALUE)
+            .addGap(0, 567, Short.MAX_VALUE)
         );
 
         scroDocumentos.setViewportView(pnlListarDocumentosPaciente);
+
+        btnBuscarDocumentos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/lupa.png"))); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(32, 32, 32)
-                .addComponent(txtPesquisarDocumentos)
-                .addGap(18, 18, 18)
-                .addComponent(btnAdicionarDocumentos, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(67, 67, 67))
             .addGroup(layout.createSequentialGroup()
-                .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scroDocumentos, javax.swing.GroupLayout.PREFERRED_SIZE, 784, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addContainerGap(118, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(32, 32, 32)
+                        .addComponent(txtPesquisarDocumentos, javax.swing.GroupLayout.DEFAULT_SIZE, 656, Short.MAX_VALUE)
+                        .addGap(4, 4, 4)
+                        .addComponent(btnBuscarDocumentos, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnAdicionarDocumentos, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(24, 24, 24)
+                                .addComponent(jLabel1))
+                            .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(scroDocumentos, javax.swing.GroupLayout.PREFERRED_SIZE, 906, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(34, 34, 34)
@@ -129,12 +141,13 @@ public class FichaDocumentosView extends javax.swing.JPanel {
                 .addGap(90, 90, 90)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAdicionarDocumentos, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtPesquisarDocumentos, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtPesquisarDocumentos, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBuscarDocumentos))
                 .addGap(35, 35, 35)
                 .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addComponent(scroDocumentos, javax.swing.GroupLayout.PREFERRED_SIZE, 541, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(115, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scroDocumentos, javax.swing.GroupLayout.PREFERRED_SIZE, 570, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(95, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(32, 32, 32)
@@ -168,7 +181,7 @@ public class FichaDocumentosView extends javax.swing.JPanel {
         //2026-10-09 Juliano: Definindo as dimensões do cartão
         card.setPreferredSize(new Dimension(600, 150));
         card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
-        card.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.GRAY),BorderFactory.createEmptyBorder(12, 12, 12, 12)));
+        card.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.GRAY), BorderFactory.createEmptyBorder(12, 12, 12, 12)));
 
         //2026-10-09 Juliano: Painel para colocar as imagens que são os tipos dos arquivos
         JLabel lblImagemDocumento = new JLabel();
@@ -176,9 +189,8 @@ public class FichaDocumentosView extends javax.swing.JPanel {
         lblImagemDocumento.setHorizontalAlignment(SwingConstants.CENTER);
         lblImagemDocumento.setVerticalAlignment(SwingConstants.CENTER);
 
-      
         String nomeArquivo = documento.getNomeArquivo().toLowerCase();
-        
+
         //2026-10-09 Juliano: Pega o id do documento para poder utilizar como referencia para poder excluir o documento
         Long documentoid = documento.getId();
 
@@ -186,16 +198,16 @@ public class FichaDocumentosView extends javax.swing.JPanel {
 
         if (nomeArquivo.endsWith(".pdf")) {
             caminhoImagem = "/imagens/pdf.png";
-            
+
         } else if (nomeArquivo.endsWith(".doc") || nomeArquivo.endsWith(".docx")) {
             caminhoImagem = "/imagens/word.JPEG";
-            
+
         } else if (nomeArquivo.endsWith(".jpg") || nomeArquivo.endsWith(".jpeg") || nomeArquivo.endsWith(".png")) {
             caminhoImagem = "/imagens/png.png";
-            
+
         } else if (nomeArquivo.endsWith(".txt")) {
             caminhoImagem = "/imagens/txt.JPEG";
-            
+
         } else {
             caminhoImagem = "/imagens/arquivo.png";
         }
@@ -216,7 +228,6 @@ public class FichaDocumentosView extends javax.swing.JPanel {
 
         card.add(lblImagemDocumento, BorderLayout.WEST);
 
-       
         JPanel painelInformacoes = new JPanel(new BorderLayout(5, 10));
 
         JLabel lblNomeArquivo = new JLabel(documento.getNomeArquivo());
@@ -347,6 +358,7 @@ public class FichaDocumentosView extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdicionarDocumentos;
+    private javax.swing.JButton btnBuscarDocumentos;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel pnlListarDocumentosPaciente;

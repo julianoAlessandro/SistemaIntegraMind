@@ -23,7 +23,10 @@ public class FinanceiroView extends javax.swing.JPanel {
 
     public FinanceiroView() {
         initComponents();
-
+        //2026-10-29 Juliano: Campos apenas para  visualização
+        txttotalfinanceiro.setEditable(false);
+        txttotalfinanceiro.setBackground(java.awt.Color.WHITE);
+        txttotalfinanceiro.setForeground(java.awt.Color.BLACK);
     }
 
     @SuppressWarnings("unchecked")
@@ -292,7 +295,7 @@ public class FinanceiroView extends javax.swing.JPanel {
 
             filtro.setDataFinal(dataFinal);
         }
-       
+
         carregarFinanceiroPaciente(listarRelatorioFinanceiroFiltrado(filtro));
 
     }//GEN-LAST:event_txtBuscarOpcoesFiltradasActionPerformed
@@ -335,7 +338,7 @@ public class FinanceiroView extends javax.swing.JPanel {
         txttotalfinanceiro.setText(faturamentototal);
     }
 
-    private  List<FinanceiroDTO> listarRelatorioFinanceiro() {
+    private List<FinanceiroDTO> listarRelatorioFinanceiro() {
         FinanceiroJPA jpa = new FinanceiroJPA();
         List<FinanceiroDTO> listarFinanceiroRelatorio = jpa.listarRelatorioFinanceiroDTO();
         return listarFinanceiroRelatorio;
@@ -374,7 +377,7 @@ public class FinanceiroView extends javax.swing.JPanel {
 
     //===========2026-06-19 Juliano: Métodos para serem utilizados ao longo do código(FINAL)=================
     private void TabMovimentoFinanceiroAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_TabMovimentoFinanceiroAncestorAdded
-        
+
         carregarFinanceiroPaciente(listarRelatorioFinanceiro());
     }//GEN-LAST:event_TabMovimentoFinanceiroAncestorAdded
 

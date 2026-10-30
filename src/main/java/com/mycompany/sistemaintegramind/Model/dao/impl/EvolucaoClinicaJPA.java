@@ -82,9 +82,9 @@ public class EvolucaoClinicaJPA implements EvolucaoClinicaDAO {
 
             String jpql = "SELECT e "
                     + "FROM EvolucaoClinica e "
-                    + "JOIN e.agendamento a "
-                    + "WHERE a.paciente.id = :pacienteId "
-                    + "ORDER BY a.dataAgendamento DESC, a.horario DESC";
+                    + "LEFT JOIN FETCH e.inativacao "
+                    + "WHERE e.paciente.id = :pacienteId "
+                    + "ORDER BY e.dataEvolucao DESC, e.horario DESC";
 
             return em.createQuery(jpql, EvolucaoClinica.class)
                     .setParameter("pacienteId", pacienteId)
@@ -94,4 +94,47 @@ public class EvolucaoClinicaJPA implements EvolucaoClinicaDAO {
             em.close();
         }
     }
+
+    @Override
+    public void AtualizarStatusNotaClinica(EvolucaoClinica evolucao) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.merge(evolucao);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em != null && em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
+
+    }
+
+    @Override
+    public EvolucaoClinica buscarNotaClinicaPorId(Long id) {
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+
+            return em.find(EvolucaoClinica.class, id);
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            return null;
+
+        } finally {
+
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
+    }
+
 }
