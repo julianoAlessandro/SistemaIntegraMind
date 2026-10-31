@@ -4,6 +4,7 @@
  */
 package com.mycompany.sistemaintegramind.View.FichaMenuPaciente;
 
+import com.mycompany.sistemaintegramind.Model.dao.FichaProntuarioPacienteFiltro;
 import com.mycompany.sistemaintegramind.Model.dao.impl.AgendamentoJPA;
 import com.mycompany.sistemaintegramind.Model.dao.impl.EvolucaoClinicaJPA;
 import com.mycompany.sistemaintegramind.Model.dao.impl.InativarNotaClinicaJPA;
@@ -37,6 +38,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.table.DefaultTableModel;
 
 public class FichaProntuarioPacienteView extends javax.swing.JPanel {
 
@@ -111,6 +113,7 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
         cmbListarNotaClinica = new javax.swing.JComboBox<>();
         txtPesquisarNotaClinicaPelaEvolucao = new javax.swing.JTextField();
         btnBuscarNotaClinica = new javax.swing.JButton();
+        btnLimparPesquisa = new javax.swing.JButton();
 
         jLabel2.setText("Evolução da Sessão");
 
@@ -165,6 +168,10 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
         jLabel1.setText("Histórico das notas Clínicas ");
 
         btnBuscarNotaClinica.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/lupa.png"))); // NOI18N
+        btnBuscarNotaClinica.addActionListener(this::btnBuscarNotaClinicaActionPerformed);
+
+        btnLimparPesquisa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/limpar.png"))); // NOI18N
+        btnLimparPesquisa.addActionListener(this::btnLimparPesquisaActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -207,7 +214,9 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(txtPesquisarNotaClinicaPelaEvolucao, javax.swing.GroupLayout.PREFERRED_SIZE, 478, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnBuscarNotaClinica, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnBuscarNotaClinica, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnLimparPesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(scrListaEvolucoes, javax.swing.GroupLayout.PREFERRED_SIZE, 631, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -224,36 +233,33 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(74, 74, 74)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(cmbListarNotaClinica, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
-                            .addComponent(txtHorario, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
-                            .addComponent(txtDataAgendamento))
-                        .addGap(30, 30, 30)
-                        .addComponent(jLabel2)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(30, 30, 30)
-                        .addComponent(jLabel4)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnLimparEvolucao)
-                            .addComponent(btnSalvarEvolucao))
-                        .addGap(0, 244, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel1)
-                        .addGap(9, 9, 9)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btnBuscarNotaClinica, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txtPesquisarNotaClinicaPelaEvolucao))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(scrListaEvolucoes, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addGap(9, 9, 9)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnBuscarNotaClinica, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtPesquisarNotaClinicaPelaEvolucao)
+                    .addComponent(btnLimparPesquisa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scrListaEvolucoes, javax.swing.GroupLayout.PREFERRED_SIZE, 741, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(74, 74, 74)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(cmbListarNotaClinica, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
+                    .addComponent(txtHorario, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
+                    .addComponent(txtDataAgendamento))
+                .addGap(30, 30, 30)
+                .addComponent(jLabel2)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(30, 30, 30)
+                .addComponent(jLabel4)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnLimparEvolucao)
+                    .addComponent(btnSalvarEvolucao)))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(50, 50, 50)
@@ -356,6 +362,26 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
     private void txtDataAgendamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDataAgendamentoActionPerformed
 
     }//GEN-LAST:event_txtDataAgendamentoActionPerformed
+
+    private void btnBuscarNotaClinicaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarNotaClinicaActionPerformed
+        FichaProntuarioPacienteFiltro filtro = new FichaProntuarioPacienteFiltro();
+        EvolucaoClinicaJPA evolucaoclinicajpa = new EvolucaoClinicaJPA();
+        if (!txtPesquisarNotaClinicaPelaEvolucao.getText().trim().isEmpty()) {
+            filtro.setEvolucaoSessao(txtPesquisarNotaClinicaPelaEvolucao.getText());
+
+        }
+        filtro.setPacienteId(paciente.getId());
+
+        List<EvolucaoClinica> listarNotasClinicasFiltradas = evolucaoclinicajpa.filtrarEvolucaoClinicaPacientes(filtro);
+        atualizarCardsEvolucaoClinica(listarNotasClinicasFiltradas);
+
+
+    }//GEN-LAST:event_btnBuscarNotaClinicaActionPerformed
+
+    private void btnLimparPesquisaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparPesquisaActionPerformed
+        txtPesquisarNotaClinicaPelaEvolucao.setText("");
+        atualizarHistoricoEvolucaoClinica();
+    }//GEN-LAST:event_btnLimparPesquisaActionPerformed
 
     private JPanel listarHistoricoEvolucaoClinicaPaciente(EvolucaoClinica evolucao) {
 
@@ -724,25 +750,35 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
     }
 
     private void atualizarHistoricoEvolucaoClinica() {
-        pnlListaEvolucoes.removeAll();
 
         EvolucaoClinicaJPA evolucaoJPA = new EvolucaoClinicaJPA();
 
         List<EvolucaoClinica> evolucoes = evolucaoJPA.listarEvolucoesPorPaciente(paciente.getId());
 
+        atualizarCardsEvolucaoClinica(evolucoes);
+    }
+
+    //2026-10-31 Juliano: Atualiza os cards utilizando a lista recebida
+    private void atualizarCardsEvolucaoClinica(List<EvolucaoClinica> evolucoes) {
+
+        pnlListaEvolucoes.removeAll();
+
+        // Percorre somente as evoluções recebidas
         for (EvolucaoClinica evolucao : evolucoes) {
-            pnlListaEvolucoes.add(listarHistoricoEvolucaoClinicaPaciente(evolucao));
+            pnlListaEvolucoes.add(
+                    listarHistoricoEvolucaoClinicaPaciente(evolucao)
+            );
         }
 
         pnlListaEvolucoes.revalidate();
         pnlListaEvolucoes.repaint();
-
     }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBuscarNotaClinica;
     private javax.swing.JButton btnLimparEvolucao;
+    private javax.swing.JButton btnLimparPesquisa;
     private javax.swing.JButton btnSalvarEvolucao;
     private javax.swing.JComboBox<TipoNotaClinica> cmbListarNotaClinica;
     private javax.swing.JLabel jLabel1;

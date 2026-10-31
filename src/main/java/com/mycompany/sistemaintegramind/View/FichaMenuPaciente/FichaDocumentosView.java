@@ -4,6 +4,7 @@
  */
 package com.mycompany.sistemaintegramind.View.FichaMenuPaciente;
 
+import com.mycompany.sistemaintegramind.Model.dao.FichaDocumentosFiltro;
 import com.mycompany.sistemaintegramind.Model.dao.impl.DocumentoJPA;
 import com.mycompany.sistemaintegramind.Model.dao.impl.EvolucaoClinicaJPA;
 import com.mycompany.sistemaintegramind.Model.entidades.Agendamento;
@@ -43,7 +44,7 @@ public class FichaDocumentosView extends javax.swing.JPanel {
         this.paciente = paciente;
         initComponents();
 
-        txtPesquisarDocumentos.putClientProperty("JTextField.placeholderText","Digite o nome do documento que deseja encontrar...");
+        txtPesquisarDocumentos.putClientProperty("JTextField.placeholderText", "Digite o nome do documento que deseja encontrar...");
 
         pnlListarDocumentosPaciente.setLayout(
                 new javax.swing.BoxLayout(
@@ -71,6 +72,7 @@ public class FichaDocumentosView extends javax.swing.JPanel {
         scroDocumentos = new javax.swing.JScrollPane();
         pnlListarDocumentosPaciente = new javax.swing.JPanel();
         btnBuscarDocumentos = new javax.swing.JButton();
+        btnLimparPesquisaDocumentos = new javax.swing.JButton();
 
         jLabel1.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         jLabel1.setText("Documentos");
@@ -95,16 +97,20 @@ public class FichaDocumentosView extends javax.swing.JPanel {
         pnlListarDocumentosPaciente.setLayout(pnlListarDocumentosPacienteLayout);
         pnlListarDocumentosPacienteLayout.setHorizontalGroup(
             pnlListarDocumentosPacienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 903, Short.MAX_VALUE)
+            .addGap(0, 917, Short.MAX_VALUE)
         );
         pnlListarDocumentosPacienteLayout.setVerticalGroup(
             pnlListarDocumentosPacienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 567, Short.MAX_VALUE)
+            .addGap(0, 613, Short.MAX_VALUE)
         );
 
         scroDocumentos.setViewportView(pnlListarDocumentosPaciente);
 
         btnBuscarDocumentos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/lupa.png"))); // NOI18N
+        btnBuscarDocumentos.addActionListener(this::btnBuscarDocumentosActionPerformed);
+
+        btnLimparPesquisaDocumentos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/limpar.png"))); // NOI18N
+        btnLimparPesquisaDocumentos.addActionListener(this::btnLimparPesquisaDocumentosActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -113,21 +119,19 @@ public class FichaDocumentosView extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(32, 32, 32)
-                        .addComponent(txtPesquisarDocumentos, javax.swing.GroupLayout.DEFAULT_SIZE, 656, Short.MAX_VALUE)
-                        .addGap(4, 4, 4)
+                        .addContainerGap()
+                        .addComponent(txtPesquisarDocumentos)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnBuscarDocumentos, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnLimparPesquisaDocumentos, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnAdicionarDocumentos, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(24, 24, 24)
-                                .addComponent(jLabel1))
-                            .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(scroDocumentos, javax.swing.GroupLayout.PREFERRED_SIZE, 906, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(24, 24, 24)
+                        .addComponent(jLabel1)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(scroDocumentos, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
@@ -139,15 +143,19 @@ public class FichaDocumentosView extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(90, 90, 90)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnAdicionarDocumentos, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtPesquisarDocumentos, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnBuscarDocumentos))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnLimparPesquisaDocumentos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnAdicionarDocumentos, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnBuscarDocumentos)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(txtPesquisarDocumentos, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(2, 2, 2))))
                 .addGap(35, 35, 35)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroDocumentos, javax.swing.GroupLayout.PREFERRED_SIZE, 570, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(95, Short.MAX_VALUE))
+                .addComponent(scroDocumentos, javax.swing.GroupLayout.PREFERRED_SIZE, 616, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(49, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(32, 32, 32)
@@ -173,6 +181,28 @@ public class FichaDocumentosView extends javax.swing.JPanel {
     private void pnlListarDocumentosPacienteAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_pnlListarDocumentosPacienteAncestorAdded
 
     }//GEN-LAST:event_pnlListarDocumentosPacienteAncestorAdded
+
+    private void btnBuscarDocumentosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarDocumentosActionPerformed
+
+        DocumentoJPA documentojpa = new DocumentoJPA();
+        FichaDocumentosFiltro filtro = new FichaDocumentosFiltro();
+        if (!txtPesquisarDocumentos.getText().trim().isEmpty()) {
+            filtro.setNomeArquivo(txtPesquisarDocumentos.getText());
+
+        }
+        filtro.setPacienteId(paciente.getId());
+
+        List<Documento> listarDocumentosFiltrados = documentojpa.filtrarDocumentosPacientes(filtro);
+        atualizarDocumentosFiltradosPaciente(listarDocumentosFiltrados);
+
+
+    }//GEN-LAST:event_btnBuscarDocumentosActionPerformed
+
+    private void btnLimparPesquisaDocumentosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparPesquisaDocumentosActionPerformed
+        txtPesquisarDocumentos.setText("");
+        atualizarListaDeDocumentos();
+        
+    }//GEN-LAST:event_btnLimparPesquisaDocumentosActionPerformed
 
     public JPanel carregarDocumentosDoPaciente(Documento documento) {
 
@@ -356,9 +386,24 @@ public class FichaDocumentosView extends javax.swing.JPanel {
         pnlListarDocumentosPaciente.repaint();
     }
 
+    //2026-10-31 Juliano: Atualiza os cards utilizando a lista recebida
+    private void atualizarDocumentosFiltradosPaciente(List<Documento> documentos) {
+
+        pnlListarDocumentosPaciente.removeAll();
+
+        // Percorre somente as evoluções recebidas
+        for (Documento documento : documentos) {
+            pnlListarDocumentosPaciente.add(carregarDocumentosDoPaciente(documento));
+        }
+
+        pnlListarDocumentosPaciente.revalidate();
+        pnlListarDocumentosPaciente.repaint();
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdicionarDocumentos;
     private javax.swing.JButton btnBuscarDocumentos;
+    private javax.swing.JButton btnLimparPesquisaDocumentos;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel pnlListarDocumentosPaciente;

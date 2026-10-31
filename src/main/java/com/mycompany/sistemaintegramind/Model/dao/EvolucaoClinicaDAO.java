@@ -21,4 +21,6 @@ public interface EvolucaoClinicaDAO {
     public void AtualizarStatusNotaClinica(EvolucaoClinica evolucao);
 
     public EvolucaoClinica buscarNotaClinicaPorId(Long id);
+
+    public List<EvolucaoClinica> filtrarEvolucaoClinicaPacientes(FichaProntuarioPacienteFiltro fichaprontuariofilro);
 }

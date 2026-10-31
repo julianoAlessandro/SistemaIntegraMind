@@ -5,6 +5,7 @@
 package com.mycompany.sistemaintegramind.Model.dao.impl;
 
 import com.mycompany.sistemaintegramind.Model.dao.DocumentoDAO;
+import com.mycompany.sistemaintegramind.Model.dao.FichaDocumentosFiltro;
 import com.mycompany.sistemaintegramind.Model.entidades.Documento;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusPacienteAgendamentoDocumento;
 import com.mycompany.sistemaintegramind.Model.entidades.Paciente;
@@ -114,4 +115,73 @@ public class DocumentoJPA implements DocumentoDAO {
 
     }
 
+    @Override
+    public List<Documento> filtrarDocumentosPacientes(FichaDocumentosFiltro fichadocumentofiltro) {
+
+        List<Documento> filtrarDocumentos = new ArrayList<>();
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+
+            if (fichadocumentofiltro.getPacienteId() == null) {
+                return filtrarDocumentos;
+            }
+
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+
+            CriteriaQuery<Documento> cq = cb.createQuery(Documento.class);
+
+            Root<Documento> RootEvolucaoClinica = cq.from(Documento.class);
+
+            List<Predicate> predicates = new ArrayList<>();
+
+            //2026-10-31 Juliano: Filtrando pelo ID do paciente
+            predicates.add(
+                    cb.equal(
+                            RootEvolucaoClinica.get("paciente").get("id"),
+                            fichadocumentofiltro.getPacienteId()
+                    )
+            );
+
+            //2026-10-31 Juliano: Exibindo somente documentos ativos
+            predicates.add(
+                    cb.equal(
+                            RootEvolucaoClinica.get("statusdocumento"),
+                            StatusPacienteAgendamentoDocumento.ATIVO
+                    )
+            );
+
+            //2026-10-31 Juliano: Filtrando pelo nome do documento
+            if (fichadocumentofiltro.getNomeArquivo() != null
+                    && !fichadocumentofiltro.getNomeArquivo().trim().isEmpty()) {
+
+                predicates.add(
+                        cb.like(
+                                cb.lower(RootEvolucaoClinica.get("nomeArquivo")),
+                                "%" + fichadocumentofiltro.getNomeArquivo().trim().toLowerCase() + "%"
+                        )
+                );
+
+            }
+
+            cq.select(RootEvolucaoClinica)
+                    .where(cb.and(predicates.toArray(new Predicate[0])));
+
+            filtrarDocumentos = em.createQuery(cq).getResultList();
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        } finally {
+
+            if (em != null) {
+                em.close();
+            }
+
+        }
+
+        return filtrarDocumentos;
+    }
 }
