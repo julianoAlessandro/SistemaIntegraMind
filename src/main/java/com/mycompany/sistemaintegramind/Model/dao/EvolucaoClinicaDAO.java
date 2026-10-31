@@ -13,6 +13,14 @@ import java.util.List;
  * @author Micro
  */
 public interface EvolucaoClinicaDAO {
-   public void cadastrarEvolucaoClinica(EvolucaoClinica evolucaoClinica);
-   public List<EvolucaoClinica> listarEvolucoesClinicas();
+
+    public void cadastrarEvolucaoClinica(EvolucaoClinica evolucaoClinica);
+
+    public List<EvolucaoClinica> listarEvolucoesClinicas();
+
+    public void AtualizarStatusNotaClinica(EvolucaoClinica evolucao);
+
+    public EvolucaoClinica buscarNotaClinicaPorId(Long id);
+
+    public List<EvolucaoClinica> filtrarEvolucaoClinicaPacientes(FichaProntuarioPacienteFiltro fichaprontuariofilro);
 }
