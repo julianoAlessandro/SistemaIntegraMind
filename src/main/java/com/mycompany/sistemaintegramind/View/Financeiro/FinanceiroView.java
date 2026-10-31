@@ -8,6 +8,7 @@ import com.mycompany.sistemaintegramind.Model.dao.impl.FinanceiroJPA;
 import com.mycompany.sistemaintegramind.Model.dto.FinanceiroDTO;
 import com.mycompany.sistemaintegramind.Model.entidades.FinanceiroFiltro;
 import com.mycompany.sistemaintegramind.View.Componentes.TabelaEstilo;
+import com.mycompany.sistemaintegramind.View.Pacientes.PacienteView;
 import com.mycompany.sistemaintegramind.util.Utilitarios.FormatarTabelas;
 import com.mycompany.sistemaintegramind.util.Utilitarios.JPAUtil;
 import java.math.BigDecimal;
@@ -18,6 +19,7 @@ import java.util.List;
 import javax.persistence.EntityManagerFactory;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.AbstractDocument;
 
 public class FinanceiroView extends javax.swing.JPanel {
 
@@ -27,6 +29,8 @@ public class FinanceiroView extends javax.swing.JPanel {
         txttotalfinanceiro.setEditable(false);
         txttotalfinanceiro.setBackground(java.awt.Color.WHITE);
         txttotalfinanceiro.setForeground(java.awt.Color.BLACK);
+
+       
     }
 
     @SuppressWarnings("unchecked")

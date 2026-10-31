@@ -78,7 +78,6 @@ public class AgendamentoJPA implements AgendamentoDAO {
 
     }
 
-   
     public List<Agendamento> listarAgendamentosPorPacientes(Paciente paciente) {
         EntityManager em = JPAUtil.getEntityManager();
         List<Agendamento> listAgendamento = new ArrayList<>();
@@ -93,7 +92,7 @@ public class AgendamentoJPA implements AgendamentoDAO {
             //2026-02-26 Juliano: mostrando na listagem todos os pacientes que são ativos
             Predicate somenteClienteAtivo = cb.equal(RootAgendamento.get("statuspacienteagendamento"), StatusPacienteAgendamentoDocumento.ATIVO);
             Predicate PacienteFicha = cb.equal(RootAgendamento.get("paciente"), paciente);
-            cq.select(RootAgendamento).where(somenteClienteAtivo,PacienteFicha);
+            cq.select(RootAgendamento).where(somenteClienteAtivo, PacienteFicha);
 
             listAgendamento = em.createQuery(cq).getResultList();
 
@@ -211,37 +210,64 @@ public class AgendamentoJPA implements AgendamentoDAO {
     public List<Agendamento> filtrarPacientes(AgendaFiltro agendafiltrar) {
         List<Agendamento> filtrarAgendamentos = new ArrayList<>();
         EntityManager em = JPAUtil.getEntityManager();
+
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery<Agendamento> cq = cb.createQuery(Agendamento.class);
             Root<Agendamento> RootAgendamento = cq.from(Agendamento.class);
 
-            List<Predicate> predicates = new ArrayList<>(); // 2025-11-23 Juliano indica qual condicao/ filtro  tera
+            List<Predicate> predicates = new ArrayList<>();
 
-            //2026-08-04 Juliano: já definindo que está lista filtrada tera somente os clientes ATIVOS
-            predicates.add(cb.equal(RootAgendamento.get("statuspacienteagendamento"),
+            //2026-10-31 Juliano: Listando somente os agendamentos ATIVOS
+            predicates.add(cb.equal(
+                    RootAgendamento.get("statuspacienteagendamento"),
                     StatusPacienteAgendamentoDocumento.ATIVO
-            )
-            );
+            ));
 
+            //2026-10-31 Juliano: Filtrando pela data
             if (agendafiltrar.getDataAgendamento() != null) {
-                predicates.add(cb.equal(RootAgendamento.get("dataAgendamento"), agendafiltrar.getDataAgendamento()));
+                predicates.add(cb.equal(
+                        RootAgendamento.get("dataAgendamento"),
+                        agendafiltrar.getDataAgendamento()
+                ));
             }
 
+            //2026-10-31 Juliano: Filtrando pelo paciente
+            //2026-10-31 Juliano: Filtrando pelo ID do paciente
             if (agendafiltrar.getPaciente() != null) {
-                predicates.add(cb.equal(RootAgendamento.get("paciente"), agendafiltrar.getPaciente()));
-            }
-            if (agendafiltrar.getStatuspagamento() != null) {
-                predicates.add(cb.equal(RootAgendamento.get("statuspagamento"), agendafiltrar.getStatuspagamento()));
-            }
-            if (agendafiltrar.getTipoatendimento() != null) {
-                predicates.add(cb.equal(RootAgendamento.get("tipoatendimento"), agendafiltrar.getTipoatendimento()));
-            }
-            if (agendafiltrar.getFrequenciaAtendimento() != null) {
-                predicates.add(cb.equal(RootAgendamento.get("frequenciaatendimento"), agendafiltrar.getFrequenciaAtendimento()));
+                predicates.add(cb.equal(
+                        RootAgendamento.get("paciente").get("id"),
+                        agendafiltrar.getPaciente().getId()
+                ));
             }
 
-            cq.where(cb.and(predicates.toArray(new Predicate[0])));
+            //2026-10-31 Juliano: Filtrando pelo status do pagamento
+            if (agendafiltrar.getStatuspagamento() != null) {
+                predicates.add(cb.equal(
+                        RootAgendamento.get("statuspagamento"),
+                        agendafiltrar.getStatuspagamento()
+                ));
+            }
+
+            //2026-10-31 Juliano: Filtrando pelo tipo de atendimento
+            if (agendafiltrar.getTipoatendimento() != null) {
+                predicates.add(cb.equal(
+                        RootAgendamento.get("tipoatendimento"),
+                        agendafiltrar.getTipoatendimento()
+                ));
+            }
+
+            //2026-10-31 Juliano: Filtrando pela frequência
+            if (agendafiltrar.getFrequenciaAtendimento() != null) {
+                predicates.add(cb.equal(
+                        RootAgendamento.get("frequenciaatendimento"),
+                        agendafiltrar.getFrequenciaAtendimento()
+                ));
+            }
+
+            cq.select(RootAgendamento)
+                    .where(cb.and(predicates.toArray(new Predicate[0])));
+
             filtrarAgendamentos = em.createQuery(cq).getResultList();
 
         } catch (Exception e) {
