@@ -1118,7 +1118,7 @@ public class AgendaView extends javax.swing.JPanel {
                 GerenciadorDeCarregamentoEFormatacaoDaTabelaDeAgendamentos.carregarAgendamento(modeloTabelaListarTodosAgendamentos, agendamentos);
                 LimparDadosAgendamento();
 
-                data = data.plusDays(15);
+                data = data.plusDays(14);
             }
             JOptionPane.showMessageDialog(
                     this,

@@ -194,14 +194,15 @@ public class AgendamentoJPA implements AgendamentoDAO {
             Long quantidade = em.createQuery(
                     "SELECT COUNT(a) FROM Agendamento a "
                     + "WHERE a.dataAgendamento = :data "
-                    + "AND a.horario = :horario",
+                    + "AND a.horario = :horario "
+                    + "AND a.statuspacienteagendamento = :status",
                     Long.class)
                     .setParameter("data", data)
                     .setParameter("horario", horario)
+                    .setParameter("status", StatusPacienteAgendamentoDocumento.ATIVO)
                     .getSingleResult();
 
             return quantidade > 0;
-
         } finally {
             em.close();
         }
