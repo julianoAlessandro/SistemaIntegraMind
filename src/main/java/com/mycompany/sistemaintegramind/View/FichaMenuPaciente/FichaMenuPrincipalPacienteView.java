@@ -23,7 +23,7 @@ public class FichaMenuPrincipalPacienteView extends javax.swing.JPanel {
         cardlayout = new CardLayout();
         MenuPrincipal.setLayout(cardlayout);
         MenuPrincipal.add(new FichaPerfilPacienteView(paciente), "PerfilPaciente");
-        MenuPrincipal.add(new FichaAnaminaseView(), "Anaminase");
+        MenuPrincipal.add(new FichaAnaminaseView(paciente), "Anaminase");
         MenuPrincipal.add(new FichaProntuarioPacienteView(paciente), "Prontuario");
         MenuPrincipal.add(new FichaAgendamentoView(paciente), "Agendamento");
         MenuPrincipal.add(new FichaDocumentosView(paciente), "Documentos");
