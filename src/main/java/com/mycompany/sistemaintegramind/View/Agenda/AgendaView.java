@@ -56,13 +56,10 @@ public class AgendaView extends javax.swing.JPanel {
         container1.setCardStyle();
         container2.setCardStyle();
         container3.setCardStyle();
-        
 
         //2026-09-11 Juliano: Definindo os estilos da tabelas
         TabelaEstilo.aplicarEstiloDois(tblAgendamentos);
         TabelaEstilo.aplicar(tblListarAgendamentosDoDia);
-        
-       
 
         //2026-09-23 Juliano: Não irá aparecer as datas anteriores a hoje
         dtDataAgendamento.setMinSelectableDate(new Date());
@@ -705,7 +702,7 @@ public class AgendaView extends javax.swing.JPanel {
         jPanel3.add(jLabel15, gridBagConstraints);
 
         jLabel18.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel18.setText("Frequência");
+        jLabel18.setText("Tipo de Atendimento");
         jLabel18.setMaximumSize(new java.awt.Dimension(51, 20));
         jLabel18.setMinimumSize(new java.awt.Dimension(0, 20));
         jLabel18.setPreferredSize(new java.awt.Dimension(115, 20));
@@ -778,7 +775,7 @@ public class AgendaView extends javax.swing.JPanel {
         jPanel3.add(jLabel13, gridBagConstraints);
 
         jLabel17.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel17.setText("Tipo Atendimento");
+        jLabel17.setText("Frequência");
         jLabel17.setMaximumSize(new java.awt.Dimension(51, 20));
         jLabel17.setMinimumSize(new java.awt.Dimension(0, 20));
         jLabel17.setPreferredSize(new java.awt.Dimension(115, 20));
@@ -1253,47 +1250,61 @@ public class AgendaView extends javax.swing.JPanel {
     }//GEN-LAST:event_tblListarAgendamentosDoDiaAncestorAdded
 
     private void btnFiltroAgendamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFiltroAgendamentoActionPerformed
+
+        //2026-10-31 Juliano: instâncias necessárias para poder carregar a tabela com os filtros aplicados
         AgendaFiltro filtro = new AgendaFiltro();
         AgendamentoJPA agendamentojpa = new AgendamentoJPA();
+        
+        //========================2026-10-31 Juliano: INICIO das definições dos filtros aplicados=====================================================
 
-        if (!dtFiltrarDataAgendamento.getDate().toString().trim().isEmpty()) {
+        //2026-10-31 Juliano: Filtrando pelo paciente
+        if (cmbFiltrarPaciente.getSelectedItem() instanceof Paciente) {
+            filtro.setPaciente((Paciente) cmbFiltrarPaciente.getSelectedItem());
+        }
+
+        //2026-10-31 Juliano: Filtrando pela data do agendamento
+        if (dtFiltrarDataAgendamento.getDate() != null) {
+
             LocalDate data = dtFiltrarDataAgendamento.getDate()
                     .toInstant()
                     .atZone(ZoneId.systemDefault())
                     .toLocalDate();
+
             filtro.setDataAgendamento(data);
-
         }
-        if (!cmbFiltrarPaciente.getSelectedItem().toString().trim().isEmpty()) {
 
-            filtro.setPaciente((Paciente) cmbFiltrarPaciente.getSelectedItem());
-
-        }
-        if (!cmbFiltrarStatusPagamento.getSelectedItem().toString().trim().isEmpty()) {
-
+        //2026-10-31 Juliano: Filtrando pelo status do pagamento
+        if (cmbFiltrarStatusPagamento.getSelectedItem() instanceof StatusPagamento) {
             filtro.setStatuspagamento((StatusPagamento) cmbFiltrarStatusPagamento.getSelectedItem());
-
         }
-        if (!cmbFiltrarTipoAtendimento.getSelectedItem().toString().trim().isEmpty()) {
 
+        //2026-10-31 Juliano: Filtrando pelo tipo de atendimento
+        if (cmbFiltrarTipoAtendimento.getSelectedItem() instanceof TipoAtendimento) {
             filtro.setTipoatendimento((TipoAtendimento) cmbFiltrarTipoAtendimento.getSelectedItem());
-
-        }
-        if (!cmbFiltrarFrequenciaAtendimento.getSelectedItem().toString().trim().isEmpty()) {
-
-            filtro.setFrequenciaAtendimento((FrequenciaAtendimento) cmbFiltrarFrequenciaAtendimento.getSelectedItem());
-
         }
 
+        //2026-10-31 Juliano: Filtrando pela frequência do atendimento
+        if (cmbFiltrarFrequenciaAtendimento.getSelectedItem() instanceof FrequenciaAtendimento) {
+
+            filtro.setFrequenciaAtendimento(
+                    (FrequenciaAtendimento) cmbFiltrarFrequenciaAtendimento.getSelectedItem()
+            );
+        }
+
+        //====================2026-10-31 Juliano: Fim das definições dos filtros aplicados=====================================================
+        
+        
+        //2026-10-31 Juliano: Aplicando os filtros no método para poder seguir os critérios estabelecidos no buscar
         List<Agendamento> ListarAgendamentosFiltrados = agendamentojpa.filtrarPacientes(filtro);
 
-        //2025-11-28 Juliano Atualiza a tabela
         DefaultTableModel model = (DefaultTableModel) tblAgendamentos.getModel();
-        model.setRowCount(0); // 2025-11-28 Juliano limpa tudo deixar a tabela vazia para chegar a tabela agora filtrada
+        model.setRowCount(0);
 
+        //2026-10-31 Juliano: Carregando a tabela com os filtros aplicados
         for (Agendamento agendamento : ListarAgendamentosFiltrados) {
             String statuspagamento = agendamento.getStatuspagamento().toString();
             String pagamentoformatado;
+
             if (statuspagamento.equals("PENDENTE")) {
                 pagamentoformatado = "<html><font color='red'><b>PENDENTE</b></font></html>";
             } else {
@@ -1314,10 +1325,9 @@ public class AgendaView extends javax.swing.JPanel {
                 agendamento.getValorDaConsulta(),
                 "",
                 ""
-
             });
-
         }
+
     }//GEN-LAST:event_btnFiltroAgendamentoActionPerformed
 
     private void btnLimparFiltroAgendamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparFiltroAgendamentoActionPerformed

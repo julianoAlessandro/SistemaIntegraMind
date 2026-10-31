@@ -100,17 +100,21 @@ public class FormatarTabelas {
     }
 
     public static DefaultTableModel formatarTabelaListarMovimentacaoFinanceiraPaciente() {
-        DefaultTableModel modelo = new DefaultTableModel(
-                new Object[]{
-                    "Código Agendamento",
-                    "Nome",
-                    "Data do Pagamento",
-                    "Valor"
 
-                },
-                0
-        );
+        DefaultTableModel modelo = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        modelo.setColumnIdentifiers(new Object[]{
+            "Código Agendamento",
+            "Nome",
+            "Data do Pagamento",
+            "Valor"
+        });
+
         return modelo;
     }
-
 }

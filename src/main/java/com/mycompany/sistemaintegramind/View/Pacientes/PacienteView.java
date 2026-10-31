@@ -236,7 +236,6 @@ public class PacienteView extends javax.swing.JPanel {
         container2 = new com.mycompany.sistemaintegramind.View.Componentes.Container();
         jLabel18 = new javax.swing.JLabel();
         txtId = new javax.swing.JTextField();
-        jLabel19 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         txtNome = new javax.swing.JTextField();
         btnEditar = new javax.swing.JButton();
@@ -890,9 +889,6 @@ public class PacienteView extends javax.swing.JPanel {
             }
         });
 
-        jLabel19.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabel19.setText("Sexo");
-
         jLabel13.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel13.setText("Nome/Nome Fantasia");
 
@@ -973,11 +969,8 @@ public class PacienteView extends javax.swing.JPanel {
                         .addGroup(container2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel23)
                             .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(container2Layout.createSequentialGroup()
-                                .addComponent(jLabel18)
-                                .addGap(353, 353, 353)
-                                .addComponent(jLabel19)))
-                        .addGap(0, 775, Short.MAX_VALUE))))
+                            .addComponent(jLabel18))
+                        .addGap(0, 832, Short.MAX_VALUE))))
         );
         container2Layout.setVerticalGroup(
             container2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -989,9 +982,7 @@ public class PacienteView extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(container2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(container2Layout.createSequentialGroup()
-                        .addGroup(container2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -2047,7 +2038,6 @@ public class PacienteView extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
