@@ -21,6 +21,7 @@ import com.mycompany.sistemaintegramind.util.Utilitarios.BotaoRenderizarIcones;
 import com.mycompany.sistemaintegramind.util.Utilitarios.StatusAgendamento;
 import com.mycompany.sistemaintegramind.util.Utilitarios.StatusCellRenderer;
 import com.toedter.calendar.JDateChooser;
+import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
@@ -34,8 +35,11 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.YES_NO_OPTION;
 import javax.swing.table.DefaultTableModel;
@@ -70,6 +74,15 @@ public class AgendaView extends javax.swing.JPanel {
 
         //2026-09-23 Juliano: carregando lista de opções do combox
         carregarComboboxesAgendamento();
+
+        //2026-11-02 Juliano: carregando a listagem de filtros
+        carregarComboboxesDoFiltro();
+
+        //2026-11-02 Juliano: Aparecendo o primeiro item TODOS no filtro
+        configurarRenderizadorFiltros(cmbFiltrarStatusPagamento);
+        configurarRenderizadorFiltros(cmbFiltrarTipoAtendimento);
+        configurarRenderizadorFiltros(cmbFiltrarFrequenciaAtendimento);
+        configurarRenderizadorFiltros(cmbFiltrarPaciente);
 
         //2026-09-11 Juliano: Definindo, o modo de exibição da data para o formato padrão 
         dtDataAgendamento.setDateFormatString("dd/MM/yyyy");
@@ -126,6 +139,7 @@ public class AgendaView extends javax.swing.JPanel {
         PacienteJPA pacientejpa = new PacienteJPA();
         List<Paciente> carregarListaPacientes = pacientejpa.listarPacientes();
         cmbListarPacientes.removeAllItems();
+
         for (Paciente p : carregarListaPacientes) {
             cmbListarPacientes.addItem(p);
         }
@@ -135,11 +149,14 @@ public class AgendaView extends javax.swing.JPanel {
     private void carregarPacientesFiltro() {
         PacienteJPA pacientejpa = new PacienteJPA();
         List<Paciente> carregarListaPacientes = pacientejpa.listarPacientes();
-        cmbFiltrarPaciente.removeAllItems();
-        for (Paciente p : carregarListaPacientes) {
-            cmbFiltrarPaciente.addItem(p.getNome());
-        }
 
+        cmbFiltrarPaciente.removeAllItems();
+        //2026-11-02 Juliano: Opção para não filtrar por paciente
+        cmbFiltrarPaciente.addItem(null);
+
+        for (Paciente p : carregarListaPacientes) {
+            cmbFiltrarPaciente.addItem(p);
+        }
     }
 
     private void carregarAgendamentosDoDIa(DefaultTableModel modelo, List<Agendamento> ListarAgendamentos) {
@@ -231,11 +248,45 @@ public class AgendaView extends javax.swing.JPanel {
         cmbStatusPagamento.setModel(new DefaultComboBoxModel<>(StatusPagamento.values()));
         cmbFrequenciaAtendimento.setModel(new DefaultComboBoxModel<>(FrequenciaAtendimento.values()));
 
-        //2026-09-23 Juliano: Carregar opções do filtro do agendamento
-        cmbFiltrarStatusPagamento.setModel(new DefaultComboBoxModel<>(StatusPagamento.values()));
-        cmbFiltrarTipoAtendimento.setModel(new DefaultComboBoxModel<>(TipoAtendimento.values()));
-        cmbFiltrarFrequenciaAtendimento.setModel(new DefaultComboBoxModel<>(FrequenciaAtendimento.values()));
+    }
 
+    private void carregarComboboxesDoFiltro() {
+        //2026-11-02 Juliano: Carregar opções dos filtros do agendamento
+        cmbFiltrarStatusPagamento.setModel(new DefaultComboBoxModel<>());
+        cmbFiltrarStatusPagamento.addItem(null);
+        for (StatusPagamento status : StatusPagamento.values()) {
+            cmbFiltrarStatusPagamento.addItem(status);
+        }
+
+        cmbFiltrarTipoAtendimento.setModel(new DefaultComboBoxModel<>());
+        cmbFiltrarTipoAtendimento.addItem(null);
+        for (TipoAtendimento tipo : TipoAtendimento.values()) {
+            cmbFiltrarTipoAtendimento.addItem(tipo);
+        }
+
+        cmbFiltrarFrequenciaAtendimento.setModel(new DefaultComboBoxModel<>());
+        cmbFiltrarFrequenciaAtendimento.addItem(null);
+        for (FrequenciaAtendimento frequencia : FrequenciaAtendimento.values()) {
+            cmbFiltrarFrequenciaAtendimento.addItem(frequencia);
+        }
+
+    }
+
+    private void configurarRenderizadorFiltros(JComboBox<?> combo) {
+        combo.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(
+                    JList<?> list, Object value, int index,
+                    boolean isSelected, boolean cellHasFocus) {
+
+                super.getListCellRendererComponent(
+                        list, value, index, isSelected, cellHasFocus);
+
+                setText(value == null ? "Todos" : value.toString());
+
+                return this;
+            }
+        });
     }
 
     //===================================================(FIM)=========================
@@ -1254,9 +1305,8 @@ public class AgendaView extends javax.swing.JPanel {
         //2026-10-31 Juliano: instâncias necessárias para poder carregar a tabela com os filtros aplicados
         AgendaFiltro filtro = new AgendaFiltro();
         AgendamentoJPA agendamentojpa = new AgendamentoJPA();
-        
-        //========================2026-10-31 Juliano: INICIO das definições dos filtros aplicados=====================================================
 
+        //========================2026-10-31 Juliano: INICIO das definições dos filtros aplicados=====================================================
         //2026-10-31 Juliano: Filtrando pelo paciente
         if (cmbFiltrarPaciente.getSelectedItem() instanceof Paciente) {
             filtro.setPaciente((Paciente) cmbFiltrarPaciente.getSelectedItem());
@@ -1292,8 +1342,6 @@ public class AgendaView extends javax.swing.JPanel {
         }
 
         //====================2026-10-31 Juliano: Fim das definições dos filtros aplicados=====================================================
-        
-        
         //2026-10-31 Juliano: Aplicando os filtros no método para poder seguir os critérios estabelecidos no buscar
         List<Agendamento> ListarAgendamentosFiltrados = agendamentojpa.filtrarPacientes(filtro);
 
@@ -1332,18 +1380,28 @@ public class AgendaView extends javax.swing.JPanel {
 
     private void btnLimparFiltroAgendamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparFiltroAgendamentoActionPerformed
 
+        //2026-11-02 Juliano: Limpando os campos dos filtros
+        cmbFiltrarStatusPagamento.setSelectedIndex(0);
+        cmbFiltrarTipoAtendimento.setSelectedIndex(0);
+        cmbFiltrarFrequenciaAtendimento.setSelectedIndex(0);
+        cmbFiltrarPaciente.setSelectedIndex(0);
+
+        //2026-11-02 Juliano: Limpando a data do filtro
+        dtFiltrarDataAgendamento.setDate(null);
+
         AgendaFiltro filtro = new AgendaFiltro();
         AgendamentoJPA agendamentojpa = new AgendamentoJPA();
 
         List<Agendamento> ListarTodosAgendamentos = agendamentojpa.listarAgendamentos();
 
-        //2025-11-28 Juliano Atualiza a tabela
         DefaultTableModel model = (DefaultTableModel) tblAgendamentos.getModel();
-        model.setRowCount(0); // 2025-11-28 Juliano limpa tudo deixar a tabela vazia para chegar a tabela agora filtrada
+        model.setRowCount(0);
 
         for (Agendamento agendamento : ListarTodosAgendamentos) {
+
             String statuspagamento = agendamento.getStatuspagamento().toString();
             String pagamentoformatado;
+
             if (statuspagamento.equals("PENDENTE")) {
                 pagamentoformatado = "<html><font color='red'><b>PENDENTE</b></font></html>";
             } else {
@@ -1364,10 +1422,9 @@ public class AgendaView extends javax.swing.JPanel {
                 agendamento.getValorDaConsulta(),
                 "",
                 ""
-
             });
-
         }
+
     }//GEN-LAST:event_btnLimparFiltroAgendamentoActionPerformed
 
     private void cmbListarPacientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbListarPacientesActionPerformed
@@ -1394,7 +1451,7 @@ public class AgendaView extends javax.swing.JPanel {
     private javax.swing.JButton btnLimparFiltroAgendamento;
     private javax.swing.JButton btnRealizarAgendamento;
     private javax.swing.JComboBox<FrequenciaAtendimento> cmbFiltrarFrequenciaAtendimento;
-    private javax.swing.JComboBox<String> cmbFiltrarPaciente;
+    private javax.swing.JComboBox<Paciente> cmbFiltrarPaciente;
     private javax.swing.JComboBox<StatusPagamento> cmbFiltrarStatusPagamento;
     private javax.swing.JComboBox<TipoAtendimento> cmbFiltrarTipoAtendimento;
     private javax.swing.JComboBox<FrequenciaAtendimento> cmbFrequenciaAtendimento;
