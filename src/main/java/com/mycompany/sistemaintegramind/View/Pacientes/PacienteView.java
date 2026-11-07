@@ -21,6 +21,7 @@ import java.util.List;
 import com.mycompany.sistemaintegramind.View.PerfilPaciente.SelecionarPerfilPacienteView;
 import com.mycompany.sistemaintegramind.util.Utilitarios.BotaoRenderizarIcones;
 import com.mycompany.sistemaintegramind.View.FichaMenuPaciente.FichaMenuPrincipalPacienteView;
+import com.mycompany.sistemaintegramind.util.Utilitarios.FormatarTabelas;
 //import com.mycompany.sistemaintegramind.util.Utilitarios.BotaoRenderizarProntuarioPaciente;
 import com.mycompany.sistemaintegramind.util.Utilitarios.JPAUtil;
 import java.awt.BorderLayout;
@@ -56,116 +57,128 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import javax.persistence.EntityManagerFactory;
+import javax.swing.SwingWorker;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.WebDriverException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 /**
  *
  * @author Juliano
  */
-public class PacienteView extends javax.swing.JPanel {
+  
 
-    Paciente paciente = new Paciente();
-    private PacienteJPA pacientejpa = new PacienteJPA();
-    private PacienteFiltro filtro = new PacienteFiltro();
-    private List<Paciente> listarPacientesFiltrados;
-    private Paciente pacienteSelecionado;
-    private boolean abrindoFicha = false;
+    public class PacienteView extends javax.swing.JPanel {
 
-    public PacienteView() {
-        initComponents();
+        Paciente paciente = new Paciente();
+        private PacienteJPA pacientejpa = new PacienteJPA();
+        private PacienteFiltro filtro = new PacienteFiltro();
+        private List<Paciente> listarPacientesFiltrados;
+        private Paciente pacienteSelecionado;
+        private boolean abrindoFicha = false;
 
-        jLabel3.setText("<html>Nome <font color='red'>*</font></html>");
+        // 2026-11-03 Juliano: Controle do Chrome para WhatsApp
+        private WebDriver driverWhatsApp;
 
-        ComponenteUtil.formatarScrollInvisivel(jScrollPane3);
-        container1.setBorder(new javax.swing.border.EmptyBorder(10, 10, 10, 10));
-      /*  BotaoEstilo.aplicarEfeito(btnSalvar,
+        public PacienteView() {
+            initComponents();
+
+            jLabel3.setText("<html>Nome <font color='red'>*</font></html>");
+
+            ComponenteUtil.formatarScrollInvisivel(jScrollPane3);
+            container1.setBorder(new javax.swing.border.EmptyBorder(10, 10, 10, 10));
+            /*  BotaoEstilo.aplicarEfeito(btnSalvar,
                 new Color(106, 218, 160),
                 new Color(87, 179, 131),
                 new Color(72, 148, 109)
         );*/
-        TabelaEstilo.aplicar(tblPacientes);
+            TabelaEstilo.aplicar(tblPacientes);
 
-        //2025-12-22 Guilherme: Define placeholders dos campos
-        txtNome.putClientProperty("JTextField.placeholderText", "Ex: João da Silva");
-        txtcpf.putClientProperty("JTextField.placeholderText", "Ex: 123.456.789-00");
-        txtEmail.putClientProperty("JTextField.placeholderText", "Ex: joao@email.com");
-        txtNomeCliente.putClientProperty("JTextField.placeholderText", "Ex: João da Silva");
-        txtDataNascimento.putClientProperty("JTextField.placeholderText", "Ex: 22/12/2005");
-        txtTelefoneFixo.putClientProperty("JTextField.placeholderText", "Ex: (11) 3456-7890");
-        txtTelefoneCelular.putClientProperty("JTextField.placeholderText", "Ex: (11) 91234-5678");
-        txtTelefoneComercial.putClientProperty("JTextField.placeholderText", "Ex: (11) 3344-5566");
-        txtBuscaCep.putClientProperty("JTextField.placeholderText", "Ex: 01001-000");
-        txtRua.putClientProperty("JTextField.placeholderText", "Ex: Av. Paulista");
-        txtBairro.putClientProperty("JTextField.placeholderText", "Ex: Bela Vista");
-        txtNumero.putClientProperty("JTextField.placeholderText", "Ex: 1000");
-        txtComplemento.putClientProperty("JTextField.placeholderText", "Ex: Apto 12, Bloco B");
-        txtProfissao.putClientProperty("JTextField.placeholderText", "Ex: Autônomo");
-        txtIdade.putClientProperty("JTextField.placeholderText", "Ex: 21");
+            //2025-12-22 Guilherme: Define placeholders dos campos
+            txtNome.putClientProperty("JTextField.placeholderText", "Ex: João da Silva");
+            txtcpf.putClientProperty("JTextField.placeholderText", "Ex: 123.456.789-00");
+            txtEmail.putClientProperty("JTextField.placeholderText", "Ex: joao@email.com");
+            txtNomeCliente.putClientProperty("JTextField.placeholderText", "Ex: João da Silva");
+            txtDataNascimento.putClientProperty("JTextField.placeholderText", "Ex: 22/12/2005");
+            txtTelefoneFixo.putClientProperty("JTextField.placeholderText", "Ex: (11) 3456-7890");
+            txtTelefoneCelular.putClientProperty("JTextField.placeholderText", "Ex: (11) 91234-5678");
+            txtTelefoneComercial.putClientProperty("JTextField.placeholderText", "Ex: (11) 3344-5566");
+            txtBuscaCep.putClientProperty("JTextField.placeholderText", "Ex: 01001-000");
+            txtRua.putClientProperty("JTextField.placeholderText", "Ex: Av. Paulista");
+            txtBairro.putClientProperty("JTextField.placeholderText", "Ex: Bela Vista");
+            txtNumero.putClientProperty("JTextField.placeholderText", "Ex: 1000");
+            txtComplemento.putClientProperty("JTextField.placeholderText", "Ex: Apto 12, Bloco B");
+            txtProfissao.putClientProperty("JTextField.placeholderText", "Ex: Autônomo");
+            txtIdade.putClientProperty("JTextField.placeholderText", "Ex: 21");
 
-        //2025-12-23 Guilherme: Ajusta aparência das abas
-        abasCadastrarClientes.putClientProperty("JTabbedPane.tabHeight", 45);
-        UIManager.put("TabbedPane.tabInsets", new Insets(0, 20, 0, 20));
-        abasCadastrarClientes.putClientProperty("JTabbedPane.underlineColor", new Color(58, 58, 191));
-        abasCadastrarClientes.putClientProperty("JTabbedPane.tabUnderlineHeight", 3);
+            //2025-12-23 Guilherme: Ajusta aparência das abas
+            abasCadastrarClientes.putClientProperty("JTabbedPane.tabHeight", 45);
+            UIManager.put("TabbedPane.tabInsets", new Insets(0, 20, 0, 20));
+            abasCadastrarClientes.putClientProperty("JTabbedPane.underlineColor", new Color(58, 58, 191));
+            abasCadastrarClientes.putClientProperty("JTabbedPane.tabUnderlineHeight", 3);
 
-        cbSexo.setModel(new DefaultComboBoxModel<>(Sexo.values()));
-        cbEstadosSigla.setModel(new DefaultComboBoxModel<>(EstadosBrasileiros.values()));
+            cbSexo.setModel(new DefaultComboBoxModel<>(Sexo.values()));
+            cbEstadosSigla.setModel(new DefaultComboBoxModel<>(EstadosBrasileiros.values()));
 
-        tblPacientes.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        tblPacientes.setRowHeight(28);
+            tblPacientes.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            tblPacientes.setRowHeight(28);
 
-        //2026-01-10 Guilherme: Máscara para data e números de telefone
-        ((AbstractDocument) txtDataNascimento.getDocument()).setDocumentFilter(new MascaraData());
-        txtDataNascimento.getActionMap().put("invalid-edit", new javax.swing.AbstractAction() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-                /* Não faz nada, logo, não faz barulho */
+            //2026-01-10 Guilherme: Máscara para data e números de telefone
+            ((AbstractDocument) txtDataNascimento.getDocument()).setDocumentFilter(new MascaraData());
+            txtDataNascimento.getActionMap().put("invalid-edit", new javax.swing.AbstractAction() {
+                @Override
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+                    /* Não faz nada, logo, não faz barulho */
+                }
+            });
+
+            // Lista de campos de telefone para aplicar o filtro e silenciar
+            javax.swing.JTextField[] camposTelefone = {txtTelefoneCelular, txtTelefoneFixo, txtTelefoneComercial};
+
+            for (javax.swing.JTextField campo : camposTelefone) {
+                // Aplica a máscara moderna
+                ((AbstractDocument) campo.getDocument()).setDocumentFilter(new MascaraTelefone());
+
+                // Remove o barulho (beep) de erro
+                campo.getActionMap().put("invalid-edit", new javax.swing.AbstractAction() {
+                    @Override
+                    public void actionPerformed(java.awt.event.ActionEvent e) {
+                    }
+                });
             }
-        });
 
-        // Lista de campos de telefone para aplicar o filtro e silenciar
-        javax.swing.JTextField[] camposTelefone = {txtTelefoneCelular, txtTelefoneFixo, txtTelefoneComercial};
+            ((AbstractDocument) txtEmail.getDocument()).setDocumentFilter(new FiltroEmail());
 
-        for (javax.swing.JTextField campo : camposTelefone) {
-            // Aplica a máscara moderna
-            ((AbstractDocument) campo.getDocument()).setDocumentFilter(new MascaraTelefone());
-
-            // Remove o barulho (beep) de erro
-            campo.getActionMap().put("invalid-edit", new javax.swing.AbstractAction() {
+            // Silenciador de sons CEP, CPF e CNPJ
+            javax.swing.Action silenciador = new javax.swing.AbstractAction() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent e) {
                 }
+            };
+
+            // Guilherme: Aplicar mascara de CPF
+            ((AbstractDocument) txtcpf.getDocument()).setDocumentFilter(new MascaraCPF());
+            txtcpf.getActionMap().put("invalid-edit", silenciador);
+
+            //Guilherme: Aplica CEP (usando o que passei anteriormente)
+            ((AbstractDocument) txtBuscaCep.getDocument()).setDocumentFilter(new MascaraCEP());
+            txtBuscaCep.getActionMap().put("invalid-edit", silenciador);
+
+            btnCep.addActionListener(new java.awt.event.ActionListener() {
+                @Override
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    buscarCep();
+                }
             });
+
         }
 
-        ((AbstractDocument) txtEmail.getDocument()).setDocumentFilter(new FiltroEmail());
-
-        // Silenciador de sons CEP, CPF e CNPJ
-        javax.swing.Action silenciador = new javax.swing.AbstractAction() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-            }
-        };
-
-        // Guilherme: Aplicar mascara de CPF
-        ((AbstractDocument) txtcpf.getDocument()).setDocumentFilter(new MascaraCPF());
-        txtcpf.getActionMap().put("invalid-edit", silenciador);
-
-        //Guilherme: Aplica CEP (usando o que passei anteriormente)
-        ((AbstractDocument) txtBuscaCep.getDocument()).setDocumentFilter(new MascaraCEP());
-        txtBuscaCep.getActionMap().put("invalid-edit", silenciador);
-
-        btnCep.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buscarCep();
-            }
-        });
-
-    }
-
-    @SuppressWarnings("unchecked")
+        @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
@@ -1018,171 +1031,171 @@ public class PacienteView extends javax.swing.JPanel {
         abasCadastrarClientes.getAccessibleContext().setAccessibleName("Cadastrar Pacientes");
     }// </editor-fold>//GEN-END:initComponents
 
-    //2025-12-09 Juliano conjunto de métodos para otimizar relacionamento com o CRUD do JPA evitando duplicidade  de código e melhorando a legibilidade do mesmo
-    private void carregartabela() {
-        DefaultTableModel model = (DefaultTableModel) tblPacientes.getModel();
-        model.setRowCount(0);
-        List<Paciente> listarClientes = pacientejpa.listarPacientes();
-        for (Paciente paciente : listarClientes) {
-            model.addRow(new Object[]{
-                paciente.getNome(),
-                paciente.getId(),
-                paciente.getCpf(),
-                paciente.getEmail(),
-                paciente.getTelefoneCelular(),
-                paciente.getTelefoneComercial(),
-                paciente.getTelefoneFixo(),
-                paciente.getRua(),
-                paciente.getBairro(),
-                paciente.getComplemento(),
-                paciente.getNumero(),
-                "X"
-            });
+        //2025-12-09 Juliano conjunto de métodos para otimizar relacionamento com o CRUD do JPA evitando duplicidade  de código e melhorando a legibilidade do mesmo
+        private void carregartabela() {
+            DefaultTableModel model = (DefaultTableModel) tblPacientes.getModel();
+            model.setRowCount(0);
+            List<Paciente> listarClientes = pacientejpa.listarPacientes();
+            for (Paciente paciente : listarClientes) {
+                model.addRow(new Object[]{
+                    paciente.getNome(),
+                    paciente.getId(),
+                    paciente.getCpf(),
+                    paciente.getEmail(),
+                    paciente.getTelefoneCelular(),
+                    paciente.getTelefoneComercial(),
+                    paciente.getTelefoneFixo(),
+                    paciente.getRua(),
+                    paciente.getBairro(),
+                    paciente.getComplemento(),
+                    paciente.getNumero(),
+                    "X"
+                });
+            }
         }
-    }
 
-    private void preencerPaciente(Paciente paciente) {
-        try {
+        private void preencerPaciente(Paciente paciente) {
+            try {
+
+                paciente.setNome(txtNomeCliente.getText());
+
+                //2025-12-03 Juliano Tratamento correto da data para evitar nullpointer
+                String textoData = txtDataNascimento.getText().trim();
+                if (!textoData.isEmpty()) {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    paciente.setDataNascimento(LocalDate.parse(textoData, formatter));
+                } else {
+                    paciente.setDataNascimento(null);
+                }
+
+                Sexo sexoSelecionado = (Sexo) cbSexo.getSelectedItem();
+                paciente.setSexo(sexoSelecionado);
+
+                paciente.setCpf(txtcpf.getText());
+                paciente.setTelefoneCelular(txtTelefoneCelular.getText());
+                paciente.setTelefoneComercial(txtTelefoneComercial.getText());
+                paciente.setTelefoneFixo(txtTelefoneFixo.getText());
+                paciente.setEmail(txtEmail.getText());
+                paciente.setCep(txtBuscaCep.getText());
+                paciente.setBairro(txtBairro.getText());
+                paciente.setRua(txtRua.getText());
+                paciente.setNumero(txtNumero.getText());
+                paciente.setComplemento(txtComplemento.getText());
+                paciente.setCidade(txtCidade.getText());
+                paciente.setStatuspaciente(StatusPacienteAgendamentoDocumento.ATIVO);
+
+                pacientejpa.CadastrarCliente(paciente);
+
+                ImageIcon icon = new ImageIcon(getClass().getResource("/imagens/Alertas/iconecerto.png"));
+
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Paciente salvo com sucesso!",
+                        "Sucesso",
+                        JOptionPane.INFORMATION_MESSAGE,
+                        icon
+                );
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Não foi possível salvar o Paciente: " + e.getMessage());
+                JOptionPane.showMessageDialog(this, e.getMessage());
+            }
+        }
+
+        private void limparTelaCadastroPaciente() {
+            txtId.setText("");
+            txtNome.setText("");
+            txtcpf.setText("");
+            txtEmail.setText("");
+            txtNomeCliente.setText("");
+            txtDataNascimento.setText("");
+            txtTelefoneFixo.setText("");
+            txtTelefoneCelular.setText("");
+            txtTelefoneComercial.setText("");
+            txtBuscaCep.setText("");
+            txtRua.setText("");
+            txtBairro.setText("");
+            txtNumero.setText("");
+            txtComplemento.setText("");
+            txtCidade.setText("");
+            cbEstadosSigla.setSelectedItem(EstadosBrasileiros.SP);
+            txtProfissao.setText("");
+            txtIdade.setText("");
+
+        }
+
+        private Paciente lerCamposPaciente() {
+
+            Paciente paciente = new Paciente();
 
             paciente.setNome(txtNomeCliente.getText());
 
-            //2025-12-03 Juliano Tratamento correto da data para evitar nullpointer
-            String textoData = txtDataNascimento.getText().trim();
-            if (!textoData.isEmpty()) {
+            String dataTexto = txtDataNascimento.getText().trim();
+            if (!dataTexto.isEmpty()) {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                paciente.setDataNascimento(LocalDate.parse(textoData, formatter));
+                paciente.setDataNascimento(LocalDate.parse(dataTexto, formatter));
             } else {
                 paciente.setDataNascimento(null);
             }
-
             Sexo sexoSelecionado = (Sexo) cbSexo.getSelectedItem();
             paciente.setSexo(sexoSelecionado);
+            //2026-01-20 Juliano: definindo a chamada dos estados brasileiros
+            EstadosBrasileiros estadoSelecionado = (EstadosBrasileiros) cbEstadosSigla.getSelectedItem();
+            paciente.setSexo(sexoSelecionado);
+            paciente.setEstado(estadoSelecionado);
 
+            //2026-01-20 Juliano: após pegar o tipo de cliente é hora de definir o valor do atributo para objeto cliente
             paciente.setCpf(txtcpf.getText());
+            paciente.setEmail(txtEmail.getText());
             paciente.setTelefoneCelular(txtTelefoneCelular.getText());
             paciente.setTelefoneComercial(txtTelefoneComercial.getText());
             paciente.setTelefoneFixo(txtTelefoneFixo.getText());
-            paciente.setEmail(txtEmail.getText());
-            paciente.setCep(txtBuscaCep.getText());
-            paciente.setBairro(txtBairro.getText());
             paciente.setRua(txtRua.getText());
-            paciente.setNumero(txtNumero.getText());
+            paciente.setBairro(txtBairro.getText());
             paciente.setComplemento(txtComplemento.getText());
+            paciente.setNumero(txtNumero.getText());
             paciente.setCidade(txtCidade.getText());
+            paciente.setCep(txtBuscaCep.getText());
             paciente.setStatuspaciente(StatusPacienteAgendamentoDocumento.ATIVO);
+            paciente.setProfissao(txtProfissao.getText());
+            paciente.setIdade(txtIdade.getText());
 
-            pacientejpa.CadastrarCliente(paciente);
+            String idText = txtId.getText().trim();
+            if (!idText.isEmpty()) {
+                paciente.setId(Long.parseLong(idText));
+            }
 
-            ImageIcon icon = new ImageIcon(getClass().getResource("/imagens/Alertas/iconecerto.png"));
-
-            JOptionPane.showMessageDialog(
-                    null,
-                    "Paciente salvo com sucesso!",
-                    "Sucesso",
-                    JOptionPane.INFORMATION_MESSAGE,
-                    icon
-            );
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Não foi possível salvar o Paciente: " + e.getMessage());
-            JOptionPane.showMessageDialog(this, e.getMessage());
-        }
-    }
-
-    private void limparTelaCadastroPaciente() {
-        txtId.setText("");
-        txtNome.setText("");
-        txtcpf.setText("");
-        txtEmail.setText("");
-        txtNomeCliente.setText("");
-        txtDataNascimento.setText("");
-        txtTelefoneFixo.setText("");
-        txtTelefoneCelular.setText("");
-        txtTelefoneComercial.setText("");
-        txtBuscaCep.setText("");
-        txtRua.setText("");
-        txtBairro.setText("");
-        txtNumero.setText("");
-        txtComplemento.setText("");
-        txtCidade.setText("");
-        cbEstadosSigla.setSelectedItem(EstadosBrasileiros.SP);
-        txtProfissao.setText("");
-        txtIdade.setText("");
-
-    }
-
-    private Paciente lerCamposPaciente() {
-
-        Paciente paciente = new Paciente();
-
-        paciente.setNome(txtNomeCliente.getText());
-
-        String dataTexto = txtDataNascimento.getText().trim();
-        if (!dataTexto.isEmpty()) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            paciente.setDataNascimento(LocalDate.parse(dataTexto, formatter));
-        } else {
-            paciente.setDataNascimento(null);
-        }
-        Sexo sexoSelecionado = (Sexo) cbSexo.getSelectedItem();
-        paciente.setSexo(sexoSelecionado);
-        //2026-01-20 Juliano: definindo a chamada dos estados brasileiros
-        EstadosBrasileiros estadoSelecionado = (EstadosBrasileiros) cbEstadosSigla.getSelectedItem();
-        paciente.setSexo(sexoSelecionado);
-        paciente.setEstado(estadoSelecionado);
-
-        //2026-01-20 Juliano: após pegar o tipo de cliente é hora de definir o valor do atributo para objeto cliente
-        paciente.setCpf(txtcpf.getText());
-        paciente.setEmail(txtEmail.getText());
-        paciente.setTelefoneCelular(txtTelefoneCelular.getText());
-        paciente.setTelefoneComercial(txtTelefoneComercial.getText());
-        paciente.setTelefoneFixo(txtTelefoneFixo.getText());
-        paciente.setRua(txtRua.getText());
-        paciente.setBairro(txtBairro.getText());
-        paciente.setComplemento(txtComplemento.getText());
-        paciente.setNumero(txtNumero.getText());
-        paciente.setCidade(txtCidade.getText());
-        paciente.setCep(txtBuscaCep.getText());
-        paciente.setStatuspaciente(StatusPacienteAgendamentoDocumento.ATIVO);
-        paciente.setProfissao(txtProfissao.getText());
-        paciente.setIdade(txtIdade.getText());
-
-        String idText = txtId.getText().trim();
-        if (!idText.isEmpty()) {
-            paciente.setId(Long.parseLong(idText));
+            return paciente;
         }
 
-        return paciente;
-    }
+        private void preencherCamposDoFormularioComDadosExistentes(Paciente paciente) {
+            //2025-12-06 Juliano caso o id exista ele vai definir os campos do formulário com os dados do respectivo ID,ou seja verificou que id existe vai pegar todos os atributos da intstância desse objeto e preencher campo a campo
+            txtId.setText(String.valueOf(paciente.getId()));
 
-    private void preencherCamposDoFormularioComDadosExistentes(Paciente paciente) {
-        //2025-12-06 Juliano caso o id exista ele vai definir os campos do formulário com os dados do respectivo ID,ou seja verificou que id existe vai pegar todos os atributos da intstância desse objeto e preencher campo a campo
-        txtId.setText(String.valueOf(paciente.getId()));
+            txtNomeCliente.setText(paciente.getNome());
 
-        txtNomeCliente.setText(paciente.getNome());
+            if (paciente.getDataNascimento() != null) {
+                txtDataNascimento.setText(paciente.getDataNascimento()
+                        .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            } else {
+                txtDataNascimento.setText("");
+            }
 
-        if (paciente.getDataNascimento() != null) {
-            txtDataNascimento.setText(paciente.getDataNascimento()
-                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        } else {
-            txtDataNascimento.setText("");
+            cbSexo.setSelectedItem(paciente.getSexo());
+            txtcpf.setText(paciente.getCpf());
+            txtEmail.setText(paciente.getEmail());
+            txtTelefoneCelular.setText(paciente.getTelefoneCelular());
+            txtTelefoneComercial.setText(paciente.getTelefoneComercial());
+            txtTelefoneFixo.setText(paciente.getTelefoneFixo());
+            txtRua.setText(paciente.getRua());
+            txtBairro.setText(paciente.getBairro());
+            txtComplemento.setText(paciente.getComplemento());
+            txtNumero.setText(paciente.getNumero());
+            txtBuscaCep.setText(paciente.getCep());
+            txtCidade.setText(paciente.getCidade());
+            cbEstadosSigla.setSelectedItem(paciente.getEstado());
         }
-
-        cbSexo.setSelectedItem(paciente.getSexo());
-        txtcpf.setText(paciente.getCpf());
-        txtEmail.setText(paciente.getEmail());
-        txtTelefoneCelular.setText(paciente.getTelefoneCelular());
-        txtTelefoneComercial.setText(paciente.getTelefoneComercial());
-        txtTelefoneFixo.setText(paciente.getTelefoneFixo());
-        txtRua.setText(paciente.getRua());
-        txtBairro.setText(paciente.getBairro());
-        txtComplemento.setText(paciente.getComplemento());
-        txtNumero.setText(paciente.getNumero());
-        txtBuscaCep.setText(paciente.getCep());
-        txtCidade.setText(paciente.getCidade());
-        cbEstadosSigla.setSelectedItem(paciente.getEstado());
-    }
 
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
@@ -1242,46 +1255,218 @@ public class PacienteView extends javax.swing.JPanel {
 
 
     }//GEN-LAST:event_btnSalvarActionPerformed
+// 2026-11-03 Juliano: Verificando se o Chrome está disponível
 
+        private boolean chromeWhatsAppDisponivel() {
+
+            try {
+
+                URL url = new URL("http://127.0.0.1:9222/json/version");
+
+                HttpURLConnection conexao
+                        = (HttpURLConnection) url.openConnection();
+
+                conexao.setConnectTimeout(2000);
+                conexao.setReadTimeout(2000);
+
+                int resposta = conexao.getResponseCode();
+
+                conexao.disconnect();
+
+                return resposta == 200;
+
+            } catch (Exception e) {
+
+                return false;
+            }
+        }
+
+        // 2026-11-03 Juliano: Inicializando Chrome para WhatsApp
+        private void iniciarChromeWhatsApp() throws Exception {
+
+            String caminhoChrome = "C:\\Users\\Micro\\AppData\\Local\\Google\\Chrome\\Application\\chrome.exe";
+
+            String perfilWhatsApp = "C:\\IntegraMIND\\ChromeWhatsAppProfile";
+
+            ProcessBuilder processo = new ProcessBuilder(
+                    caminhoChrome,
+                    "--remote-debugging-port=9222",
+                    "--user-data-dir=" + perfilWhatsApp,
+                    "--no-first-run",
+                    "--no-default-browser-check",
+                    "https://web.whatsapp.com"
+            );
+
+            processo.redirectErrorStream(true);
+            processo.redirectOutput(ProcessBuilder.Redirect.DISCARD);
+
+            processo.start();
+
+            //2026-11-03 Juliano: Aguarda o Chrome disponibilizar a porta
+            for (int i = 0; i < 30; i++) {
+
+                if (chromeWhatsAppDisponivel()) {
+                    return;
+                }
+
+                Thread.sleep(500);
+            }
+
+            throw new Exception(
+                    "O Chrome não disponibilizou a porta 9222."
+            );
+        }
+
+        // 2026-11-03 Juliano: Conectando ao Chrome do WhatsApp
+        private void conectarChromeWhatsApp() throws Exception {
+
+            // Verifica se o Chrome está disponível
+            if (!chromeWhatsAppDisponivel()) {
+
+                iniciarChromeWhatsApp();
+            }
+
+            // Verifica se o Selenium já possui uma conexão válida
+            if (driverWhatsApp != null) {
+
+                try {
+
+                    driverWhatsApp.getTitle();
+                    return;
+
+                } catch (Exception e) {
+
+                    driverWhatsApp = null;
+                }
+            }
+
+            ChromeOptions options = new ChromeOptions();
+
+            options.setExperimentalOption(
+                    "debuggerAddress",
+                    "127.0.0.1:9222"
+            );
+
+            driverWhatsApp = new ChromeDriver(options);
+        }
+
+// 2026-11-03 Juliano: Abrindo WhatsApp do paciente
+        private void abrirWhatsApp(String telefone) {
+
+            // Verifica se o paciente possui telefone cadastrado
+            if (telefone == null || telefone.trim().isEmpty()) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Este paciente não possui telefone celular cadastrado.",
+                        "Telefone inexistente",
+                        JOptionPane.WARNING_MESSAGE
+                );
+
+                return;
+            }
+
+            // Remove caracteres que não sejam números
+            telefone = telefone.replaceAll("\\D", "");
+
+            // Verifica se existem números após remover a máscara
+            if (telefone.isEmpty()) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "O telefone cadastrado é inválido.",
+                        "Telefone inválido",
+                        JOptionPane.WARNING_MESSAGE
+                );
+
+                return;
+            }
+
+            // Adiciona o código do Brasil, caso não exista
+            if (!telefone.startsWith("55")) {
+                telefone = "55" + telefone;
+            }
+
+            final String urlWhatsApp
+                    = "https://web.whatsapp.com/send?phone=" + telefone;
+
+            // 2026-11-03 Juliano: Abrindo WhatsApp na mesma instância do Chrome
+            new SwingWorker<Void, Void>() {
+
+                @Override
+                protected Void doInBackground() throws Exception {
+
+                    // Conecta ao Chrome existente ou inicializa uma nova instância
+                    conectarChromeWhatsApp();
+
+                    // Abre a conversa na mesma aba
+                    driverWhatsApp.get(urlWhatsApp);
+
+                    return null;
+                }
+
+                @Override
+                protected void done() {
+
+                    try {
+
+                        get();
+
+                        System.out.println("WhatsApp aberto com sucesso!");
+
+                    } catch (Exception e) {
+
+                        e.printStackTrace();
+
+                        JOptionPane.showMessageDialog(
+                                PacienteView.this,
+                                "Não foi possível abrir o WhatsApp.\n"
+                                + e.getMessage(),
+                                "Erro ao abrir WhatsApp",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                    }
+                }
+
+            }.execute();
+        
+
+    }
     private void tblPacientesAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_tblPacientesAncestorAdded
-        //2025-11-22 Juliano definindo o nome das colunas da tabela
-        DefaultTableModel modelo = new DefaultTableModel(
-                new Object[]{
-                    "Nome",
-                    "id",
-                    "CPF",
-                    "E-mail",
-                    "Celular",
-                    "Telefone Urgência",
-                    "Telefone Fixo",
-                    "Rua",
-                    "Bairro",
-                    "Complemento",
-                    "Número",
-                    "Ficha"
-                  
-                },
-                0
-        );
-
+        DefaultTableModel modelo = FormatarTabelas.formatarTabelaListarPacientes();
         tblPacientes.setModel(modelo);
-
-        //2026-09-02 Juliano: Permitindo abrir a tela de perfil do paciente 
-        // 2026-09-02 Juliano: Permitindo abrir a tela de perfil do paciente
         tblPacientes.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                // Garante que a ação só dispara no PRIMEIRO clique
+
                 if (evt.getClickCount() == 1) {
+
                     int coluna = tblPacientes.columnAtPoint(evt.getPoint());
                     int linha = tblPacientes.rowAtPoint(evt.getPoint());
 
-                    if (coluna == 11 && linha >= 0) {
+                    if (linha < 0) {
+                        return;
+                    }
+
+                    // 2026-11-03 Juliano: Abrindo WhatsApp do paciente
+                    if (coluna == 12) {
+
+                        String telefone = tblPacientes.getValueAt(linha, 4).toString();
+
+                        abrirWhatsApp(telefone);
+
+                        return;
+                    }
+
+                    // 2026-09-02 Juliano: Permitindo abrir a tela de perfil do paciente
+                    if (coluna == 11) {
+
                         if (abrindoFicha) {
                             return;
                         }
 
                         abrindoFicha = true;
+
                         try {
                             PacienteJPA pacientejpa = new PacienteJPA();
 
@@ -1294,10 +1479,10 @@ public class PacienteView extends javax.swing.JPanel {
                             //2026-09-03 Juliano: Abrindo a ficha completa do paciente
                             FichaMenuPrincipalPacienteView painelFicha = new FichaMenuPrincipalPacienteView(pacienteSelecionado);
 
-                            //2026-09-03 Juliano:  Realizando a criação do modal
+                            //2026-09-03 Juliano: Realizando a criação do modal
                             javax.swing.JDialog modal = new javax.swing.JDialog((java.awt.Frame) null, "Ficha do Paciente - " + pacienteSelecionado.getNome(), true);
 
-                            //2026-10-05 Juliano:  Define que o X deve realmente destruir o diálogo para nao ficar criando várias
+                            //2026-10-05 Juliano: Define que o X deve realmente destruir o diálogo
                             modal.setDefaultCloseOperation(javax.swing.JDialog.DISPOSE_ON_CLOSE);
 
                             //2026-09-04 Juliano: Adicionando um icone ao lado do título do modal
@@ -1306,6 +1491,7 @@ public class PacienteView extends javax.swing.JPanel {
                                             getClass().getResource("/imagens/PacienteModal.png")
                                     ).getImage()
                             );
+
                             modal.getContentPane().add(painelFicha);
 
                             //2026-09-03 Juliano: Pega o tamanho total do monitor e aplica no modal (Tela Cheia)
@@ -1320,7 +1506,6 @@ public class PacienteView extends javax.swing.JPanel {
                             // Libera para poder abrir outra ficha depois
                             abrindoFicha = false;
                         }
-
                     }
                 }
             }
@@ -1329,6 +1514,11 @@ public class PacienteView extends javax.swing.JPanel {
         tblPacientes.getColumnModel().getColumn(11).setMaxWidth(50);
         tblPacientes.getColumnModel().getColumn(11)
                 .setCellRenderer(new BotaoRenderizarIcones("/imagens/prontuario.png"));
+
+        //2026-11-03 Juliano: Incluindo botão do whatsapp para redirecionar a conversa no whatsapp
+        tblPacientes.getColumnModel().getColumn(12).setMaxWidth(40);
+        tblPacientes.getColumnModel().getColumn(12)
+                .setCellRenderer(new BotaoRenderizarIcones("/imagens/whatsapp_icon-icons.com_62756.png"));
 
         List<Paciente> listarPacientes = pacientejpa.listarPacientes();
 

@@ -372,4 +372,30 @@ public class AgendamentoJPA implements AgendamentoDAO {
             em.close();
         }
     }
+
+    // 2026-11-03 Juliano: Listando agendamentos do dia para envio de mensagens
+    public List<Agendamento> listarAgendamentosDoDiaParaEnvio() {
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+
+            return em.createQuery(
+                    "SELECT a FROM Agendamento a "
+                    + "WHERE a.dataAgendamento = :dataAtual "
+                    + "AND a.statusagendamento = :statusAgendamento "
+                    + "AND a.statuspacienteagendamento = :statusPaciente "
+                    + "ORDER BY a.horario",
+                    Agendamento.class
+            )
+                    .setParameter("dataAtual", LocalDate.now())
+                    .setParameter("statusAgendamento", StatusAgendamento.AGENDADO)
+                    .setParameter("statusPaciente", StatusPacienteAgendamentoDocumento.ATIVO)
+                    .getResultList();
+
+        } finally {
+
+            em.close();
+        }
+    }
 }

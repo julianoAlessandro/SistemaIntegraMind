@@ -6,10 +6,12 @@ package com.mycompany.sistemaintegramind.View.FichaMenuPaciente;
 
 import com.mycompany.sistemaintegramind.Model.dao.FichaProntuarioPacienteFiltro;
 import com.mycompany.sistemaintegramind.Model.dao.impl.AgendamentoJPA;
+import com.mycompany.sistemaintegramind.Model.dao.impl.AudioEvolucaoClinicaJPA;
 import com.mycompany.sistemaintegramind.Model.dao.impl.EvolucaoClinicaJPA;
 import com.mycompany.sistemaintegramind.Model.dao.impl.InativarNotaClinicaJPA;
 import com.mycompany.sistemaintegramind.Model.dao.impl.RetificarNotaClinicaJPA;
 import com.mycompany.sistemaintegramind.Model.entidades.Agendamento;
+import com.mycompany.sistemaintegramind.Model.entidades.AudioEvolucaoClinica;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusNotaClinica;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.TipoAtendimento;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.TipoNotaClinica;
@@ -17,6 +19,7 @@ import com.mycompany.sistemaintegramind.Model.entidades.EvolucaoClinica;
 import com.mycompany.sistemaintegramind.Model.entidades.InativarNotaClinica;
 import com.mycompany.sistemaintegramind.Model.entidades.Paciente;
 import com.mycompany.sistemaintegramind.Model.entidades.RetificarNotaClinica;
+import com.mycompany.sistemaintegramind.util.Utilitarios.GravadorAudio;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -24,7 +27,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -39,6 +41,16 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.time.LocalDateTime;
+import javax.swing.JOptionPane;
+import com.mycompany.sistemaintegramind.Model.entidades.AudioEvolucaoClinica;
+import com.mycompany.sistemaintegramind.Model.dao.impl.AudioEvolucaoClinicaJPA;
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
 
 public class FichaProntuarioPacienteView extends javax.swing.JPanel {
 
@@ -50,6 +62,7 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
     private RetificarNotaClinica retificacaoPendente;
     private boolean retificacaoEmAndamento = false;
     private InativarNotaClinicaJPA inativacaoJPA = new InativarNotaClinicaJPA();
+    private GravadorAudio gravadorAudio = new GravadorAudio();
 
     public FichaProntuarioPacienteView(Paciente paciente) {
         this.paciente = paciente;
@@ -114,6 +127,7 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
         txtPesquisarNotaClinicaPelaEvolucao = new javax.swing.JTextField();
         btnBuscarNotaClinica = new javax.swing.JButton();
         btnLimparPesquisa = new javax.swing.JButton();
+        btnGravarAudioEvolucaoClinicaPaciente = new javax.swing.JButton();
 
         jLabel2.setText("Evolução da Sessão");
 
@@ -155,7 +169,7 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
         pnlListaEvolucoes.setLayout(pnlListaEvolucoesLayout);
         pnlListaEvolucoesLayout.setHorizontalGroup(
             pnlListaEvolucoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 615, Short.MAX_VALUE)
+            .addGap(0, 621, Short.MAX_VALUE)
         );
         pnlListaEvolucoesLayout.setVerticalGroup(
             pnlListaEvolucoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -172,6 +186,9 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
 
         btnLimparPesquisa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/limpar.png"))); // NOI18N
         btnLimparPesquisa.addActionListener(this::btnLimparPesquisaActionPerformed);
+
+        btnGravarAudioEvolucaoClinicaPaciente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/ferramenta-de-audio-com-alto-falante.png"))); // NOI18N
+        btnGravarAudioEvolucaoClinicaPaciente.addActionListener(this::btnGravarAudioEvolucaoClinicaPacienteActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -194,7 +211,11 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
                                 .addComponent(cmbListarNotaClinica, 0, 123, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel2)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel2)
+                                        .addGap(118, 118, 118)
+                                        .addComponent(btnGravarAudioEvolucaoClinicaPaciente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGap(19, 19, 19))
                                     .addGroup(layout.createSequentialGroup()
                                         .addGap(133, 133, 133)
                                         .addComponent(btnLimparEvolucao, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -217,8 +238,7 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
                         .addComponent(btnBuscarNotaClinica, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnLimparPesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(scrListaEvolucoes, javax.swing.GroupLayout.PREFERRED_SIZE, 631, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                    .addComponent(scrListaEvolucoes, javax.swing.GroupLayout.PREFERRED_SIZE, 637, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(33, 33, 33)
@@ -233,33 +253,41 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addGap(9, 9, 9)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnBuscarNotaClinica, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtPesquisarNotaClinicaPelaEvolucao)
-                    .addComponent(btnLimparPesquisa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrListaEvolucoes, javax.swing.GroupLayout.PREFERRED_SIZE, 741, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(74, 74, 74)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(cmbListarNotaClinica, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
-                    .addComponent(txtHorario, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
-                    .addComponent(txtDataAgendamento))
-                .addGap(30, 30, 30)
-                .addComponent(jLabel2)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
-                .addComponent(jLabel4)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnLimparEvolucao)
-                    .addComponent(btnSalvarEvolucao)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(74, 74, 74)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(cmbListarNotaClinica, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
+                            .addComponent(txtHorario, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
+                            .addComponent(txtDataAgendamento))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(30, 30, 30)
+                                .addComponent(jLabel2))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(btnGravarAudioEvolucaoClinicaPaciente, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(30, 30, 30)
+                        .addComponent(jLabel4)
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnLimparEvolucao)
+                            .addComponent(btnSalvarEvolucao)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel1)
+                        .addGap(9, 9, 9)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btnBuscarNotaClinica, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtPesquisarNotaClinicaPelaEvolucao)
+                            .addComponent(btnLimparPesquisa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(scrListaEvolucoes, javax.swing.GroupLayout.PREFERRED_SIZE, 694, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(41, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(50, 50, 50)
@@ -287,14 +315,14 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
             return;
         }
 
-        // Cria uma nova instância da nota clínica
+        //2026-11-07 Juliano: Cria uma nova instância da nota clínica
         EvolucaoClinica evolucaoclinica = new EvolucaoClinica();
 
         EvolucaoClinicaJPA evolucaoclinicajpa = new EvolucaoClinicaJPA();
 
         RetificarNotaClinicaJPA retificarjpa = new RetificarNotaClinicaJPA();
 
-        // Preenche os dados da nova nota clínica
+        //2026-11-07 Juliano: Preenche os dados da nova nota clínica
         evolucaoclinica.setPaciente(paciente);
 
         evolucaoclinica.setEvolucaoSessao(txtEvolucaoSessao.getText());
@@ -309,13 +337,67 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
 
         evolucaoclinica.setTiponotaclinica((TipoNotaClinica) cmbListarNotaClinica.getSelectedItem());
 
-        // Primeiro, salva a nova nota clínica no banco de dados
+        //2026-11-07 Juliano: Primeiro, salva a nova nota clínica no banco de dados
         evolucaoclinicajpa.cadastrarEvolucaoClinica(evolucaoclinica);
 
         System.out.println(
                 "Nova nota clínica criada. ID: "
                 + evolucaoclinica.getId()
         );
+
+        //2026-11-07 Juliano: Salvando o áudio do prontuario
+        File arquivoTemporario = gravadorAudio.getArquivoAudioTemporario();
+
+        if (arquivoTemporario != null && arquivoTemporario.exists()) {
+
+            if (gravadorAudio.isGravando()) {
+                throw new IllegalStateException(
+                        "Finalize a gravação antes de salvar a evolução."
+                );
+            }
+
+            Long idPaciente = evolucaoclinica.getPaciente().getId();
+            Long idEvolucao = evolucaoclinica.getId();
+
+            //2026-11-07 Juliano: Diretório definitivo do áudio
+            File diretorioAudio = new File("C:\\IntegraMIND\\Audios\\Pacientes\\" + idPaciente);
+
+            if (!diretorioAudio.exists() && !diretorioAudio.mkdirs()) {
+                try {
+                    throw new IOException("Não foi possível criar a pasta dos áudios.");
+                } catch (IOException ex) {
+                    System.getLogger(FichaProntuarioPacienteView.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+                }
+            }
+
+            //2026-11-07 Juliano: Nome do arquivo
+            String nomeArquivo = "evolucao_" + idEvolucao + ".wav";
+
+            //2026-11-07 Juliano: Caminho definitivo
+            File arquivoDefinitivo = new File(diretorioAudio, nomeArquivo);
+
+            try {
+                //2026-11-07 Juliano: Transfere o arquivo temporário para a pasta definitiva
+                Files.move(arquivoTemporario.toPath(), arquivoDefinitivo.toPath());
+            } catch (IOException ex) {
+                System.getLogger(FichaProntuarioPacienteView.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            }
+
+            //2026-11-07 Juliano:Instância para gravar um áudio do prontuário
+            AudioEvolucaoClinica audioevolucao = new AudioEvolucaoClinica();
+            AudioEvolucaoClinicaJPA audioevolucaojpa = new AudioEvolucaoClinicaJPA();
+
+            audioevolucao.setNomeArquivo(nomeArquivo);
+            audioevolucao.setCaminhoArquivo(arquivoDefinitivo.getAbsolutePath());
+            audioevolucao.setFormato("WAV");
+            audioevolucao.setDataGravacao(LocalDateTime.now());
+            audioevolucao.setEvolucaoclinica(evolucaoclinica);
+            audioevolucaojpa.cadastrarAudioEvolucaoClinica(audioevolucao);
+
+            // Libera a referência do arquivo temporário
+            gravadorAudio.liberarAudioSalvo();
+
+        }
 
         // Se houver uma retificação em andamento, salva o vínculo
         if (retificacaoEmAndamento && retificacaoPendente != null) {
@@ -383,6 +465,72 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
         atualizarHistoricoEvolucaoClinica();
     }//GEN-LAST:event_btnLimparPesquisaActionPerformed
 
+    private void btnGravarAudioEvolucaoClinicaPacienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGravarAudioEvolucaoClinicaPacienteActionPerformed
+        try {
+            gravadorAudio.listarDispositivosAudio();
+
+            // Verifica se já existe uma gravação em andamento
+            if (gravadorAudio.isGravando()) {
+
+                // Interrompe e finaliza a gravação
+                File arquivoAudio = gravadorAudio.pararGravacao();
+
+                btnGravarAudioEvolucaoClinicaPaciente.setText("Gravar áudio");
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Gravação finalizada com sucesso!\n"
+                        + "O áudio está aguardando o salvamento da evolução clínica.",
+                        "Gravação de áudio",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+
+            } else {
+
+                // Verifica se existe uma gravação anterior aguardando salvamento
+                File audioAnterior = gravadorAudio.getArquivoAudioTemporario();
+
+                if (audioAnterior != null && audioAnterior.exists()) {
+
+                    int resposta = JOptionPane.showConfirmDialog(
+                            this,
+                            "Já existe uma gravação aguardando salvamento.\n"
+                            + "Deseja descartá-la e iniciar uma nova gravação?",
+                            "Substituir gravação",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE
+                    );
+
+                    if (resposta != JOptionPane.YES_OPTION) {
+                        return;
+                    }
+
+                    // Descarta o áudio anterior
+                    gravadorAudio.cancelarAudio();
+                }
+
+                // Inicia uma nova gravação
+                gravadorAudio.iniciarGravacao();
+
+                btnGravarAudioEvolucaoClinicaPaciente.setText("Parar gravação");
+
+            }
+
+        } catch (Exception e) {
+
+            btnGravarAudioEvolucaoClinicaPaciente.setText("Gravar áudio");
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Erro ao realizar a gravação:\n" + e.getMessage(),
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE
+            );
+
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_btnGravarAudioEvolucaoClinicaPacienteActionPerformed
+
     private JPanel listarHistoricoEvolucaoClinicaPaciente(EvolucaoClinica evolucao) {
 
         // Painel externo que contém o card e a justificativa
@@ -442,10 +590,66 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
                 new FlowLayout(FlowLayout.RIGHT, 5, 0)
         );
         painelBotoes.setOpaque(false);
-
+        JButton btnReproduzirAudio = new JButton("Reproduzir áudio");
         JButton btnVisualizar = new JButton("Visualizar");
         JButton btnRetificar = new JButton("Retificar");
         JButton btnInativar = new JButton("Inativar");
+
+        //2026-11-07 Juliano: Verifica se a evolução possui áudio
+        AudioEvolucaoClinicaJPA audioJPA = new AudioEvolucaoClinicaJPA();
+
+        AudioEvolucaoClinica audioEvolucao
+                = audioJPA.buscarAudioPorEvolucao(evolucao.getId());
+
+        if (audioEvolucao != null) {
+
+            painelBotoes.add(btnReproduzirAudio);
+
+            String caminhoAudio = audioEvolucao.getCaminhoArquivo();
+
+            File arquivoAudio = caminhoAudio != null
+                    ? new File(caminhoAudio) : null;
+
+            if (arquivoAudio != null && arquivoAudio.isFile()) {
+
+                btnReproduzirAudio.addActionListener(e -> {
+
+                    try {
+
+                        if (Desktop.isDesktopSupported()
+                                && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
+
+                            Desktop.getDesktop().open(arquivoAudio);
+
+                        } else {
+
+                            JOptionPane.showMessageDialog(
+                                    this,
+                                    "Não foi possível abrir o reprodutor de áudio.",
+                                    "Reprodução de áudio",
+                                    JOptionPane.WARNING_MESSAGE
+                            );
+                        }
+
+                    } catch (IOException ex) {
+
+                        JOptionPane.showMessageDialog(
+                                this,
+                                "Erro ao abrir o áudio: " + ex.getMessage(),
+                                "Erro",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+
+                        ex.printStackTrace();
+                    }
+                });
+
+            } else {
+
+                btnReproduzirAudio.setEnabled(false);
+                btnReproduzirAudio.setToolTipText("Arquivo de áudio não encontrado.");
+            }
+        }
 
         //2026-10-30 Juliano: Verifica se a nota está inativa
         boolean notaInativa = evolucao.getStatusnotaclinica() == StatusNotaClinica.INATIVA;
@@ -777,6 +981,7 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBuscarNotaClinica;
+    private javax.swing.JButton btnGravarAudioEvolucaoClinicaPaciente;
     private javax.swing.JButton btnLimparEvolucao;
     private javax.swing.JButton btnLimparPesquisa;
     private javax.swing.JButton btnSalvarEvolucao;
