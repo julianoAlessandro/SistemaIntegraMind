@@ -117,4 +117,28 @@ public class FormatarTabelas {
 
         return modelo;
     }
+    
+    public static DefaultTableModel formatarTabelaListarPacientes(){
+           //2025-11-22 Juliano definindo o nome das colunas da tabela
+        DefaultTableModel modelo = new DefaultTableModel(
+                new Object[]{
+                    "Nome",
+                    "id",
+                    "CPF",
+                    "E-mail",
+                    "Celular",
+                    "Telefone Urgência",
+                    "Telefone Fixo",
+                    "Rua",
+                    "Bairro",
+                    "Complemento",
+                    "Número",
+                    "Ficha",
+                    "Contato"
+                  
+                },
+                0
+        );
+        return modelo;
+    }
 }

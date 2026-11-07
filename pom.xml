@@ -67,6 +67,13 @@
             <version>1.4</version>
         </dependency>
         
+        <!-- Selenium para controlar o Google Chrome -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>4.25.0</version>
+        </dependency>
+        
         <!-- BCrypt (HASH DE SENHA) -->
         <dependency>
             <groupId>org.mindrot</groupId>
