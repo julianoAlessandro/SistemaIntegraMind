@@ -9,11 +9,18 @@ import com.mycompany.sistemaintegramind.Model.entidades.Paciente;
 import com.mycompany.sistemaintegramind.Model.entidades.PerguntaAnamnese;
 import com.mycompany.sistemaintegramind.Model.entidades.RespostaAnamnese;
 import com.mycompany.sistemaintegramind.util.Utilitarios.JPAUtil;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -22,12 +29,21 @@ import javax.persistence.criteria.Root;
 
 public class AnamneseJPA implements AnamneseDAO {
 
+    private static final File ARQUIVO_FORMULARIOS_DISCO = new File(
+            System.getProperty("user.home"), ".integramind_formularios_anamnese.properties"
+    );
+    private static final File ARQUIVO_RESPOSTAS_DISCO = new File(
+            System.getProperty("user.home"), ".integramind_respostas_anamnese.properties"
+    );
     private static final List<FormularioAnamnese> MEMORIA_FORMULARIOS = new ArrayList<>();
     private static final List<RespostaAnamnese> MEMORIA_RESPOSTAS = new ArrayList<>();
     private static long proximoIdMemoria = 100L;
+    private static long proximoIdRespostaMemoria = 500L;
 
     static {
         inicializarModelosPadraoMemoria();
+        carregarFormulariosPersonalizadosDoDisco();
+        carregarRespostasDoDisco();
     }
 
     private static void inicializarModelosPadraoMemoria() {
@@ -41,6 +57,381 @@ public class AnamneseJPA implements AnamneseDAO {
         FormularioAnamnese adulto = criarTemplatePadrao(TipoModeloAnamnese.ADULTO);
         adulto.setId(2L);
         MEMORIA_FORMULARIOS.add(adulto);
+    }
+
+    public static String gerarChavePaciente(Paciente paciente) {
+        if (paciente == null) {
+            return "PAC_GERAL";
+        }
+        if (paciente.getId() != null) {
+            return "PAC_ID_" + paciente.getId();
+        }
+        if (paciente.getCpf() != null && !paciente.getCpf().isBlank()) {
+            return "PAC_CPF_" + normalizarTextoChave(paciente.getCpf());
+        }
+        if (paciente.getNome() != null && !paciente.getNome().isBlank()) {
+            return "PAC_NOME_" + normalizarTextoChave(paciente.getNome());
+        }
+        return "PAC_GERAL";
+    }
+
+    private static String normalizarTextoChave(String texto) {
+        if (texto == null) {
+            return "";
+        }
+        return texto.trim().toLowerCase().replaceAll("[^a-z0-9à-ú]+", "_");
+    }
+
+    private static boolean respostaPertenceAoPaciente(RespostaAnamnese r, Paciente paciente) {
+        if (r == null) {
+            return false;
+        }
+        String chaveAlvo = gerarChavePaciente(paciente);
+        if (r.getChavePaciente() != null && r.getChavePaciente().equals(chaveAlvo)) {
+            return true;
+        }
+        Paciente rp = r.getPaciente();
+        if (paciente == null) {
+            return rp == null || "PAC_GERAL".equals(r.getChavePaciente());
+        }
+        if (rp != null) {
+            if (paciente.getId() != null && rp.getId() != null && paciente.getId().equals(rp.getId())) {
+                return true;
+            }
+            if (paciente.getCpf() != null && !paciente.getCpf().isBlank()
+                    && rp.getCpf() != null && paciente.getCpf().trim().equalsIgnoreCase(rp.getCpf().trim())) {
+                return true;
+            }
+            if (paciente.getNome() != null && !paciente.getNome().isBlank()
+                    && rp.getNome() != null && paciente.getNome().trim().equalsIgnoreCase(rp.getNome().trim())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static synchronized void carregarFormulariosPersonalizadosDoDisco() {
+        if (!ARQUIVO_FORMULARIOS_DISCO.exists()) {
+            return;
+        }
+        Properties props = new Properties();
+        try (InputStreamReader reader = new InputStreamReader(
+                new FileInputStream(ARQUIVO_FORMULARIOS_DISCO), StandardCharsets.UTF_8)) {
+            props.load(reader);
+            int qtd = Integer.parseInt(props.getProperty("form.count", "0"));
+            long maiorId = proximoIdMemoria;
+
+            for (int i = 0; i < qtd; i++) {
+                String pref = "form." + i + ".";
+                Long id = Long.parseLong(props.getProperty(pref + "id", String.valueOf(proximoIdMemoria++)));
+                if (id >= maiorId) {
+                    maiorId = id + 1;
+                }
+                String titulo = props.getProperty(pref + "titulo", "Personalizado");
+                String dataStr = props.getProperty(pref + "dataAbertura", LocalDate.now().toString());
+                LocalDate dataAb;
+                try {
+                    dataAb = LocalDate.parse(dataStr);
+                } catch (Exception ex) {
+                    dataAb = LocalDate.now();
+                }
+                String tipoStr = props.getProperty(pref + "tipoModelo", TipoModeloAnamnese.PERSONALIZADO.name());
+                TipoModeloAnamnese tipoMod;
+                try {
+                    tipoMod = TipoModeloAnamnese.valueOf(tipoStr);
+                } catch (Exception ex) {
+                    tipoMod = TipoModeloAnamnese.PERSONALIZADO;
+                }
+                String statusStr = props.getProperty(pref + "status", StatusPacienteAgendamentoDocumento.ATIVO.name());
+                StatusPacienteAgendamentoDocumento statusMod;
+                try {
+                    statusMod = StatusPacienteAgendamentoDocumento.valueOf(statusStr);
+                } catch (Exception ex) {
+                    statusMod = StatusPacienteAgendamentoDocumento.ATIVO;
+                }
+
+                FormularioAnamnese form = new FormularioAnamnese();
+                form.setId(id);
+                form.setTitulo(titulo);
+                form.setDataAbertura(dataAb);
+                form.setTipoModelo(tipoMod);
+                form.setStatusFormulario(statusMod);
+
+                int pCount = Integer.parseInt(props.getProperty(pref + "perguntas.count", "0"));
+                for (int j = 0; j < pCount; j++) {
+                    String pPref = pref + "p." + j + ".";
+                    String enunciado = props.getProperty(pPref + "enunciado", "Pergunta");
+                    int ordem = Integer.parseInt(props.getProperty(pPref + "ordem", String.valueOf(j + 1)));
+                    String tPergStr = props.getProperty(pPref + "tipo", TipoPerguntaAnamnese.TEXTO_LIVRE.name());
+                    TipoPerguntaAnamnese tPerg;
+                    try {
+                        tPerg = TipoPerguntaAnamnese.valueOf(tPergStr);
+                    } catch (Exception ex) {
+                        tPerg = TipoPerguntaAnamnese.TEXTO_LIVRE;
+                    }
+                    int opCount = Integer.parseInt(props.getProperty(pPref + "opcoes.count", "0"));
+                    List<String> opcoes = new ArrayList<>();
+                    for (int k = 0; k < opCount; k++) {
+                        opcoes.add(props.getProperty(pPref + "op." + k, ""));
+                    }
+                    form.adicionarPergunta(new PerguntaAnamnese(enunciado, ordem, tPerg, opcoes));
+                }
+
+                sincronizarMemoriaInterno(form);
+            }
+            proximoIdMemoria = Math.max(proximoIdMemoria, maiorId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static synchronized void salvarFormulariosPersonalizadosNoDisco() {
+        Properties props = new Properties();
+        List<FormularioAnamnese> personalizados = new ArrayList<>();
+        for (FormularioAnamnese f : MEMORIA_FORMULARIOS) {
+            if (f.getTipoModelo() == TipoModeloAnamnese.PERSONALIZADO
+                    && f.getStatusFormulario() == StatusPacienteAgendamentoDocumento.ATIVO) {
+                personalizados.add(f);
+            }
+        }
+        props.setProperty("form.count", String.valueOf(personalizados.size()));
+        for (int i = 0; i < personalizados.size(); i++) {
+            FormularioAnamnese f = personalizados.get(i);
+            String pref = "form." + i + ".";
+            props.setProperty(pref + "id", String.valueOf(f.getId() != null ? f.getId() : (proximoIdMemoria++)));
+            props.setProperty(pref + "titulo", f.getTitulo() != null ? f.getTitulo() : "Personalizado");
+            props.setProperty(pref + "dataAbertura", (f.getDataAbertura() != null ? f.getDataAbertura() : LocalDate.now()).toString());
+            props.setProperty(pref + "tipoModelo", (f.getTipoModelo() != null ? f.getTipoModelo() : TipoModeloAnamnese.PERSONALIZADO).name());
+            props.setProperty(pref + "status", (f.getStatusFormulario() != null ? f.getStatusFormulario() : StatusPacienteAgendamentoDocumento.ATIVO).name());
+
+            List<PerguntaAnamnese> perguntas = f.getPerguntas();
+            props.setProperty(pref + "perguntas.count", String.valueOf(perguntas != null ? perguntas.size() : 0));
+            if (perguntas != null) {
+                for (int j = 0; j < perguntas.size(); j++) {
+                    PerguntaAnamnese p = perguntas.get(j);
+                    String pPref = pref + "p." + j + ".";
+                    props.setProperty(pPref + "enunciado", p.getEnunciado() != null ? p.getEnunciado() : "");
+                    props.setProperty(pPref + "ordem", String.valueOf(p.getOrdem() != null ? p.getOrdem() : (j + 1)));
+                    props.setProperty(pPref + "tipo", (p.getTipoPergunta() != null ? p.getTipoPergunta() : TipoPerguntaAnamnese.TEXTO_LIVRE).name());
+                    List<String> ops = p.getOpcoes();
+                    props.setProperty(pPref + "opcoes.count", String.valueOf(ops != null ? ops.size() : 0));
+                    if (ops != null) {
+                        for (int k = 0; k < ops.size(); k++) {
+                            props.setProperty(pPref + "op." + k, ops.get(k) != null ? ops.get(k) : "");
+                        }
+                    }
+                }
+            }
+        }
+        try (OutputStreamWriter writer = new OutputStreamWriter(
+                new FileOutputStream(ARQUIVO_FORMULARIOS_DISCO), StandardCharsets.UTF_8)) {
+            props.store(writer, "Formularios Personalizados de Anamnese - SistemaIntegraMind");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static synchronized void carregarRespostasDoDisco() {
+        if (!ARQUIVO_RESPOSTAS_DISCO.exists()) {
+            return;
+        }
+        Properties props = new Properties();
+        try (InputStreamReader reader = new InputStreamReader(
+                new FileInputStream(ARQUIVO_RESPOSTAS_DISCO), StandardCharsets.UTF_8)) {
+            props.load(reader);
+            int qtd = Integer.parseInt(props.getProperty("resp.count", "0"));
+            long maiorId = proximoIdRespostaMemoria;
+
+            for (int i = 0; i < qtd; i++) {
+                String pref = "resp." + i + ".";
+                Long id = Long.parseLong(props.getProperty(pref + "id", String.valueOf(proximoIdRespostaMemoria++)));
+                if (id >= maiorId) {
+                    maiorId = id + 1;
+                }
+                LocalDate dataAb;
+                try {
+                    dataAb = LocalDate.parse(props.getProperty(pref + "dataAbertura", LocalDate.now().toString()));
+                } catch (Exception ex) {
+                    dataAb = LocalDate.now();
+                }
+                boolean ativa = Boolean.parseBoolean(props.getProperty(pref + "ativa", "true"));
+                LocalDateTime dataHoraDesat = null;
+                String desatStr = props.getProperty(pref + "dataHoraDesativacao", "");
+                if (!desatStr.isBlank()) {
+                    try {
+                        dataHoraDesat = LocalDateTime.parse(desatStr);
+                    } catch (Exception ignored) {
+                    }
+                }
+                if (!ativa && dataHoraDesat == null) {
+                    dataHoraDesat = LocalDateTime.now();
+                }
+
+                String chavePac = props.getProperty(pref + "chavePaciente", "PAC_GERAL");
+                String conteudo = props.getProperty(pref + "conteudoRespostas", "");
+                String dadosCampos = props.getProperty(pref + "dadosCampos", "");
+
+                String formTipoStr = props.getProperty(pref + "form.tipo", TipoModeloAnamnese.INFANTIL_ADOLESCENTE.name());
+                TipoModeloAnamnese formTipo;
+                try {
+                    formTipo = TipoModeloAnamnese.valueOf(formTipoStr);
+                } catch (Exception ex) {
+                    formTipo = TipoModeloAnamnese.INFANTIL_ADOLESCENTE;
+                }
+                Long formId = null;
+                try {
+                    String fIdStr = props.getProperty(pref + "form.id", "");
+                    if (!fIdStr.isBlank()) {
+                        formId = Long.parseLong(fIdStr);
+                    }
+                } catch (Exception ignored) {
+                }
+                String formTitulo = props.getProperty(pref + "form.titulo", "Anamnese");
+
+                // Constrói o snapshot exato do formulário salvo com esta resposta
+                FormularioAnamnese formSnapshot = new FormularioAnamnese();
+                formSnapshot.setId(formId);
+                formSnapshot.setTitulo(formTitulo);
+                formSnapshot.setDataAbertura(dataAb);
+                formSnapshot.setTipoModelo(formTipo);
+                formSnapshot.setStatusFormulario(StatusPacienteAgendamentoDocumento.ATIVO);
+
+                int pCount = Integer.parseInt(props.getProperty(pref + "form.p.count", "0"));
+                for (int j = 0; j < pCount; j++) {
+                    String pPref = pref + "form.p." + j + ".";
+                    String enunciado = props.getProperty(pPref + "enunciado", "Pergunta");
+                    int ordem = Integer.parseInt(props.getProperty(pPref + "ordem", String.valueOf(j + 1)));
+                    TipoPerguntaAnamnese tPerg;
+                    try {
+                        tPerg = TipoPerguntaAnamnese.valueOf(props.getProperty(pPref + "tipo", TipoPerguntaAnamnese.TEXTO_LIVRE.name()));
+                    } catch (Exception ex) {
+                        tPerg = TipoPerguntaAnamnese.TEXTO_LIVRE;
+                    }
+                    int opCount = Integer.parseInt(props.getProperty(pPref + "opcoes.count", "0"));
+                    List<String> ops = new ArrayList<>();
+                    for (int k = 0; k < opCount; k++) {
+                        ops.add(props.getProperty(pPref + "op." + k, ""));
+                    }
+                    formSnapshot.adicionarPergunta(new PerguntaAnamnese(enunciado, ordem, tPerg, ops));
+                }
+
+                FormularioAnamnese formAssociado = !formSnapshot.getPerguntas().isEmpty()
+                        ? formSnapshot
+                        : localizarFormularioEmMemoria(formId, formTipo, formTitulo);
+
+                RespostaAnamnese r = new RespostaAnamnese();
+                r.setId(id);
+                r.setDataAbertura(dataAb);
+                r.setAtiva(ativa);
+                r.setDataHoraDesativacao(dataHoraDesat);
+                r.setChavePaciente(chavePac);
+                r.setConteudoRespostas(conteudo);
+                r.setDadosCampos(dadosCampos);
+                r.setFormulario(formAssociado);
+
+                sincronizarRespostaMemoriaInterno(r);
+            }
+            proximoIdRespostaMemoria = Math.max(proximoIdRespostaMemoria, maiorId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static FormularioAnamnese localizarFormularioEmMemoria(Long formId, TipoModeloAnamnese tipo, String titulo) {
+        if (tipo == TipoModeloAnamnese.INFANTIL_ADOLESCENTE) {
+            for (FormularioAnamnese f : MEMORIA_FORMULARIOS) {
+                if (f.getTipoModelo() == TipoModeloAnamnese.INFANTIL_ADOLESCENTE) {
+                    return f;
+                }
+            }
+        }
+        if (tipo == TipoModeloAnamnese.ADULTO) {
+            for (FormularioAnamnese f : MEMORIA_FORMULARIOS) {
+                if (f.getTipoModelo() == TipoModeloAnamnese.ADULTO) {
+                    return f;
+                }
+            }
+        }
+        if (formId != null) {
+            for (FormularioAnamnese f : MEMORIA_FORMULARIOS) {
+                if (formId.equals(f.getId())) {
+                    return f;
+                }
+            }
+        }
+        if (titulo != null && !titulo.isBlank()) {
+            for (FormularioAnamnese f : MEMORIA_FORMULARIOS) {
+                if (f.getTitulo() != null && f.getTitulo().equalsIgnoreCase(titulo)) {
+                    return f;
+                }
+            }
+        }
+        return null;
+    }
+
+    private static synchronized void salvarRespostasNoDisco() {
+        Properties props = new Properties();
+        props.setProperty("resp.count", String.valueOf(MEMORIA_RESPOSTAS.size()));
+        for (int i = 0; i < MEMORIA_RESPOSTAS.size(); i++) {
+            RespostaAnamnese r = MEMORIA_RESPOSTAS.get(i);
+            String pref = "resp." + i + ".";
+            props.setProperty(pref + "id", String.valueOf(r.getId() != null ? r.getId() : (proximoIdRespostaMemoria++)));
+            props.setProperty(pref + "dataAbertura", (r.getDataAbertura() != null ? r.getDataAbertura() : LocalDate.now()).toString());
+            props.setProperty(pref + "ativa", String.valueOf(r.isAtiva()));
+            props.setProperty(pref + "dataHoraDesativacao", r.getDataHoraDesativacao() != null ? r.getDataHoraDesativacao().toString() : "");
+            String chavePac = r.getChavePaciente() != null ? r.getChavePaciente() : gerarChavePaciente(r.getPaciente());
+            props.setProperty(pref + "chavePaciente", chavePac);
+            props.setProperty(pref + "conteudoRespostas", r.getConteudoRespostas() != null ? r.getConteudoRespostas() : "");
+            props.setProperty(pref + "dadosCampos", r.getDadosCampos() != null ? r.getDadosCampos() : "");
+
+            FormularioAnamnese f = r.getFormulario();
+            if (f != null) {
+                props.setProperty(pref + "form.id", f.getId() != null ? String.valueOf(f.getId()) : "");
+                props.setProperty(pref + "form.tipo", (f.getTipoModelo() != null ? f.getTipoModelo() : TipoModeloAnamnese.INFANTIL_ADOLESCENTE).name());
+                props.setProperty(pref + "form.titulo", f.getTitulo() != null ? f.getTitulo() : "Anamnese");
+                List<PerguntaAnamnese> perguntas = f.getPerguntas();
+                props.setProperty(pref + "form.p.count", String.valueOf(perguntas != null ? perguntas.size() : 0));
+                if (perguntas != null) {
+                    for (int j = 0; j < perguntas.size(); j++) {
+                        PerguntaAnamnese p = perguntas.get(j);
+                        String pPref = pref + "form.p." + j + ".";
+                        props.setProperty(pPref + "enunciado", p.getEnunciado() != null ? p.getEnunciado() : "");
+                        props.setProperty(pPref + "ordem", String.valueOf(p.getOrdem() != null ? p.getOrdem() : (j + 1)));
+                        props.setProperty(pPref + "tipo", (p.getTipoPergunta() != null ? p.getTipoPergunta() : TipoPerguntaAnamnese.TEXTO_LIVRE).name());
+                        List<String> ops = p.getOpcoes();
+                        props.setProperty(pPref + "opcoes.count", String.valueOf(ops != null ? ops.size() : 0));
+                        if (ops != null) {
+                            for (int k = 0; k < ops.size(); k++) {
+                                props.setProperty(pPref + "op." + k, ops.get(k) != null ? ops.get(k) : "");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        try (OutputStreamWriter writer = new OutputStreamWriter(
+                new FileOutputStream(ARQUIVO_RESPOSTAS_DISCO), StandardCharsets.UTF_8)) {
+            props.store(writer, "Respostas Salvas de Anamnese (Ativas e Desativadas) - SistemaIntegraMind");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void sincronizarRespostaMemoriaInterno(RespostaAnamnese resposta) {
+        if (resposta == null) {
+            return;
+        }
+        if (resposta.getChavePaciente() == null || resposta.getChavePaciente().isBlank()) {
+            resposta.setChavePaciente(gerarChavePaciente(resposta.getPaciente()));
+        }
+        for (int i = 0; i < MEMORIA_RESPOSTAS.size(); i++) {
+            RespostaAnamnese existente = MEMORIA_RESPOSTAS.get(i);
+            if (existente.getId() != null && existente.getId().equals(resposta.getId())) {
+                MEMORIA_RESPOSTAS.set(i, resposta);
+                return;
+            }
+        }
+        MEMORIA_RESPOSTAS.add(resposta);
     }
 
     private static void addPergunta(FormularioAnamnese form, String enunciado, TipoPerguntaAnamnese tipo, String... opcoes) {
@@ -214,6 +605,7 @@ public class AnamneseJPA implements AnamneseDAO {
         for (PerguntaAnamnese p : formulario.getPerguntas()) {
             p.setFormulario(formulario);
             p.setOrdem(ordem++);
+            p.getOpcoesTexto();
         }
 
         EntityManager em = obterEntityManagerSeguro();
@@ -259,6 +651,7 @@ public class AnamneseJPA implements AnamneseDAO {
         for (PerguntaAnamnese p : formulario.getPerguntas()) {
             p.setFormulario(formulario);
             p.setOrdem(ordem++);
+            p.getOpcoesTexto();
         }
 
         EntityManager em = obterEntityManagerSeguro();
@@ -311,7 +704,7 @@ public class AnamneseJPA implements AnamneseDAO {
         sincronizarMemoria(formulario);
     }
 
-    private void sincronizarMemoria(FormularioAnamnese formulario) {
+    private static void sincronizarMemoriaInterno(FormularioAnamnese formulario) {
         if (formulario == null) {
             return;
         }
@@ -321,8 +714,20 @@ public class AnamneseJPA implements AnamneseDAO {
                 MEMORIA_FORMULARIOS.set(i, formulario);
                 return;
             }
+            if (existente.getTipoModelo() == TipoModeloAnamnese.PERSONALIZADO
+                    && formulario.getTipoModelo() == TipoModeloAnamnese.PERSONALIZADO
+                    && existente.getTitulo() != null
+                    && existente.getTitulo().equalsIgnoreCase(formulario.getTitulo())) {
+                MEMORIA_FORMULARIOS.set(i, formulario);
+                return;
+            }
         }
         MEMORIA_FORMULARIOS.add(formulario);
+    }
+
+    private void sincronizarMemoria(FormularioAnamnese formulario) {
+        sincronizarMemoriaInterno(formulario);
+        salvarFormulariosPersonalizadosNoDisco();
     }
 
     @Override
@@ -358,7 +763,6 @@ public class AnamneseJPA implements AnamneseDAO {
         List<FormularioAnamnese> lista = listarFormulariosPorTipo(tipoModelo);
         if (!lista.isEmpty()) {
             FormularioAnamnese existente = lista.get(0);
-            // Atualiza automaticamente caso o banco ainda tenha a versão antiga de 3 perguntas do modelo Infantil/Adolescente
             if (tipoModelo == TipoModeloAnamnese.INFANTIL_ADOLESCENTE
                     && (existente.getPerguntas() == null || existente.getPerguntas().size() < 20)) {
                 FormularioAnamnese completo = criarTemplatePadrao(TipoModeloAnamnese.INFANTIL_ADOLESCENTE);
@@ -383,9 +787,12 @@ public class AnamneseJPA implements AnamneseDAO {
                 Root<FormularioAnamnese> root = cq.from(FormularioAnamnese.class);
                 Predicate ativo = cb.equal(root.get("statusFormulario"), StatusPacienteAgendamentoDocumento.ATIVO);
                 cq.select(root).where(ativo).distinct(true);
-                List<FormularioAnamnese> resultado = em.createQuery(cq).getResultList();
-                if (resultado != null && !resultado.isEmpty()) {
-                    return resultado;
+                List<FormularioAnamnese> doBanco = em.createQuery(cq).getResultList();
+                if (doBanco != null) {
+                    for (FormularioAnamnese fb : doBanco) {
+                        sincronizarMemoriaInterno(fb);
+                    }
+                    salvarFormulariosPersonalizadosNoDisco();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -411,9 +818,14 @@ public class AnamneseJPA implements AnamneseDAO {
                 Predicate porTipo = cb.equal(root.get("tipoModelo"), tipoModelo);
                 cq.select(root).where(ativo, porTipo).distinct(true);
 
-                List<FormularioAnamnese> resultado = em.createQuery(cq).getResultList();
-                if (resultado != null && !resultado.isEmpty()) {
-                    return resultado;
+                List<FormularioAnamnese> doBanco = em.createQuery(cq).getResultList();
+                if (doBanco != null) {
+                    for (FormularioAnamnese fb : doBanco) {
+                        sincronizarMemoriaInterno(fb);
+                    }
+                    if (tipoModelo == TipoModeloAnamnese.PERSONALIZADO && !doBanco.isEmpty()) {
+                        salvarFormulariosPersonalizadosNoDisco();
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -435,20 +847,48 @@ public class AnamneseJPA implements AnamneseDAO {
 
     @Override
     public void salvarResposta(RespostaAnamnese resposta) {
+        if (resposta == null) {
+            return;
+        }
         if (resposta.getDataAbertura() == null) {
             resposta.setDataAbertura(LocalDate.now());
         }
+        if (resposta.getAtiva() == null) {
+            resposta.setAtiva(Boolean.TRUE);
+        }
+        if (!resposta.isAtiva() && resposta.getDataHoraDesativacao() == null) {
+            resposta.setDataHoraDesativacao(LocalDateTime.now());
+        }
+        if (resposta.getChavePaciente() == null || resposta.getChavePaciente().isBlank()) {
+            resposta.setChavePaciente(gerarChavePaciente(resposta.getPaciente()));
+        }
+
         EntityManager em = obterEntityManagerSeguro();
         if (em != null) {
             try {
                 em.getTransaction().begin();
+                if (resposta.getFormulario() != null) {
+                    FormularioAnamnese f = resposta.getFormulario();
+                    FormularioAnamnese fBanco = (f.getId() != null) ? em.find(FormularioAnamnese.class, f.getId()) : null;
+                    if (fBanco == null) {
+                        fBanco = em.merge(f);
+                    }
+                    resposta.setFormulario(fBanco);
+                }
+                if (resposta.getPaciente() != null && resposta.getPaciente().getId() != null) {
+                    Paciente pBanco = em.find(Paciente.class, resposta.getPaciente().getId());
+                    if (pBanco != null) {
+                        resposta.setPaciente(pBanco);
+                    }
+                }
                 if (resposta.getId() == null) {
                     em.persist(resposta);
                 } else {
-                    em.merge(resposta);
+                    resposta = em.merge(resposta);
                 }
                 em.getTransaction().commit();
-                MEMORIA_RESPOSTAS.add(resposta);
+                sincronizarRespostaMemoriaInterno(resposta);
+                salvarRespostasNoDisco();
                 return;
             } catch (Exception e) {
                 if (em.getTransaction().isActive()) {
@@ -461,20 +901,78 @@ public class AnamneseJPA implements AnamneseDAO {
                 }
             }
         }
-        MEMORIA_RESPOSTAS.add(resposta);
+
+        if (resposta.getId() == null) {
+            resposta.setId(proximoIdRespostaMemoria++);
+        }
+        sincronizarRespostaMemoriaInterno(resposta);
+        salvarRespostasNoDisco();
+    }
+
+    @Override
+    public void desativarRespostasPorPaciente(Paciente paciente) {
+        LocalDateTime agora = LocalDateTime.now();
+        for (RespostaAnamnese r : MEMORIA_RESPOSTAS) {
+            if (respostaPertenceAoPaciente(r, paciente) && r.isAtiva()) {
+                r.setAtiva(Boolean.FALSE);
+                r.setDataHoraDesativacao(agora);
+            }
+        }
+        EntityManager em = obterEntityManagerSeguro();
+        if (em != null) {
+            try {
+                em.getTransaction().begin();
+                CriteriaBuilder cb = em.getCriteriaBuilder();
+                CriteriaQuery<RespostaAnamnese> cq = cb.createQuery(RespostaAnamnese.class);
+                Root<RespostaAnamnese> root = cq.from(RespostaAnamnese.class);
+                cq.select(root);
+                List<RespostaAnamnese> doBanco = em.createQuery(cq).getResultList();
+                if (doBanco != null) {
+                    for (RespostaAnamnese rb : doBanco) {
+                        if (respostaPertenceAoPaciente(rb, paciente) && rb.isAtiva()) {
+                            rb.setAtiva(Boolean.FALSE);
+                            rb.setDataHoraDesativacao(agora);
+                            em.merge(rb);
+                            sincronizarRespostaMemoriaInterno(rb);
+                        }
+                    }
+                }
+                em.getTransaction().commit();
+            } catch (Exception e) {
+                if (em.getTransaction().isActive()) {
+                    em.getTransaction().rollback();
+                }
+                e.printStackTrace();
+            } finally {
+                if (em.isOpen()) {
+                    em.close();
+                }
+            }
+        }
+        salvarRespostasNoDisco();
     }
 
     @Override
     public List<RespostaAnamnese> listarRespostasPorPaciente(Paciente paciente) {
         EntityManager em = obterEntityManagerSeguro();
-        if (em != null && paciente != null && paciente.getId() != null) {
+        if (em != null) {
             try {
                 CriteriaBuilder cb = em.getCriteriaBuilder();
                 CriteriaQuery<RespostaAnamnese> cq = cb.createQuery(RespostaAnamnese.class);
                 Root<RespostaAnamnese> root = cq.from(RespostaAnamnese.class);
-                Predicate predPaciente = cb.equal(root.get("paciente"), paciente);
-                cq.select(root).where(predPaciente);
-                return em.createQuery(cq).getResultList();
+                cq.select(root);
+                List<RespostaAnamnese> doBanco = em.createQuery(cq).getResultList();
+                if (doBanco != null) {
+                    for (RespostaAnamnese rb : doBanco) {
+                        if (respostaPertenceAoPaciente(rb, paciente)) {
+                            if (!rb.isAtiva() && rb.getDataHoraDesativacao() == null) {
+                                rb.setDataHoraDesativacao(rb.getDataAtualizacao() != null ? rb.getDataAtualizacao() : LocalDateTime.now());
+                            }
+                            sincronizarRespostaMemoriaInterno(rb);
+                        }
+                    }
+                    salvarRespostasNoDisco();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -485,7 +983,7 @@ public class AnamneseJPA implements AnamneseDAO {
         }
         List<RespostaAnamnese> resultado = new ArrayList<>();
         for (RespostaAnamnese r : MEMORIA_RESPOSTAS) {
-            if (paciente == null || (r.getPaciente() != null && r.getPaciente().equals(paciente))) {
+            if (respostaPertenceAoPaciente(r, paciente)) {
                 resultado.add(r);
             }
         }
