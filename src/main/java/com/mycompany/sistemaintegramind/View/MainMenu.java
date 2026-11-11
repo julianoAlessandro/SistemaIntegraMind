@@ -25,11 +25,13 @@ import javax.swing.JOptionPane;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Insets;
+import java.io.File;
 import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.UIManager;
 import java.util.Locale;
 import javax.swing.JFrame;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -483,40 +485,101 @@ public class MainMenu extends javax.swing.JFrame {
 
     private void btnBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackupActionPerformed
 
-        //2026-08-31 Juliano: Backup do sistema para poder ter tanto localmente, quanto na nuvem
+//2026-11-09 Juliano: Backup do sistema localmente e na nuvem
         System.out.println("Iniciando o processo de backup no sistema....");
-        JOptionPane.showMessageDialog(
+
+        int opcao = JOptionPane.showConfirmDialog(
                 this,
-                "O backup do IntegraMIND está sendo iniciado.\n\nAguarde enquanto o processo é concluído.",
-                "Backup do IntegraMind",
+                "O backup do IntegraMIND será iniciado em segundo plano.\n\n"
+                + "Você poderá continuar utilizando o sistema.",
+                "Backup do IntegraMIND",
+                JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.INFORMATION_MESSAGE
         );
-        try {
-            ProcessBuilder pb = new ProcessBuilder(
-                    "cmd.exe",
-                    "/c",
-                    "C:\\backup_integramind.bat"
-            );
 
-            pb.start();
+        if (opcao == JOptionPane.OK_OPTION) {
 
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Backup iniciado com sucesso!",
-                    "Backup",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+            new SwingWorker<Integer, Void>() {
 
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Não foi possível iniciar o backup.\n\nErro: " + e.getMessage(),
-                    "Erro no Backup",
-                    JOptionPane.ERROR_MESSAGE
-            );
+                @Override
+                protected Integer doInBackground() throws Exception {
+
+                    File pastaBackup = new File("C:\\BackupSegurancaIntegraMIND");
+
+                    if (!pastaBackup.exists() && !pastaBackup.mkdirs()) {
+                        throw new IOException("Não foi possível criar a pasta de backup.");
+                    }
+
+                    File logExecucao = new File(
+                            pastaBackup,
+                            "Execucao_Backup_Java.log"
+                    );
+
+                    ProcessBuilder pb = new ProcessBuilder(
+                            "cmd.exe",
+                            "/c",
+                            "call",
+                            "C:\\backup_integramind.bat"
+                    );
+
+                    pb.directory(new File("C:\\"));
+                    pb.redirectErrorStream(true);
+                    pb.redirectOutput(ProcessBuilder.Redirect.appendTo(logExecucao));
+
+                    Process processo = pb.start();
+
+                    return processo.waitFor();
+                }
+
+                @Override
+                protected void done() {
+
+                    try {
+
+                        int resultado = get();
+
+                        if (resultado == 0) {
+
+                            JOptionPane.showMessageDialog(
+                                    null,
+                                    "O processo de backup foi finalizado.\n\n"
+                                    + "Consulte os logs para verificar cada operação.",
+                                    "Backup do IntegraMIND",
+                                    JOptionPane.INFORMATION_MESSAGE
+                            );
+
+                        } else {
+
+                            JOptionPane.showMessageDialog(
+                                    null,
+                                    "O processo de backup terminou com erro.\n\n"
+                                    + "Código: " + resultado
+                                    + "\nConsulte Execucao_Backup_Java.log.",
+                                    "Erro no Backup",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
+
+                        }
+
+                    } catch (Exception e) {
+
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "Não foi possível concluir o backup.\n\n"
+                                + "Erro: " + e.getMessage(),
+                                "Erro no Backup",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+
+                    }
+
+                    System.out.println("Processo de backup finalizado.");
+
+                }
+
+            }.execute();
+
         }
-
-        System.out.println("Backup realizado com sucesso!!!");
 
     }//GEN-LAST:event_btnBackupActionPerformed
 

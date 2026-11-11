@@ -87,6 +87,8 @@ import java.net.URL;
 
         public PacienteView() {
             initComponents();
+            // 2026-11-11 Juliano: Registra o evento da tabela apenas uma vez
+            configurarCliqueTabelaPacientes();
 
             jLabel3.setText("<html>Nome <font color='red'>*</font></html>");
 
@@ -1031,171 +1033,171 @@ import java.net.URL;
         abasCadastrarClientes.getAccessibleContext().setAccessibleName("Cadastrar Pacientes");
     }// </editor-fold>//GEN-END:initComponents
 
-        //2025-12-09 Juliano conjunto de métodos para otimizar relacionamento com o CRUD do JPA evitando duplicidade  de código e melhorando a legibilidade do mesmo
-        private void carregartabela() {
-            DefaultTableModel model = (DefaultTableModel) tblPacientes.getModel();
-            model.setRowCount(0);
-            List<Paciente> listarClientes = pacientejpa.listarPacientes();
-            for (Paciente paciente : listarClientes) {
-                model.addRow(new Object[]{
-                    paciente.getNome(),
-                    paciente.getId(),
-                    paciente.getCpf(),
-                    paciente.getEmail(),
-                    paciente.getTelefoneCelular(),
-                    paciente.getTelefoneComercial(),
-                    paciente.getTelefoneFixo(),
-                    paciente.getRua(),
-                    paciente.getBairro(),
-                    paciente.getComplemento(),
-                    paciente.getNumero(),
-                    "X"
-                });
-            }
+    //2025-12-09 Juliano conjunto de métodos para otimizar relacionamento com o CRUD do JPA evitando duplicidade  de código e melhorando a legibilidade do mesmo
+    private void carregartabela() {
+        DefaultTableModel model = (DefaultTableModel) tblPacientes.getModel();
+        model.setRowCount(0);
+        List<Paciente> listarClientes = pacientejpa.listarPacientes();
+        for (Paciente paciente : listarClientes) {
+            model.addRow(new Object[]{
+                paciente.getNome(),
+                paciente.getId(),
+                paciente.getCpf(),
+                paciente.getEmail(),
+                paciente.getTelefoneCelular(),
+                paciente.getTelefoneComercial(),
+                paciente.getTelefoneFixo(),
+                paciente.getRua(),
+                paciente.getBairro(),
+                paciente.getComplemento(),
+                paciente.getNumero(),
+                "X"
+            });
         }
+    }
 
-        private void preencerPaciente(Paciente paciente) {
-            try {
-
-                paciente.setNome(txtNomeCliente.getText());
-
-                //2025-12-03 Juliano Tratamento correto da data para evitar nullpointer
-                String textoData = txtDataNascimento.getText().trim();
-                if (!textoData.isEmpty()) {
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                    paciente.setDataNascimento(LocalDate.parse(textoData, formatter));
-                } else {
-                    paciente.setDataNascimento(null);
-                }
-
-                Sexo sexoSelecionado = (Sexo) cbSexo.getSelectedItem();
-                paciente.setSexo(sexoSelecionado);
-
-                paciente.setCpf(txtcpf.getText());
-                paciente.setTelefoneCelular(txtTelefoneCelular.getText());
-                paciente.setTelefoneComercial(txtTelefoneComercial.getText());
-                paciente.setTelefoneFixo(txtTelefoneFixo.getText());
-                paciente.setEmail(txtEmail.getText());
-                paciente.setCep(txtBuscaCep.getText());
-                paciente.setBairro(txtBairro.getText());
-                paciente.setRua(txtRua.getText());
-                paciente.setNumero(txtNumero.getText());
-                paciente.setComplemento(txtComplemento.getText());
-                paciente.setCidade(txtCidade.getText());
-                paciente.setStatuspaciente(StatusPacienteAgendamentoDocumento.ATIVO);
-
-                pacientejpa.CadastrarCliente(paciente);
-
-                ImageIcon icon = new ImageIcon(getClass().getResource("/imagens/Alertas/iconecerto.png"));
-
-                JOptionPane.showMessageDialog(
-                        null,
-                        "Paciente salvo com sucesso!",
-                        "Sucesso",
-                        JOptionPane.INFORMATION_MESSAGE,
-                        icon
-                );
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.out.println("Não foi possível salvar o Paciente: " + e.getMessage());
-                JOptionPane.showMessageDialog(this, e.getMessage());
-            }
-        }
-
-        private void limparTelaCadastroPaciente() {
-            txtId.setText("");
-            txtNome.setText("");
-            txtcpf.setText("");
-            txtEmail.setText("");
-            txtNomeCliente.setText("");
-            txtDataNascimento.setText("");
-            txtTelefoneFixo.setText("");
-            txtTelefoneCelular.setText("");
-            txtTelefoneComercial.setText("");
-            txtBuscaCep.setText("");
-            txtRua.setText("");
-            txtBairro.setText("");
-            txtNumero.setText("");
-            txtComplemento.setText("");
-            txtCidade.setText("");
-            cbEstadosSigla.setSelectedItem(EstadosBrasileiros.SP);
-            txtProfissao.setText("");
-            txtIdade.setText("");
-
-        }
-
-        private Paciente lerCamposPaciente() {
-
-            Paciente paciente = new Paciente();
+    private void preencerPaciente(Paciente paciente) {
+        try {
 
             paciente.setNome(txtNomeCliente.getText());
 
-            String dataTexto = txtDataNascimento.getText().trim();
-            if (!dataTexto.isEmpty()) {
+            //2025-12-03 Juliano Tratamento correto da data para evitar nullpointer
+            String textoData = txtDataNascimento.getText().trim();
+            if (!textoData.isEmpty()) {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                paciente.setDataNascimento(LocalDate.parse(dataTexto, formatter));
+                paciente.setDataNascimento(LocalDate.parse(textoData, formatter));
             } else {
                 paciente.setDataNascimento(null);
             }
+
             Sexo sexoSelecionado = (Sexo) cbSexo.getSelectedItem();
             paciente.setSexo(sexoSelecionado);
-            //2026-01-20 Juliano: definindo a chamada dos estados brasileiros
-            EstadosBrasileiros estadoSelecionado = (EstadosBrasileiros) cbEstadosSigla.getSelectedItem();
-            paciente.setSexo(sexoSelecionado);
-            paciente.setEstado(estadoSelecionado);
 
-            //2026-01-20 Juliano: após pegar o tipo de cliente é hora de definir o valor do atributo para objeto cliente
             paciente.setCpf(txtcpf.getText());
-            paciente.setEmail(txtEmail.getText());
             paciente.setTelefoneCelular(txtTelefoneCelular.getText());
             paciente.setTelefoneComercial(txtTelefoneComercial.getText());
             paciente.setTelefoneFixo(txtTelefoneFixo.getText());
-            paciente.setRua(txtRua.getText());
-            paciente.setBairro(txtBairro.getText());
-            paciente.setComplemento(txtComplemento.getText());
-            paciente.setNumero(txtNumero.getText());
-            paciente.setCidade(txtCidade.getText());
+            paciente.setEmail(txtEmail.getText());
             paciente.setCep(txtBuscaCep.getText());
+            paciente.setBairro(txtBairro.getText());
+            paciente.setRua(txtRua.getText());
+            paciente.setNumero(txtNumero.getText());
+            paciente.setComplemento(txtComplemento.getText());
+            paciente.setCidade(txtCidade.getText());
             paciente.setStatuspaciente(StatusPacienteAgendamentoDocumento.ATIVO);
-            paciente.setProfissao(txtProfissao.getText());
-            paciente.setIdade(txtIdade.getText());
 
-            String idText = txtId.getText().trim();
-            if (!idText.isEmpty()) {
-                paciente.setId(Long.parseLong(idText));
-            }
+            pacientejpa.CadastrarCliente(paciente);
 
-            return paciente;
+            ImageIcon icon = new ImageIcon(getClass().getResource("/imagens/Alertas/iconecerto.png"));
+
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Paciente salvo com sucesso!",
+                    "Sucesso",
+                    JOptionPane.INFORMATION_MESSAGE,
+                    icon
+            );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Não foi possível salvar o Paciente: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
+    }
+
+    private void limparTelaCadastroPaciente() {
+        txtId.setText("");
+        txtNome.setText("");
+        txtcpf.setText("");
+        txtEmail.setText("");
+        txtNomeCliente.setText("");
+        txtDataNascimento.setText("");
+        txtTelefoneFixo.setText("");
+        txtTelefoneCelular.setText("");
+        txtTelefoneComercial.setText("");
+        txtBuscaCep.setText("");
+        txtRua.setText("");
+        txtBairro.setText("");
+        txtNumero.setText("");
+        txtComplemento.setText("");
+        txtCidade.setText("");
+        cbEstadosSigla.setSelectedItem(EstadosBrasileiros.SP);
+        txtProfissao.setText("");
+        txtIdade.setText("");
+
+    }
+
+    private Paciente lerCamposPaciente() {
+
+        Paciente paciente = new Paciente();
+
+        paciente.setNome(txtNomeCliente.getText());
+
+        String dataTexto = txtDataNascimento.getText().trim();
+        if (!dataTexto.isEmpty()) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            paciente.setDataNascimento(LocalDate.parse(dataTexto, formatter));
+        } else {
+            paciente.setDataNascimento(null);
+        }
+        Sexo sexoSelecionado = (Sexo) cbSexo.getSelectedItem();
+        paciente.setSexo(sexoSelecionado);
+        //2026-01-20 Juliano: definindo a chamada dos estados brasileiros
+        EstadosBrasileiros estadoSelecionado = (EstadosBrasileiros) cbEstadosSigla.getSelectedItem();
+        paciente.setSexo(sexoSelecionado);
+        paciente.setEstado(estadoSelecionado);
+
+        //2026-01-20 Juliano: após pegar o tipo de cliente é hora de definir o valor do atributo para objeto cliente
+        paciente.setCpf(txtcpf.getText());
+        paciente.setEmail(txtEmail.getText());
+        paciente.setTelefoneCelular(txtTelefoneCelular.getText());
+        paciente.setTelefoneComercial(txtTelefoneComercial.getText());
+        paciente.setTelefoneFixo(txtTelefoneFixo.getText());
+        paciente.setRua(txtRua.getText());
+        paciente.setBairro(txtBairro.getText());
+        paciente.setComplemento(txtComplemento.getText());
+        paciente.setNumero(txtNumero.getText());
+        paciente.setCidade(txtCidade.getText());
+        paciente.setCep(txtBuscaCep.getText());
+        paciente.setStatuspaciente(StatusPacienteAgendamentoDocumento.ATIVO);
+        paciente.setProfissao(txtProfissao.getText());
+        paciente.setIdade(txtIdade.getText());
+
+        String idText = txtId.getText().trim();
+        if (!idText.isEmpty()) {
+            paciente.setId(Long.parseLong(idText));
         }
 
-        private void preencherCamposDoFormularioComDadosExistentes(Paciente paciente) {
-            //2025-12-06 Juliano caso o id exista ele vai definir os campos do formulário com os dados do respectivo ID,ou seja verificou que id existe vai pegar todos os atributos da intstância desse objeto e preencher campo a campo
-            txtId.setText(String.valueOf(paciente.getId()));
+        return paciente;
+    }
 
-            txtNomeCliente.setText(paciente.getNome());
+    private void preencherCamposDoFormularioComDadosExistentes(Paciente paciente) {
+        //2025-12-06 Juliano caso o id exista ele vai definir os campos do formulário com os dados do respectivo ID,ou seja verificou que id existe vai pegar todos os atributos da intstância desse objeto e preencher campo a campo
+        txtId.setText(String.valueOf(paciente.getId()));
 
-            if (paciente.getDataNascimento() != null) {
-                txtDataNascimento.setText(paciente.getDataNascimento()
-                        .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-            } else {
-                txtDataNascimento.setText("");
-            }
+        txtNomeCliente.setText(paciente.getNome());
 
-            cbSexo.setSelectedItem(paciente.getSexo());
-            txtcpf.setText(paciente.getCpf());
-            txtEmail.setText(paciente.getEmail());
-            txtTelefoneCelular.setText(paciente.getTelefoneCelular());
-            txtTelefoneComercial.setText(paciente.getTelefoneComercial());
-            txtTelefoneFixo.setText(paciente.getTelefoneFixo());
-            txtRua.setText(paciente.getRua());
-            txtBairro.setText(paciente.getBairro());
-            txtComplemento.setText(paciente.getComplemento());
-            txtNumero.setText(paciente.getNumero());
-            txtBuscaCep.setText(paciente.getCep());
-            txtCidade.setText(paciente.getCidade());
-            cbEstadosSigla.setSelectedItem(paciente.getEstado());
+        if (paciente.getDataNascimento() != null) {
+            txtDataNascimento.setText(paciente.getDataNascimento()
+                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        } else {
+            txtDataNascimento.setText("");
         }
+
+        cbSexo.setSelectedItem(paciente.getSexo());
+        txtcpf.setText(paciente.getCpf());
+        txtEmail.setText(paciente.getEmail());
+        txtTelefoneCelular.setText(paciente.getTelefoneCelular());
+        txtTelefoneComercial.setText(paciente.getTelefoneComercial());
+        txtTelefoneFixo.setText(paciente.getTelefoneFixo());
+        txtRua.setText(paciente.getRua());
+        txtBairro.setText(paciente.getBairro());
+        txtComplemento.setText(paciente.getComplemento());
+        txtNumero.setText(paciente.getNumero());
+        txtBuscaCep.setText(paciente.getCep());
+        txtCidade.setText(paciente.getCidade());
+        cbEstadosSigla.setSelectedItem(paciente.getEstado());
+    }
 
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
@@ -1257,259 +1259,184 @@ import java.net.URL;
     }//GEN-LAST:event_btnSalvarActionPerformed
 // 2026-11-03 Juliano: Verificando se o Chrome está disponível
 
-        private boolean chromeWhatsAppDisponivel() {
+    private boolean chromeWhatsAppDisponivel() {
+
+        try {
+
+            URL url = new URL("http://127.0.0.1:9222/json/version");
+
+            HttpURLConnection conexao
+                    = (HttpURLConnection) url.openConnection();
+
+            conexao.setConnectTimeout(2000);
+            conexao.setReadTimeout(2000);
+
+            int resposta = conexao.getResponseCode();
+
+            conexao.disconnect();
+
+            return resposta == 200;
+
+        } catch (Exception e) {
+
+            return false;
+        }
+    }
+
+    // 2026-11-03 Juliano: Inicializando Chrome para WhatsApp
+    private void iniciarChromeWhatsApp() throws Exception {
+
+        String caminhoChrome = "C:\\Users\\Micro\\AppData\\Local\\Google\\Chrome\\Application\\chrome.exe";
+
+        String perfilWhatsApp = "C:\\IntegraMIND\\ChromeWhatsAppProfile";
+
+        ProcessBuilder processo = new ProcessBuilder(
+                caminhoChrome,
+                "--remote-debugging-port=9222",
+                "--user-data-dir=" + perfilWhatsApp,
+                "--no-first-run",
+                "--no-default-browser-check",
+                "https://web.whatsapp.com"
+        );
+
+        processo.redirectErrorStream(true);
+        processo.redirectOutput(ProcessBuilder.Redirect.DISCARD);
+
+        processo.start();
+
+        //2026-11-03 Juliano: Aguarda o Chrome disponibilizar a porta
+        for (int i = 0; i < 30; i++) {
+
+            if (chromeWhatsAppDisponivel()) {
+                return;
+            }
+
+            Thread.sleep(500);
+        }
+
+        throw new Exception(
+                "O Chrome não disponibilizou a porta 9222."
+        );
+    }
+
+    // 2026-11-03 Juliano: Conectando ao Chrome do WhatsApp
+    private void conectarChromeWhatsApp() throws Exception {
+
+        // Verifica se o Chrome está disponível
+        if (!chromeWhatsAppDisponivel()) {
+
+            iniciarChromeWhatsApp();
+        }
+
+        // Verifica se o Selenium já possui uma conexão válida
+        if (driverWhatsApp != null) {
 
             try {
 
-                URL url = new URL("http://127.0.0.1:9222/json/version");
-
-                HttpURLConnection conexao
-                        = (HttpURLConnection) url.openConnection();
-
-                conexao.setConnectTimeout(2000);
-                conexao.setReadTimeout(2000);
-
-                int resposta = conexao.getResponseCode();
-
-                conexao.disconnect();
-
-                return resposta == 200;
+                driverWhatsApp.getTitle();
+                return;
 
             } catch (Exception e) {
 
-                return false;
+                driverWhatsApp = null;
             }
         }
 
-        // 2026-11-03 Juliano: Inicializando Chrome para WhatsApp
-        private void iniciarChromeWhatsApp() throws Exception {
+        ChromeOptions options = new ChromeOptions();
 
-            String caminhoChrome = "C:\\Users\\Micro\\AppData\\Local\\Google\\Chrome\\Application\\chrome.exe";
+        options.setExperimentalOption(
+                "debuggerAddress",
+                "127.0.0.1:9222"
+        );
 
-            String perfilWhatsApp = "C:\\IntegraMIND\\ChromeWhatsAppProfile";
+        driverWhatsApp = new ChromeDriver(options);
+    }
 
-            ProcessBuilder processo = new ProcessBuilder(
-                    caminhoChrome,
-                    "--remote-debugging-port=9222",
-                    "--user-data-dir=" + perfilWhatsApp,
-                    "--no-first-run",
-                    "--no-default-browser-check",
-                    "https://web.whatsapp.com"
+// 2026-11-03 Juliano: Abrindo WhatsApp do paciente
+    private void abrirWhatsApp(String telefone) {
+
+        // Verifica se o paciente possui telefone cadastrado
+        if (telefone == null || telefone.trim().isEmpty()) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Este paciente não possui telefone celular cadastrado.",
+                    "Telefone inexistente",
+                    JOptionPane.WARNING_MESSAGE
             );
 
-            processo.redirectErrorStream(true);
-            processo.redirectOutput(ProcessBuilder.Redirect.DISCARD);
-
-            processo.start();
-
-            //2026-11-03 Juliano: Aguarda o Chrome disponibilizar a porta
-            for (int i = 0; i < 30; i++) {
-
-                if (chromeWhatsAppDisponivel()) {
-                    return;
-                }
-
-                Thread.sleep(500);
-            }
-
-            throw new Exception(
-                    "O Chrome não disponibilizou a porta 9222."
-            );
+            return;
         }
 
-        // 2026-11-03 Juliano: Conectando ao Chrome do WhatsApp
-        private void conectarChromeWhatsApp() throws Exception {
+        // Remove caracteres que não sejam números
+        telefone = telefone.replaceAll("\\D", "");
 
-            // Verifica se o Chrome está disponível
-            if (!chromeWhatsAppDisponivel()) {
+        // Verifica se existem números após remover a máscara
+        if (telefone.isEmpty()) {
 
-                iniciarChromeWhatsApp();
+            JOptionPane.showMessageDialog(
+                    this,
+                    "O telefone cadastrado é inválido.",
+                    "Telefone inválido",
+                    JOptionPane.WARNING_MESSAGE
+            );
+
+            return;
+        }
+
+        // Adiciona o código do Brasil, caso não exista
+        if (!telefone.startsWith("55")) {
+            telefone = "55" + telefone;
+        }
+
+        final String urlWhatsApp
+                = "https://web.whatsapp.com/send?phone=" + telefone;
+
+        // 2026-11-03 Juliano: Abrindo WhatsApp na mesma instância do Chrome
+        new SwingWorker<Void, Void>() {
+
+            @Override
+            protected Void doInBackground() throws Exception {
+
+                // Conecta ao Chrome existente ou inicializa uma nova instância
+                conectarChromeWhatsApp();
+
+                // Abre a conversa na mesma aba
+                driverWhatsApp.get(urlWhatsApp);
+
+                return null;
             }
 
-            // Verifica se o Selenium já possui uma conexão válida
-            if (driverWhatsApp != null) {
+            @Override
+            protected void done() {
 
                 try {
 
-                    driverWhatsApp.getTitle();
-                    return;
+                    get();
+
+                    System.out.println("WhatsApp aberto com sucesso!");
 
                 } catch (Exception e) {
 
-                    driverWhatsApp = null;
+                    e.printStackTrace();
+
+                    JOptionPane.showMessageDialog(
+                            PacienteView.this,
+                            "Não foi possível abrir o WhatsApp.\n"
+                            + e.getMessage(),
+                            "Erro ao abrir WhatsApp",
+                            JOptionPane.ERROR_MESSAGE
+                    );
                 }
             }
 
-            ChromeOptions options = new ChromeOptions();
-
-            options.setExperimentalOption(
-                    "debuggerAddress",
-                    "127.0.0.1:9222"
-            );
-
-            driverWhatsApp = new ChromeDriver(options);
-        }
-
-// 2026-11-03 Juliano: Abrindo WhatsApp do paciente
-        private void abrirWhatsApp(String telefone) {
-
-            // Verifica se o paciente possui telefone cadastrado
-            if (telefone == null || telefone.trim().isEmpty()) {
-
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Este paciente não possui telefone celular cadastrado.",
-                        "Telefone inexistente",
-                        JOptionPane.WARNING_MESSAGE
-                );
-
-                return;
-            }
-
-            // Remove caracteres que não sejam números
-            telefone = telefone.replaceAll("\\D", "");
-
-            // Verifica se existem números após remover a máscara
-            if (telefone.isEmpty()) {
-
-                JOptionPane.showMessageDialog(
-                        this,
-                        "O telefone cadastrado é inválido.",
-                        "Telefone inválido",
-                        JOptionPane.WARNING_MESSAGE
-                );
-
-                return;
-            }
-
-            // Adiciona o código do Brasil, caso não exista
-            if (!telefone.startsWith("55")) {
-                telefone = "55" + telefone;
-            }
-
-            final String urlWhatsApp
-                    = "https://web.whatsapp.com/send?phone=" + telefone;
-
-            // 2026-11-03 Juliano: Abrindo WhatsApp na mesma instância do Chrome
-            new SwingWorker<Void, Void>() {
-
-                @Override
-                protected Void doInBackground() throws Exception {
-
-                    // Conecta ao Chrome existente ou inicializa uma nova instância
-                    conectarChromeWhatsApp();
-
-                    // Abre a conversa na mesma aba
-                    driverWhatsApp.get(urlWhatsApp);
-
-                    return null;
-                }
-
-                @Override
-                protected void done() {
-
-                    try {
-
-                        get();
-
-                        System.out.println("WhatsApp aberto com sucesso!");
-
-                    } catch (Exception e) {
-
-                        e.printStackTrace();
-
-                        JOptionPane.showMessageDialog(
-                                PacienteView.this,
-                                "Não foi possível abrir o WhatsApp.\n"
-                                + e.getMessage(),
-                                "Erro ao abrir WhatsApp",
-                                JOptionPane.ERROR_MESSAGE
-                        );
-                    }
-                }
-
-            }.execute();
-        
+        }.execute();
 
     }
     private void tblPacientesAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_tblPacientesAncestorAdded
+
         DefaultTableModel modelo = FormatarTabelas.formatarTabelaListarPacientes();
         tblPacientes.setModel(modelo);
-        tblPacientes.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-
-                if (evt.getClickCount() == 1) {
-
-                    int coluna = tblPacientes.columnAtPoint(evt.getPoint());
-                    int linha = tblPacientes.rowAtPoint(evt.getPoint());
-
-                    if (linha < 0) {
-                        return;
-                    }
-
-                    // 2026-11-03 Juliano: Abrindo WhatsApp do paciente
-                    if (coluna == 12) {
-
-                        String telefone = tblPacientes.getValueAt(linha, 4).toString();
-
-                        abrirWhatsApp(telefone);
-
-                        return;
-                    }
-
-                    // 2026-09-02 Juliano: Permitindo abrir a tela de perfil do paciente
-                    if (coluna == 11) {
-
-                        if (abrindoFicha) {
-                            return;
-                        }
-
-                        abrindoFicha = true;
-
-                        try {
-                            PacienteJPA pacientejpa = new PacienteJPA();
-
-                            // 2026-09-02 Juliano: Pega o id da linha selecionada para recuperar o objeto no banco
-                            Long idPaciente = (Long) tblPacientes.getValueAt(linha, 1);
-
-                            // 2026-09-02 Juliano: Passando o id no método buscar para poder recuperar o id da linha selecionada
-                            pacienteSelecionado = pacientejpa.buscarPorId(idPaciente);
-
-                            //2026-09-03 Juliano: Abrindo a ficha completa do paciente
-                            FichaMenuPrincipalPacienteView painelFicha = new FichaMenuPrincipalPacienteView(pacienteSelecionado);
-
-                            //2026-09-03 Juliano: Realizando a criação do modal
-                            javax.swing.JDialog modal = new javax.swing.JDialog((java.awt.Frame) null, "Ficha do Paciente - " + pacienteSelecionado.getNome(), true);
-
-                            //2026-10-05 Juliano: Define que o X deve realmente destruir o diálogo
-                            modal.setDefaultCloseOperation(javax.swing.JDialog.DISPOSE_ON_CLOSE);
-
-                            //2026-09-04 Juliano: Adicionando um icone ao lado do título do modal
-                            modal.setIconImage(
-                                    new javax.swing.ImageIcon(
-                                            getClass().getResource("/imagens/PacienteModal.png")
-                                    ).getImage()
-                            );
-
-                            modal.getContentPane().add(painelFicha);
-
-                            //2026-09-03 Juliano: Pega o tamanho total do monitor e aplica no modal (Tela Cheia)
-                            java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-                            modal.setSize(screenSize);
-
-                            // 2026-09-03 Juliano: Centraliza e exibe o modal
-                            modal.setLocationRelativeTo(null);
-                            modal.setVisible(true);
-
-                        } finally {
-                            // Libera para poder abrir outra ficha depois
-                            abrindoFicha = false;
-                        }
-                    }
-                }
-            }
-        });
 
         tblPacientes.getColumnModel().getColumn(11).setMaxWidth(50);
         tblPacientes.getColumnModel().getColumn(11)
@@ -1537,10 +1464,12 @@ import java.net.URL;
                 p.getBairro(),
                 p.getComplemento(),
                 p.getNumero(),
-                ""
+                "", // Prontuário
+                "" // WhatsApp
             });
         }
-
+    
+    
     }//GEN-LAST:event_tblPacientesAncestorAdded
 
     private void txtIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdActionPerformed
@@ -2153,6 +2082,90 @@ import java.net.URL;
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Erro ao conectar: " + e.getMessage());
         }
+    }
+// 2026-11-11 Juliano: Controlando os cliques na tabela de pacientes
+
+    private void configurarCliqueTabelaPacientes() {
+
+        tblPacientes.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+
+                if (evt.getClickCount() == 1) {
+
+                    int coluna = tblPacientes.columnAtPoint(evt.getPoint());
+                    int linha = tblPacientes.rowAtPoint(evt.getPoint());
+
+                    if (linha < 0) {
+                        return;
+                    }
+
+                    // 2026-11-03 Juliano: Abrindo WhatsApp do paciente
+                    if (coluna == 12) {
+
+                        Object valorTelefone = tblPacientes.getValueAt(linha, 4);
+
+                        String telefone = valorTelefone != null
+                                ? valorTelefone.toString()
+                                : "";
+
+                        abrirWhatsApp(telefone);
+
+                        return;
+                    }
+
+                    // 2026-09-02 Juliano: Permitindo abrir a tela de perfil do paciente
+                    if (coluna == 11) {
+
+                        if (abrindoFicha) {
+                            return;
+                        }
+
+                        abrindoFicha = true;
+
+                        try {
+                            PacienteJPA pacientejpa = new PacienteJPA();
+
+                            // 2026-09-02 Juliano: Pega o id da linha selecionada para recuperar o objeto no banco
+                            Long idPaciente = (Long) tblPacientes.getValueAt(linha, 1);
+
+                            // 2026-09-02 Juliano: Passando o id no método buscar para poder recuperar o id da linha selecionada
+                            pacienteSelecionado = pacientejpa.buscarPorId(idPaciente);
+
+                            //2026-09-03 Juliano: Abrindo a ficha completa do paciente
+                            FichaMenuPrincipalPacienteView painelFicha = new FichaMenuPrincipalPacienteView(pacienteSelecionado);
+
+                            //2026-09-03 Juliano: Realizando a criação do modal
+                            javax.swing.JDialog modal = new javax.swing.JDialog((java.awt.Frame) null, "Ficha do Paciente - " + pacienteSelecionado.getNome(), true);
+
+                            //2026-10-05 Juliano: Define que o X deve realmente destruir o diálogo
+                            modal.setDefaultCloseOperation(javax.swing.JDialog.DISPOSE_ON_CLOSE);
+
+                            //2026-09-04 Juliano: Adicionando um icone ao lado do título do modal
+                            modal.setIconImage(
+                                    new javax.swing.ImageIcon(
+                                            getClass().getResource("/imagens/PacienteModal.png")
+                                    ).getImage()
+                            );
+
+                            modal.getContentPane().add(painelFicha);
+
+                            //2026-09-03 Juliano: Pega o tamanho total do monitor e aplica no modal (Tela Cheia)
+                            java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+                            modal.setSize(screenSize);
+
+                            // 2026-09-03 Juliano: Centraliza e exibe o modal
+                            modal.setLocationRelativeTo(null);
+                            modal.setVisible(true);
+
+                        } finally {
+                            // Libera para poder abrir outra ficha depois
+                            abrindoFicha = false;
+                        }
+                    }
+                }
+            }
+        });
     }
 
 // Melhore o extrairValor para retornar vazio se não encontrar a chave
