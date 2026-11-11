@@ -15,22 +15,31 @@ import com.mycompany.sistemaintegramind.Model.entidades.PerguntaAnamnese;
 import com.mycompany.sistemaintegramind.Model.entidades.RespostaAnamnese;
 import com.mycompany.sistemaintegramind.View.Componentes.ComponenteUtil;
 import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Window;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -39,6 +48,12 @@ import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+import javax.swing.AbstractButton;
+import javax.swing.JFileChooser;
+import javax.swing.JScrollPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -58,6 +73,10 @@ import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollBar;
+import javax.swing.ListSelectionModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -98,6 +117,89 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
         DROPDOWN_SELECIONAR,
         CRIAR_PERSONALIZADO
     }
+
+    /**
+     * FlowLayout responsivo que calcula a quebra automática de linha (multi-row)
+     * com base na largura disponível do container/scrollpane, evitando que perguntas
+     * ou opções ultrapassem o limite lateral da tela.
+     */
+    private static class WrapFlowLayout extends FlowLayout {
+
+        public WrapFlowLayout(int align, int hgap, int vgap) {
+            super(align, hgap, vgap);
+        }
+
+        @Override
+        public Dimension preferredLayoutSize(Container target) {
+            return layoutSize(target, true);
+        }
+
+        @Override
+        public Dimension minimumLayoutSize(Container target) {
+            Dimension minimum = layoutSize(target, false);
+            minimum.width -= (getHgap() + 1);
+            return minimum;
+        }
+
+        private Dimension layoutSize(Container target, boolean preferred) {
+            synchronized (target.getTreeLock()) {
+                int targetWidth = target.getSize().width;
+                Container container = target;
+                while (container.getSize().width == 0 && container.getParent() != null) {
+                    container = container.getParent();
+                }
+                targetWidth = container.getSize().width;
+                if (targetWidth <= 0) {
+                    targetWidth = 780;
+                }
+                int hgap = getHgap();
+                int vgap = getVgap();
+                Insets insets = target.getInsets();
+                int horizontalInsetsAndGap = insets.left + insets.right + (hgap * 2);
+                int maxWidth = Math.max(220, targetWidth - horizontalInsetsAndGap - 24);
+
+                Dimension dim = new Dimension(0, 0);
+                int rowWidth = 0;
+                int rowHeight = 0;
+                int nmembers = target.getComponentCount();
+
+                for (int i = 0; i < nmembers; i++) {
+                    Component m = target.getComponent(i);
+                    if (m.isVisible()) {
+                        Dimension d = preferred ? m.getPreferredSize() : m.getMinimumSize();
+                        if (rowWidth + d.width > maxWidth && rowWidth > 0) {
+                            addRow(dim, rowWidth, rowHeight);
+                            rowWidth = 0;
+                            rowHeight = 0;
+                        }
+                        if (rowWidth != 0) {
+                            rowWidth += hgap;
+                        }
+                        rowWidth += d.width;
+                        rowHeight = Math.max(rowHeight, d.height);
+                    }
+                }
+                addRow(dim, rowWidth, rowHeight);
+                dim.width += horizontalInsetsAndGap;
+                dim.height += insets.top + insets.bottom + vgap * 2;
+
+                Container scrollParent = SwingUtilities.getAncestorOfClass(JScrollPane.class, target);
+                if (scrollParent != null && target.isValid()) {
+                    dim.width -= (hgap + 1);
+                }
+                return dim;
+            }
+        }
+
+        private void addRow(Dimension dim, int rowWidth, int rowHeight) {
+            dim.width = Math.max(dim.width, rowWidth);
+            if (dim.height > 0) {
+                dim.height += getVgap();
+            }
+            dim.height += rowHeight;
+        }
+    }
+
 
     private static final String PREFIXO_COMPLEMENTO = "COMPLEMENTO:";
     private static final String PREFIXO_COLUNA = "COL:";
@@ -213,6 +315,22 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
     private Icon iconeSlidersEscuro;
     private Icon iconeMaisBranco;
     private Icon iconeFecharX;
+    private Icon iconeExpandirPadrao;
+    private Icon iconeMinimizarPadrao;
+
+    private boolean modoTelaCheiaExpandida = false;
+    private JDialog dialogTelaCheia = null;
+
+    // Estado estilo Microsoft Forms no construtor: -1 = todas em pré-visualização; >= 0 = índice da pergunta em edição
+    private int indicePerguntaSelecionadaConstrutor = -1;
+    private JTextField campoEnunciadoAtivoConstrutor = null;
+
+    // Popup pesquisável para o dropdown "Anamneses Desativadas"
+    private JPopupMenu popupBuscaDesativadas;
+    private JTextField txtBuscaDesativadas;
+    private DefaultListModel<ItemAnamneseDesativada> modeloListaDesativadas;
+    private JList<ItemAnamneseDesativada> listaBuscaDesativadas;
+    private int indiceHoverListaDesativadas = -1;
 
     private FormularioAnamnese formularioAtual;
     private FormularioAnamnese rascunhoPersonalizado = null;
@@ -258,9 +376,12 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
 
         btnCriarPersonalizado.setIcon(iconeSlidersEscuro);
         btnCriarNovaAnamnese.setIcon(iconeMaisBranco);
+        iconeExpandirPadrao = criarIconeExpandir(new Color(120, 125, 130));
+        iconeMinimizarPadrao = criarIconeMinimizar(new Color(120, 125, 130));
+
         btnFecharVisualizacaoDesativada.setIcon(iconeFecharX);
         btnFecharVisualizacaoDesativada.setText("");
-        btnExpandir.setIcon(criarIconeExpandir(new Color(120, 125, 130)));
+        btnExpandir.setIcon(iconeExpandirPadrao);
         btnExpandir.setText("");
 
         configurarBotaoLimparVassoura();
@@ -292,12 +413,23 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
         estilizarBotaoArredondado(btnCriarPersonalizado);
         estilizarBotaoArredondado(btnSalvarAnamnese);
         estilizarBotaoArredondado(btnCriarNovaAnamnese);
+        estilizarBotaoArredondado(btnBaixarAnamneseSalva);
         estilizarBotaoArredondado(btnEditarAnamneseSalva);
 
         btnCriarNovaAnamnese.setBackground(VERDE_ACAO_PRINCIPAL);
         btnCriarNovaAnamnese.setForeground(Color.WHITE);
+        btnBaixarAnamneseSalva.setBackground(VERDE_ACAO_PRINCIPAL);
+        btnBaixarAnamneseSalva.setForeground(Color.WHITE);
         btnEditarAnamneseSalva.setBackground(VERDE_ACAO_PRINCIPAL);
         btnEditarAnamneseSalva.setForeground(Color.WHITE);
+
+        scrPerguntas.getViewport().addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                pnlConteudoAnamnese.revalidate();
+                pnlConteudoAnamnese.repaint();
+            }
+        });
 
         btnEditarPerguntasModelo.setOpaque(true);
         btnEditarPerguntasModelo.setContentAreaFilled(true);
@@ -393,6 +525,244 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
                 return lbl;
             }
         });
+
+        inicializarPopupPesquisaDesativadas();
+
+        cmbAnamnesesDesativadas.addPopupMenuListener(new PopupMenuListener() {
+            @Override
+            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+                SwingUtilities.invokeLater(() -> {
+                    cmbAnamnesesDesativadas.hidePopup();
+                    mostrarPopupPesquisaDesativadas();
+                });
+            }
+
+            @Override
+            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+            }
+
+            @Override
+            public void popupMenuCanceled(PopupMenuEvent e) {
+            }
+        });
+    }
+
+    private void inicializarPopupPesquisaDesativadas() {
+        popupBuscaDesativadas = new JPopupMenu();
+        popupBuscaDesativadas.setBackground(Color.WHITE);
+        popupBuscaDesativadas.setBorder(BorderFactory.createLineBorder(new Color(195, 205, 212), 1));
+
+        JPanel painelPopup = new JPanel(new BorderLayout(0, 4));
+        painelPopup.setBackground(Color.WHITE);
+        painelPopup.setBorder(new EmptyBorder(8, 8, 8, 8));
+
+        JPanel barraPesquisa = new JPanel(new BorderLayout(6, 0));
+        barraPesquisa.setBackground(new Color(246, 248, 250));
+        barraPesquisa.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(205, 214, 222), 1, true),
+                new EmptyBorder(5, 10, 5, 10)
+        ));
+
+        JLabel lblLupa = new JLabel("🔍");
+        lblLupa.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 13));
+        lblLupa.setForeground(new Color(100, 110, 120));
+
+        txtBuscaDesativadas = new JTextField();
+        txtBuscaDesativadas.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        txtBuscaDesativadas.setForeground(new Color(30, 35, 40));
+        txtBuscaDesativadas.setOpaque(false);
+        txtBuscaDesativadas.setBorder(null);
+        txtBuscaDesativadas.setToolTipText("Pesquisar pelo nome ou data da anamnese (ex.: Adulto, 09/11/2026)");
+
+        JLabel lblDicaBusca = new JLabel("Pesquisar por nome ou data...");
+        lblDicaBusca.setFont(new Font("Segoe UI", Font.ITALIC, 12));
+        lblDicaBusca.setForeground(new Color(140, 148, 156));
+
+        barraPesquisa.add(lblLupa, BorderLayout.WEST);
+        barraPesquisa.add(txtBuscaDesativadas, BorderLayout.CENTER);
+        barraPesquisa.add(lblDicaBusca, BorderLayout.EAST);
+
+        txtBuscaDesativadas.getDocument().addDocumentListener(new DocumentListener() {
+            private void atualizar() {
+                String texto = txtBuscaDesativadas.getText();
+                lblDicaBusca.setVisible(texto == null || texto.isEmpty());
+                filtrarListaPopupDesativadas(texto);
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                atualizar();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                atualizar();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                atualizar();
+            }
+        });
+
+        txtBuscaDesativadas.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                    int prox = Math.min(modeloListaDesativadas.getSize() - 1, listaBuscaDesativadas.getSelectedIndex() + 1);
+                    if (prox >= 0) {
+                        listaBuscaDesativadas.setSelectedIndex(prox);
+                        listaBuscaDesativadas.ensureIndexIsVisible(prox);
+                    }
+                    e.consume();
+                } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+                    int ant = Math.max(0, listaBuscaDesativadas.getSelectedIndex() - 1);
+                    if (ant >= 0) {
+                        listaBuscaDesativadas.setSelectedIndex(ant);
+                        listaBuscaDesativadas.ensureIndexIsVisible(ant);
+                    }
+                    e.consume();
+                } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    ItemAnamneseDesativada sel = listaBuscaDesativadas.getSelectedValue();
+                    if (sel != null && sel.getResposta() != null) {
+                        popupBuscaDesativadas.setVisible(false);
+                        selecionarItemAnamneseDesativada(sel);
+                    }
+                    e.consume();
+                } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    popupBuscaDesativadas.setVisible(false);
+                    e.consume();
+                }
+            }
+        });
+
+        modeloListaDesativadas = new DefaultListModel<>();
+        listaBuscaDesativadas = new JList<>(modeloListaDesativadas);
+        listaBuscaDesativadas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listaBuscaDesativadas.setBackground(Color.WHITE);
+        listaBuscaDesativadas.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        listaBuscaDesativadas.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                JLabel lbl = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                lbl.setBorder(new EmptyBorder(8, 12, 8, 12));
+                lbl.setFont(new Font("Segoe UI", Font.BOLD, 13));
+                boolean destacado = isSelected || (index == indiceHoverListaDesativadas);
+                if (value instanceof ItemAnamneseDesativada && ((ItemAnamneseDesativada) value).getResposta() == null) {
+                    lbl.setBackground(Color.WHITE);
+                    lbl.setForeground(new Color(120, 128, 136));
+                    lbl.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+                } else if (destacado) {
+                    lbl.setBackground(VERDE_BOTAO_ATIVO);
+                    lbl.setForeground(Color.WHITE);
+                } else {
+                    lbl.setBackground(Color.WHITE);
+                    lbl.setForeground(new Color(30, 36, 42));
+                }
+                return lbl;
+            }
+        });
+
+        listaBuscaDesativadas.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                int idx = listaBuscaDesativadas.locationToIndex(e.getPoint());
+                if (idx != indiceHoverListaDesativadas) {
+                    indiceHoverListaDesativadas = idx;
+                    listaBuscaDesativadas.repaint();
+                }
+            }
+        });
+
+        listaBuscaDesativadas.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseExited(MouseEvent e) {
+                indiceHoverListaDesativadas = -1;
+                listaBuscaDesativadas.repaint();
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int idx = listaBuscaDesativadas.locationToIndex(e.getPoint());
+                if (idx >= 0) {
+                    ItemAnamneseDesativada item = modeloListaDesativadas.getElementAt(idx);
+                    if (item != null && item.getResposta() != null) {
+                        popupBuscaDesativadas.setVisible(false);
+                        selecionarItemAnamneseDesativada(item);
+                    }
+                }
+            }
+        });
+
+        JScrollPane scrollLista = new JScrollPane(listaBuscaDesativadas);
+        scrollLista.setBorder(BorderFactory.createEmptyBorder());
+        ComponenteUtil.formatarScrollInvisivel(scrollLista);
+
+        painelPopup.add(barraPesquisa, BorderLayout.NORTH);
+        painelPopup.add(scrollLista, BorderLayout.CENTER);
+        painelPopup.setPreferredSize(new Dimension(520, 310));
+
+        popupBuscaDesativadas.add(painelPopup);
+    }
+
+    private void mostrarPopupPesquisaDesativadas() {
+        List<RespostaAnamnese> desativadas = listarRespostasDesativadasPaciente();
+        if (desativadas.isEmpty()) {
+            return;
+        }
+        indiceHoverListaDesativadas = -1;
+        txtBuscaDesativadas.setText("");
+        filtrarListaPopupDesativadas("");
+
+        int larguraPopup = Math.max(520, cmbAnamnesesDesativadas.getWidth());
+        Component conteudo = popupBuscaDesativadas.getComponent(0);
+        conteudo.setPreferredSize(new Dimension(larguraPopup, 310));
+        popupBuscaDesativadas.pack();
+
+        int xOffset = Math.min(0, cmbAnamnesesDesativadas.getWidth() - larguraPopup);
+        popupBuscaDesativadas.show(cmbAnamnesesDesativadas, xOffset, cmbAnamnesesDesativadas.getHeight() + 2);
+        SwingUtilities.invokeLater(() -> txtBuscaDesativadas.requestFocusInWindow());
+    }
+
+    private void filtrarListaPopupDesativadas(String termo) {
+        modeloListaDesativadas.clear();
+        List<RespostaAnamnese> desativadas = listarRespostasDesativadasPaciente();
+        String filtro = termo != null ? termo.trim().toLowerCase() : "";
+
+        for (RespostaAnamnese d : desativadas) {
+            ItemAnamneseDesativada item = new ItemAnamneseDesativada(d);
+            String textoItem = item.toString().toLowerCase();
+            String dataAb = d.getDataAbertura() != null ? d.getDataAbertura().format(FORMATO_DATA).toLowerCase() : "";
+            if (filtro.isEmpty() || textoItem.contains(filtro) || dataAb.contains(filtro)) {
+                modeloListaDesativadas.addElement(item);
+            }
+        }
+
+        if (modeloListaDesativadas.isEmpty()) {
+            modeloListaDesativadas.addElement(new ItemAnamneseDesativada(null) {
+                @Override
+                public String toString() {
+                    return "Nenhuma anamnese encontrada para \"" + (termo != null ? termo.trim() : "") + "\"";
+                }
+            });
+        } else {
+            listaBuscaDesativadas.setSelectedIndex(0);
+        }
+    }
+
+    private void selecionarItemAnamneseDesativada(ItemAnamneseDesativada item) {
+        if (item == null || item.getResposta() == null) {
+            return;
+        }
+        if (!modoVisualizacaoAnamnese) {
+            salvarRascunhoSeEstiverCriandoPersonalizado();
+            salvarCachePreenchimentoNoDisco();
+            this.desativadaAbertaAPartirDeModelos = true;
+            this.abaAnteriorModelos = this.abaAtiva;
+            this.formularioAnteriorModelos = this.formularioAtual;
+            this.estavaEditandoQuestionarioModelos = this.modoEdicaoQuestionario;
+        }
+        abrirVisualizacaoResposta(item.getResposta());
     }
 
     private void atualizarDropdownDesativadas(RespostaAnamnese selecionada) {
@@ -868,6 +1238,36 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
         return new ImageIcon(img);
     }
 
+    private Icon criarIconeMinimizar(Color cor) {
+        int w = 18;
+        int h = 18;
+        BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = img.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setColor(cor);
+        g2.setStroke(new BasicStroke(1.8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+
+        // Setas apontando para o centro (minimizar / sair da tela cheia)
+        g2.drawLine(2, 2, 7, 7);
+        g2.drawLine(7, 3, 7, 7);
+        g2.drawLine(3, 7, 7, 7);
+
+        g2.drawLine(16, 2, 11, 7);
+        g2.drawLine(11, 3, 11, 7);
+        g2.drawLine(15, 7, 11, 7);
+
+        g2.drawLine(2, 16, 7, 11);
+        g2.drawLine(7, 15, 7, 11);
+        g2.drawLine(3, 11, 7, 11);
+
+        g2.drawLine(16, 16, 11, 11);
+        g2.drawLine(11, 15, 11, 11);
+        g2.drawLine(15, 11, 11, 11);
+
+        g2.dispose();
+        return new ImageIcon(img);
+    }
+
     private void atualizarEstadoBarra(AbaBarraAnamnese aba) {
         this.abaAtiva = aba;
         this.dropdownSelecionado = (aba == AbaBarraAnamnese.DROPDOWN_SELECIONAR);
@@ -1116,6 +1516,9 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
         this.respostaVisualizada = null;
         this.modoEdicaoQuestionario = true;
         this.editoresPerguntas.clear();
+        // Inicia com todas as perguntas em Pré-visualização (estilo Microsoft Forms),
+        // ou se tiver poucas perguntas recém-criadas, permite clicar em qualquer uma para editar
+        this.indicePerguntaSelecionadaConstrutor = -1;
 
         if (base != null && base.getId() != null) {
             this.chaveFormularioOrigemEdicao = obterChaveFormulario(base);
@@ -1167,6 +1570,7 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
         btnFecharVisualizacaoDesativada.setVisible(false);
         btnEditarPerguntasModelo.setVisible(false);
         btnLimparPreenchimento.setVisible(false);
+        btnBaixarAnamneseSalva.setVisible(false);
         btnEditarAnamneseSalva.setVisible(false);
         btnAdicionarPergunta.setVisible(true);
         btnSalvarAnamnese.setText("SALVAR");
@@ -1175,22 +1579,59 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
         renderizarConstrutorGoogleForms();
     }
 
+    private void selecionarPerguntaConstrutor(int novoIndice) {
+        if (!modoEdicaoQuestionario || formularioAtual == null) {
+            return;
+        }
+        sincronizarEdicaoAtualNoFormulario();
+        final int scrollAtual = scrPerguntas.getVerticalScrollBar().getValue();
+        this.indicePerguntaSelecionadaConstrutor = novoIndice;
+        editoresPerguntas.clear();
+        renderizarConstrutorGoogleForms();
+        SwingUtilities.invokeLater(() -> {
+            scrPerguntas.getVerticalScrollBar().setValue(scrollAtual);
+            if (campoEnunciadoAtivoConstrutor != null) {
+                campoEnunciadoAtivoConstrutor.requestFocusInWindow();
+            }
+        });
+    }
+
     private void renderizarConstrutorGoogleForms() {
         sincronizarEdicaoAtualNoFormulario();
 
         editoresPerguntas.clear();
+        campoEnunciadoAtivoConstrutor = null;
         pnlConteudoAnamnese.removeAll();
         pnlConteudoAnamnese.setLayout(new BoxLayout(pnlConteudoAnamnese, BoxLayout.Y_AXIS));
         pnlConteudoAnamnese.setBackground(Color.WHITE);
         pnlConteudoAnamnese.setBorder(new EmptyBorder(12, 24, 12, 24));
 
+        // Clicar no fundo branco fora dos cards coloca todas as perguntas em Pré-visualização (como no Microsoft Forms)
+        pnlConteudoAnamnese.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (modoEdicaoQuestionario && indicePerguntaSelecionadaConstrutor != -1) {
+                    selecionarPerguntaConstrutor(-1);
+                }
+            }
+        });
+
         List<PerguntaAnamnese> perguntas = formularioAtual.getPerguntas();
+        if (indicePerguntaSelecionadaConstrutor >= perguntas.size()) {
+            indicePerguntaSelecionadaConstrutor = perguntas.size() - 1;
+        }
+
         for (int i = 0; i < perguntas.size(); i++) {
             PerguntaAnamnese pergunta = perguntas.get(i);
             pergunta.setOrdem(i + 1);
-            JPanel card = criarCardEditorPergunta(i, pergunta);
-            pnlConteudoAnamnese.add(card);
-            pnlConteudoAnamnese.add(Box.createVerticalStrut(14));
+            if (i == indicePerguntaSelecionadaConstrutor) {
+                JPanel cardEdicao = criarCardEditorPergunta(i, pergunta);
+                pnlConteudoAnamnese.add(cardEdicao);
+            } else {
+                JPanel cardPreview = criarCardPreVisualizacaoConstrutor(i, pergunta);
+                pnlConteudoAnamnese.add(cardPreview);
+            }
+            pnlConteudoAnamnese.add(Box.createVerticalStrut(10));
         }
 
         pnlConteudoAnamnese.add(Box.createVerticalGlue());
@@ -1198,47 +1639,341 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
         pnlConteudoAnamnese.repaint();
     }
 
+    /**
+     * Estado 1 (Microsoft Forms - Pré-visualização):
+     * Quando a pergunta NÃO está selecionada no construtor, ela é exibida exatamente na forma
+     * que ficará na hora do preenchimento. Ao clicar nela, entra no Estado 2 (Edição).
+     */
+    private JPanel criarCardPreVisualizacaoConstrutor(final int indiceZeroBased, PerguntaAnamnese p) {
+        TipoPerguntaAnamnese tipo = p.getTipoPergunta() != null
+                ? p.getTipoPergunta()
+                : TipoPerguntaAnamnese.TEXTO_LIVRE;
+
+        if (tipo == TipoPerguntaAnamnese.SECAO_TITULO) {
+            JPanel bannerSecao = new JPanel(new WrapFlowLayout(FlowLayout.LEFT, 10, 6)) {
+                @Override
+                public Dimension getMaximumSize() {
+                    Dimension pref = getPreferredSize();
+                    return new Dimension(Integer.MAX_VALUE, pref.height);
+                }
+            };
+            bannerSecao.setBackground(new Color(236, 246, 240));
+            bannerSecao.setAlignmentX(Component.LEFT_ALIGNMENT);
+            bannerSecao.setBorder(BorderFactory.createMatteBorder(0, 4, 0, 0, VERDE_BOTAO_ATIVO));
+            bannerSecao.setToolTipText("Clique para editar esta seção");
+
+            JLabel lblSecao = new JLabel(p.getEnunciado());
+            lblSecao.setFont(new Font("Segoe UI", Font.BOLD, 16));
+            lblSecao.setForeground(new Color(13, 82, 65));
+            bannerSecao.add(lblSecao);
+
+            instalarCliqueParaEditarRecursivo(bannerSecao, indiceZeroBased, new Color(236, 246, 240), new Color(224, 240, 231));
+            return bannerSecao;
+        }
+
+        JPanel bloco = new JPanel() {
+            @Override
+            public Dimension getMaximumSize() {
+                Dimension pref = getPreferredSize();
+                return new Dimension(Integer.MAX_VALUE, pref.height);
+            }
+        };
+        bloco.setLayout(new BoxLayout(bloco, BoxLayout.Y_AXIS));
+        bloco.setBackground(Color.WHITE);
+        bloco.setOpaque(true);
+        bloco.setAlignmentX(Component.LEFT_ALIGNMENT);
+        bloco.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(240, 243, 246)),
+                new EmptyBorder(8, 8, 10, 8)
+        ));
+        bloco.setToolTipText("Clique para editar esta pergunta");
+
+        JPanel linhaPergunta = new JPanel(new BorderLayout());
+        linhaPergunta.setOpaque(false);
+        linhaPergunta.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel lblPergunta = new JLabel(formatarEnunciadoResponsivoHtml(p.getEnunciado()));
+        lblPergunta.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        lblPergunta.setForeground(new Color(35, 42, 48));
+        linhaPergunta.add(lblPergunta, BorderLayout.CENTER);
+        bloco.add(linhaPergunta);
+        bloco.add(Box.createVerticalStrut(4));
+
+        JPanel corpo = new JPanel();
+        corpo.setLayout(new BoxLayout(corpo, BoxLayout.Y_AXIS));
+        corpo.setOpaque(false);
+        corpo.setAlignmentX(Component.LEFT_ALIGNMENT);
+        corpo.setBorder(new EmptyBorder(0, 8, 0, 0));
+
+        if (tipo == TipoPerguntaAnamnese.MULTIPLA_ESCOLHA) {
+            JPanel linhaOpcoes = new JPanel(new WrapFlowLayout(FlowLayout.LEFT, 14, 4));
+            linhaOpcoes.setOpaque(false);
+            linhaOpcoes.setAlignmentX(Component.LEFT_ALIGNMENT);
+            for (String opBruta : p.getOpcoes()) {
+                JRadioButton rb = new JRadioButton(limparPrefixoParentesesOpcao(opBruta));
+                rb.setOpaque(false);
+                rb.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+                rb.setForeground(new Color(55, 62, 68));
+                rb.setFocusable(false);
+                linhaOpcoes.add(rb);
+            }
+            corpo.add(linhaOpcoes);
+
+        } else if (tipo == TipoPerguntaAnamnese.CAIXA_SELECAO) {
+            JPanel linhaChecks = new JPanel(new WrapFlowLayout(FlowLayout.LEFT, 14, 4));
+            linhaChecks.setOpaque(false);
+            linhaChecks.setAlignmentX(Component.LEFT_ALIGNMENT);
+            for (String opBruta : p.getOpcoes()) {
+                JCheckBox cb = new JCheckBox(limparPrefixoParentesesOpcao(opBruta));
+                cb.setOpaque(false);
+                cb.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+                cb.setForeground(new Color(55, 62, 68));
+                cb.setFocusable(false);
+                linhaChecks.add(cb);
+            }
+            corpo.add(linhaChecks);
+
+        } else if (tipo == TipoPerguntaAnamnese.CAMPOS_LINHA) {
+            JPanel linhaCampos = new JPanel(new WrapFlowLayout(FlowLayout.LEFT, 12, 6));
+            linhaCampos.setOpaque(false);
+            linhaCampos.setAlignmentX(Component.LEFT_ALIGNMENT);
+            for (String rotuloCampo : p.getOpcoes()) {
+                JLabel lbl = new JLabel(rotuloCampo + ":");
+                lbl.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+                lbl.setForeground(new Color(60, 68, 75));
+                JTextField txtCampo = new JTextField("", 13);
+                txtCampo.setEditable(false);
+                txtCampo.setFocusable(false);
+                txtCampo.setBackground(Color.WHITE);
+                txtCampo.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(175, 185, 195)),
+                        new EmptyBorder(2, 4, 2, 4)
+                ));
+                linhaCampos.add(lbl);
+                linhaCampos.add(txtCampo);
+            }
+            corpo.add(linhaCampos);
+
+        } else if (tipo == TipoPerguntaAnamnese.ESCOLHA_COM_COMPLEMENTO) {
+            JPanel linhaMista = new JPanel(new WrapFlowLayout(FlowLayout.LEFT, 12, 6));
+            linhaMista.setOpaque(false);
+            linhaMista.setAlignmentX(Component.LEFT_ALIGNMENT);
+            for (String item : p.getOpcoes()) {
+                if (item.startsWith(PREFIXO_COMPLEMENTO)) {
+                    String rotuloComp = item.substring(PREFIXO_COMPLEMENTO.length()).trim();
+                    JLabel lblC = new JLabel(rotuloComp.endsWith(":") ? rotuloComp : (rotuloComp + ":"));
+                    lblC.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+                    lblC.setForeground(new Color(60, 68, 75));
+                    JTextField txtComp = new JTextField("", 14);
+                    txtComp.setEditable(false);
+                    txtComp.setFocusable(false);
+                    txtComp.setBackground(Color.WHITE);
+                    txtComp.setBorder(BorderFactory.createCompoundBorder(
+                            BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(175, 185, 195)),
+                            new EmptyBorder(2, 4, 2, 4)
+                    ));
+                    linhaMista.add(lblC);
+                    linhaMista.add(txtComp);
+                } else if (!item.startsWith(PREFIXO_COLUNA) && !item.startsWith(PREFIXO_LINHA)) {
+                    JRadioButton rb = new JRadioButton(limparPrefixoParentesesOpcao(item));
+                    rb.setOpaque(false);
+                    rb.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+                    rb.setForeground(new Color(55, 62, 68));
+                    rb.setFocusable(false);
+                    linhaMista.add(rb);
+                }
+            }
+            corpo.add(linhaMista);
+
+        } else if (tipo == TipoPerguntaAnamnese.GRADE_DISPONIBILIDADE) {
+            List<String> colunas = new ArrayList<>();
+            List<String> linhas = new ArrayList<>();
+            for (String item : p.getOpcoes()) {
+                if (item.startsWith(PREFIXO_COLUNA)) {
+                    colunas.add(item.substring(PREFIXO_COLUNA.length()));
+                } else if (item.startsWith(PREFIXO_LINHA)) {
+                    linhas.add(item.substring(PREFIXO_LINHA.length()));
+                }
+            }
+            if (colunas.isEmpty()) {
+                colunas = Arrays.asList("2ª-feira", "3ª-feira", "4ª-feira", "5ª-feira", "6ª-feira");
+            }
+            if (linhas.isEmpty()) {
+                linhas = Arrays.asList("Manhã", "Tarde");
+            }
+            JPanel tabelaGrid = new JPanel(new GridLayout(linhas.size() + 1, colunas.size() + 1, 0, 0));
+            tabelaGrid.setBackground(Color.WHITE);
+            tabelaGrid.setAlignmentX(Component.LEFT_ALIGNMENT);
+            tabelaGrid.setMaximumSize(new Dimension(720, (linhas.size() + 1) * 34));
+            tabelaGrid.add(criarCelulaCabecalhoTabela("Dia da semana"));
+            for (String col : colunas) {
+                tabelaGrid.add(criarCelulaCabecalhoTabela(col));
+            }
+            for (String lin : linhas) {
+                tabelaGrid.add(criarCelulaCabecalhoTabela(lin));
+                for (int c = 0; c < colunas.size(); c++) {
+                    JPanel celula = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 4));
+                    celula.setBackground(Color.WHITE);
+                    celula.setBorder(BorderFactory.createLineBorder(new Color(205, 212, 220)));
+                    JCheckBox cb = new JCheckBox("X");
+                    cb.setOpaque(false);
+                    cb.setFont(new Font("Segoe UI", Font.BOLD, 12));
+                    cb.setFocusable(false);
+                    celula.add(cb);
+                    tabelaGrid.add(celula);
+                }
+            }
+            corpo.add(tabelaGrid);
+
+        } else if (tipo == TipoPerguntaAnamnese.ESTRELAS) {
+            JPanel estrelas = criarPainelEstrelasInterativo(indiceZeroBased, null, null, 0, true);
+            estrelas.setAlignmentX(Component.LEFT_ALIGNMENT);
+            corpo.add(estrelas);
+
+        } else {
+            JTextArea txtResp = new JTextArea("", 2, 30);
+            txtResp.setEditable(false);
+            txtResp.setFocusable(false);
+            txtResp.setBackground(Color.WHITE);
+            txtResp.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+            txtResp.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(new Color(210, 215, 220)),
+                    new EmptyBorder(4, 8, 4, 8)
+            ));
+            JPanel wrapperArea = new JPanel(new BorderLayout());
+            wrapperArea.setOpaque(false);
+            wrapperArea.setAlignmentX(Component.LEFT_ALIGNMENT);
+            wrapperArea.setBorder(new EmptyBorder(0, 0, 0, 12));
+            wrapperArea.add(txtResp, BorderLayout.CENTER);
+            corpo.add(wrapperArea);
+        }
+
+        bloco.add(corpo);
+        instalarCliqueParaEditarRecursivo(bloco, indiceZeroBased, Color.WHITE, new Color(246, 251, 248));
+        return bloco;
+    }
+
+    private void instalarCliqueParaEditarRecursivo(
+            final JPanel cardRaiz,
+            final int indicePergunta,
+            final Color corNormal,
+            final Color corHover) {
+        MouseAdapter adapter = new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                e.consume();
+                selecionarPerguntaConstrutor(indicePergunta);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                cardRaiz.setBackground(corHover);
+                cardRaiz.repaint();
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                Point p = SwingUtilities.convertPoint(e.getComponent(), e.getPoint(), cardRaiz);
+                if (!cardRaiz.contains(p)) {
+                    cardRaiz.setBackground(corNormal);
+                    cardRaiz.repaint();
+                }
+            }
+        };
+        adicionarMouseListenerRecursivo(cardRaiz, adapter);
+    }
+
+    private void adicionarMouseListenerRecursivo(Component comp, MouseAdapter adapter) {
+        comp.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        comp.addMouseListener(adapter);
+        if (comp instanceof Container) {
+            for (Component filho : ((Container) comp).getComponents()) {
+                adicionarMouseListenerRecursivo(filho, adapter);
+            }
+        }
+    }
+
+    /**
+     * Estado 2 (Microsoft Forms - Edição):
+     * Quando a pergunta está selecionada no construtor, exibe o card completo de edição
+     * com destaque superior verde, seletor de tipo, reordenação (↑/↓), exclusão e edição de opções.
+     */
     private JPanel criarCardEditorPergunta(int indiceZeroBased, PerguntaAnamnese pergunta) {
         int numero = indiceZeroBased + 1;
         TipoPerguntaAnamnese tipo = pergunta.getTipoPergunta() != null
                 ? pergunta.getTipoPergunta()
                 : TipoPerguntaAnamnese.MULTIPLA_ESCOLHA;
 
-        JPanel card = new JPanel();
+        JPanel card = new JPanel() {
+            @Override
+            public Dimension getMaximumSize() {
+                Dimension pref = getPreferredSize();
+                return new Dimension(Integer.MAX_VALUE, pref.height);
+            }
+        };
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
-        card.setBackground(tipo == TipoPerguntaAnamnese.SECAO_TITULO ? new Color(242, 249, 245) : Color.WHITE);
+        card.setBackground(new Color(249, 252, 250));
         card.setAlignmentX(Component.LEFT_ALIGNMENT);
         card.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(
-                        0,
-                        tipo == TipoPerguntaAnamnese.SECAO_TITULO ? 4 : 0,
-                        1,
-                        0,
-                        tipo == TipoPerguntaAnamnese.SECAO_TITULO ? VERDE_BOTAO_ATIVO : new Color(240, 243, 246)
+                BorderFactory.createCompoundBorder(
+                        BorderFactory.createMatteBorder(3, 0, 0, 0, VERDE_BOTAO_ATIVO),
+                        BorderFactory.createLineBorder(new Color(185, 218, 200), 1)
                 ),
-                new EmptyBorder(8, 8, 12, 8)
+                new EmptyBorder(10, 12, 12, 12)
         ));
 
-        JPanel linhaTopo = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 2));
+        JPanel linhaTopo = new JPanel(new WrapFlowLayout(FlowLayout.LEFT, 6, 4));
         linhaTopo.setOpaque(false);
         linhaTopo.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel lblNumero = new JLabel(tipo == TipoPerguntaAnamnese.SECAO_TITULO ? "Seção:" : (numero + "."));
-        lblNumero.setFont(new Font("Segoe UI", tipo == TipoPerguntaAnamnese.SECAO_TITULO ? Font.BOLD : Font.PLAIN, 14));
-        lblNumero.setForeground(tipo == TipoPerguntaAnamnese.SECAO_TITULO ? VERDE_BOTAO_ATIVO : new Color(45, 50, 56));
+        lblNumero.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        lblNumero.setForeground(VERDE_BOTAO_ATIVO);
 
-        JTextField txtEnunciado = new JTextField(pergunta.getEnunciado() != null ? pergunta.getEnunciado() : "Pergunta", 28);
+        JTextField txtEnunciado = new JTextField(pergunta.getEnunciado() != null ? pergunta.getEnunciado() : "Pergunta", 26);
         txtEnunciado.setFont(new Font("Segoe UI", tipo == TipoPerguntaAnamnese.SECAO_TITULO ? Font.BOLD : Font.PLAIN, 15));
         txtEnunciado.setForeground(new Color(30, 35, 40));
+        txtEnunciado.setBackground(Color.WHITE);
         txtEnunciado.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(210, 218, 224)),
-                new EmptyBorder(2, 4, 2, 4)
+                BorderFactory.createMatteBorder(0, 0, 2, 0, VERDE_BOTAO_ATIVO),
+                new EmptyBorder(3, 6, 3, 6)
         ));
+        this.campoEnunciadoAtivoConstrutor = txtEnunciado;
 
         JComboBox<TipoPerguntaAnamnese> cmbTipo = new JComboBox<>(TipoPerguntaAnamnese.values());
         cmbTipo.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        cmbTipo.setBackground(new Color(246, 248, 250));
+        cmbTipo.setBackground(Color.WHITE);
         cmbTipo.setSelectedItem(tipo);
+
+        JButton btnSubir = criarBotaoAdicionarItem("↑");
+        btnSubir.setToolTipText("Mover pergunta para cima");
+        btnSubir.setEnabled(indiceZeroBased > 0);
+        btnSubir.addActionListener(e -> {
+            if (indiceZeroBased > 0) {
+                sincronizarEdicaoAtualNoFormulario();
+                Collections.swap(formularioAtual.getPerguntas(), indiceZeroBased, indiceZeroBased - 1);
+                indicePerguntaSelecionadaConstrutor = indiceZeroBased - 1;
+                editoresPerguntas.clear();
+                renderizarConstrutorGoogleForms();
+            }
+        });
+
+        JButton btnDescer = criarBotaoAdicionarItem("↓");
+        btnDescer.setToolTipText("Mover pergunta para baixo");
+        btnDescer.setEnabled(indiceZeroBased < formularioAtual.getPerguntas().size() - 1);
+        btnDescer.addActionListener(e -> {
+            if (indiceZeroBased < formularioAtual.getPerguntas().size() - 1) {
+                sincronizarEdicaoAtualNoFormulario();
+                Collections.swap(formularioAtual.getPerguntas(), indiceZeroBased, indiceZeroBased + 1);
+                indicePerguntaSelecionadaConstrutor = indiceZeroBased + 1;
+                editoresPerguntas.clear();
+                renderizarConstrutorGoogleForms();
+            }
+        });
+
+        JButton btnConcluirItem = criarBotaoAdicionarItem("✓ Pré-visualizar");
+        btnConcluirItem.setToolTipText("Concluir edição desta pergunta e voltar à pré-visualização");
+        btnConcluirItem.addActionListener(e -> selecionarPerguntaConstrutor(-1));
 
         JButton btnRemoverPergunta = new JButton("Excluir item");
         btnRemoverPergunta.setFont(new Font("Segoe UI", Font.PLAIN, 11));
@@ -1250,8 +1985,11 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
 
         linhaTopo.add(lblNumero);
         linhaTopo.add(txtEnunciado);
-        linhaTopo.add(Box.createHorizontalStrut(8));
+        linhaTopo.add(Box.createHorizontalStrut(6));
         linhaTopo.add(cmbTipo);
+        linhaTopo.add(btnSubir);
+        linhaTopo.add(btnDescer);
+        linhaTopo.add(btnConcluirItem);
         if (formularioAtual.getPerguntas().size() > 1) {
             linhaTopo.add(btnRemoverPergunta);
         }
@@ -1287,7 +2025,7 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
 
             for (int idxOp = 0; idxOp < opcoesAtuais.size(); idxOp++) {
                 final int indiceOpcao = idxOp;
-                JPanel linhaOpcao = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 2));
+                JPanel linhaOpcao = new JPanel(new WrapFlowLayout(FlowLayout.LEFT, 8, 2));
                 linhaOpcao.setOpaque(false);
                 linhaOpcao.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -1308,12 +2046,13 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
                 }
 
                 String valorLimpo = opcoesAtuais.get(idxOp).replaceFirst("^(" + PREFIXO_COMPLEMENTO + "|" + PREFIXO_COLUNA + "|" + PREFIXO_LINHA + ")", "");
+                valorLimpo = limparPrefixoParentesesOpcao(valorLimpo);
                 JTextField txtOpcao = new JTextField(valorLimpo, 20);
                 txtOpcao.setFont(new Font("Segoe UI", Font.PLAIN, 13));
                 txtOpcao.setForeground(new Color(65, 70, 75));
                 txtOpcao.setBorder(BorderFactory.createCompoundBorder(
-                        BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(230, 234, 238)),
-                        new EmptyBorder(2, 2, 2, 2)
+                        BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(210, 218, 224)),
+                        new EmptyBorder(2, 4, 2, 4)
                 ));
                 camposOpcoes.add(txtOpcao);
                 linhaOpcao.add(txtOpcao);
@@ -1333,7 +2072,7 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
                 painelCorpo.add(linhaOpcao);
             }
 
-            JPanel linhaAddOpcao = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 2));
+            JPanel linhaAddOpcao = new JPanel(new WrapFlowLayout(FlowLayout.LEFT, 8, 2));
             linhaAddOpcao.setOpaque(false);
             linhaAddOpcao.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -1357,7 +2096,7 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
                     if (item.startsWith(PREFIXO_COMPLEMENTO)) {
                         complementos.add(item.substring(PREFIXO_COMPLEMENTO.length()));
                     } else if (!item.startsWith(PREFIXO_COLUNA) && !item.startsWith(PREFIXO_LINHA)) {
-                        escolhas.add(item);
+                        escolhas.add(limparPrefixoParentesesOpcao(item));
                     }
                 }
             }
@@ -1368,20 +2107,22 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
                 atualizarListaEscolhaComComplemento(pergunta, escolhas, complementos);
             }
 
-            JLabel lblSubEscolhas = new JLabel("Opções de marcação (ex.: sim, não):");
+            JLabel lblSubEscolhas = new JLabel("Opções de seleção única (ex.: sim / não, Particular / Estadual / Outro):");
             lblSubEscolhas.setFont(new Font("Segoe UI", Font.BOLD, 12));
             lblSubEscolhas.setForeground(new Color(70, 80, 85));
             lblSubEscolhas.setAlignmentX(Component.LEFT_ALIGNMENT);
             painelCorpo.add(lblSubEscolhas);
 
+            ButtonGroup grupoPreviewEsc = new ButtonGroup();
             for (int i = 0; i < escolhas.size(); i++) {
                 final int idxEsc = i;
-                JPanel linhaEsc = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 2));
+                JPanel linhaEsc = new JPanel(new WrapFlowLayout(FlowLayout.LEFT, 8, 2));
                 linhaEsc.setOpaque(false);
                 linhaEsc.setAlignmentX(Component.LEFT_ALIGNMENT);
 
                 JRadioButton rb = new JRadioButton();
                 rb.setOpaque(false);
+                grupoPreviewEsc.add(rb);
                 linhaEsc.add(rb);
 
                 JTextField txtEsc = new JTextField(escolhas.get(i), 16);
@@ -1401,7 +2142,7 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
                 painelCorpo.add(linhaEsc);
             }
 
-            JPanel linhaAddEsc = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 2));
+            JPanel linhaAddEsc = new JPanel(new WrapFlowLayout(FlowLayout.LEFT, 8, 2));
             linhaAddEsc.setOpaque(false);
             linhaAddEsc.setAlignmentX(Component.LEFT_ALIGNMENT);
             JButton btnAddEsc = criarBotaoAdicionarItem("+ Adicionar opção");
@@ -1416,7 +2157,7 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
             painelCorpo.add(linhaAddEsc);
 
             painelCorpo.add(Box.createVerticalStrut(4));
-            JLabel lblSubComp = new JLabel("Campos de texto complementares (ex.: Qual?, Desde:, Razões dadas:):");
+            JLabel lblSubComp = new JLabel("Campos de texto complementares (ex.: Qual?, Desde:, Outro):");
             lblSubComp.setFont(new Font("Segoe UI", Font.BOLD, 12));
             lblSubComp.setForeground(new Color(70, 80, 85));
             lblSubComp.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -1424,7 +2165,7 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
 
             for (int i = 0; i < complementos.size(); i++) {
                 final int idxComp = i;
-                JPanel linhaComp = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 2));
+                JPanel linhaComp = new JPanel(new WrapFlowLayout(FlowLayout.LEFT, 8, 2));
                 linhaComp.setOpaque(false);
                 linhaComp.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -1449,7 +2190,7 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
                 painelCorpo.add(linhaComp);
             }
 
-            JPanel linhaAddComp = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 2));
+            JPanel linhaAddComp = new JPanel(new WrapFlowLayout(FlowLayout.LEFT, 8, 2));
             linhaAddComp.setOpaque(false);
             linhaAddComp.setAlignmentX(Component.LEFT_ALIGNMENT);
             JButton btnAddComp = criarBotaoAdicionarItem("+ Adicionar campo complementar");
@@ -1489,7 +2230,7 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
             lblCols.setAlignmentX(Component.LEFT_ALIGNMENT);
             painelCorpo.add(lblCols);
 
-            JPanel painelCols = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 2));
+            JPanel painelCols = new JPanel(new WrapFlowLayout(FlowLayout.LEFT, 6, 2));
             painelCols.setOpaque(false);
             painelCols.setAlignmentX(Component.LEFT_ALIGNMENT);
             for (int i = 0; i < refColunas.size(); i++) {
@@ -1525,7 +2266,7 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
             lblRows.setAlignmentX(Component.LEFT_ALIGNMENT);
             painelCorpo.add(lblRows);
 
-            JPanel painelRows = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 2));
+            JPanel painelRows = new JPanel(new WrapFlowLayout(FlowLayout.LEFT, 6, 2));
             painelRows.setOpaque(false);
             painelRows.setAlignmentX(Component.LEFT_ALIGNMENT);
             for (int i = 0; i < refLinhas.size(); i++) {
@@ -1569,7 +2310,7 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
             txtExemplo.setBackground(new Color(250, 251, 252));
             txtExemplo.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(210, 215, 220)));
 
-            JPanel wrapperTexto = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 2));
+            JPanel wrapperTexto = new JPanel(new WrapFlowLayout(FlowLayout.LEFT, 8, 2));
             wrapperTexto.setOpaque(false);
             wrapperTexto.setAlignmentX(Component.LEFT_ALIGNMENT);
             wrapperTexto.add(txtExemplo);
@@ -1609,6 +2350,7 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
         btnRemoverPergunta.addActionListener(e -> {
             sincronizarEdicaoAtualNoFormulario();
             formularioAtual.getPerguntas().remove(indiceZeroBased);
+            indicePerguntaSelecionadaConstrutor = -1;
             editoresPerguntas.clear();
             renderizarConstrutorGoogleForms();
         });
@@ -1666,7 +2408,7 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
             final String chavePergunta,
             int notaInicial,
             boolean somenteLeitura) {
-        JPanel painelEstrelas = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 2));
+        JPanel painelEstrelas = new JPanel(new WrapFlowLayout(FlowLayout.LEFT, 10, 2));
         painelEstrelas.setOpaque(false);
 
         final JButton[] botoesEstrela = new JButton[5];
@@ -1758,6 +2500,7 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
         // Quando uma anamnese desativada for selecionada, mostra o botão X para sair dela e voltar à principal,
         // e o botão de ação se chama sempre "Retificar"
         btnFecharVisualizacaoDesativada.setVisible(ehDesativada);
+        btnBaixarAnamneseSalva.setVisible(true);
         btnEditarAnamneseSalva.setText("Retificar");
         btnEditarAnamneseSalva.setVisible(true);
 
@@ -1835,12 +2578,28 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
         btnFecharVisualizacaoDesativada.setVisible(false);
         btnEditarPerguntasModelo.setVisible(true);
         btnLimparPreenchimento.setVisible(true);
+        btnBaixarAnamneseSalva.setVisible(false);
         btnEditarAnamneseSalva.setVisible(false);
         btnAdicionarPergunta.setVisible(false);
         btnSalvarAnamnese.setText("SALVAR");
         pnlRodapeAcoes.setVisible(true);
 
         renderizarFormularioPreenchimentoOuVisualizacao(form, prefixoRascunho, null, false);
+    }
+
+    private String limparPrefixoParentesesOpcao(String texto) {
+        if (texto == null) {
+            return "";
+        }
+        return texto.trim().replaceFirst("^\\(\\s*[xX]?\\s*\\)\\s*", "");
+    }
+
+    private String formatarEnunciadoResponsivoHtml(String texto) {
+        if (texto == null) {
+            return "";
+        }
+        String escapado = texto.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
+        return "<html><body style='width: 100%;'>" + escapado + "</body></html>";
     }
 
     private void renderizarFormularioPreenchimentoOuVisualizacao(
@@ -1872,7 +2631,13 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
             final String idxKey = "IDX_" + idx;
 
             if (tipo == TipoPerguntaAnamnese.SECAO_TITULO) {
-                JPanel bannerSecao = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 6));
+                JPanel bannerSecao = new JPanel(new WrapFlowLayout(FlowLayout.LEFT, 10, 6)) {
+                    @Override
+                    public Dimension getMaximumSize() {
+                        Dimension pref = getPreferredSize();
+                        return new Dimension(Integer.MAX_VALUE, pref.height);
+                    }
+                };
                 bannerSecao.setBackground(new Color(236, 246, 240));
                 bannerSecao.setAlignmentX(Component.LEFT_ALIGNMENT);
                 bannerSecao.setBorder(BorderFactory.createMatteBorder(0, 4, 0, 0, VERDE_BOTAO_ATIVO));
@@ -1882,13 +2647,19 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
                 lblSecao.setForeground(new Color(13, 82, 65));
                 bannerSecao.add(lblSecao);
 
-                pnlConteudoAnamnese.add(Box.createVerticalStrut(10));
-                pnlConteudoAnamnese.add(bannerSecao);
                 pnlConteudoAnamnese.add(Box.createVerticalStrut(8));
+                pnlConteudoAnamnese.add(bannerSecao);
+                pnlConteudoAnamnese.add(Box.createVerticalStrut(6));
                 continue;
             }
 
-            JPanel bloco = new JPanel();
+            JPanel bloco = new JPanel() {
+                @Override
+                public Dimension getMaximumSize() {
+                    Dimension pref = getPreferredSize();
+                    return new Dimension(Integer.MAX_VALUE, pref.height);
+                }
+            };
             bloco.setLayout(new BoxLayout(bloco, BoxLayout.Y_AXIS));
             bloco.setOpaque(false);
             bloco.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -1897,22 +2668,26 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
                     new EmptyBorder(6, 4, 10, 4)
             ));
 
-            JLabel lblPergunta = new JLabel(p.getEnunciado());
+            JPanel linhaPergunta = new JPanel(new BorderLayout());
+            linhaPergunta.setOpaque(false);
+            linhaPergunta.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+            JLabel lblPergunta = new JLabel(formatarEnunciadoResponsivoHtml(p.getEnunciado()));
             lblPergunta.setFont(new Font("Segoe UI", Font.BOLD, 14));
             lblPergunta.setForeground(new Color(35, 42, 48));
-            lblPergunta.setAlignmentX(Component.LEFT_ALIGNMENT);
-            bloco.add(lblPergunta);
-            bloco.add(Box.createVerticalStrut(6));
+            linhaPergunta.add(lblPergunta, BorderLayout.CENTER);
+            bloco.add(linhaPergunta);
+            bloco.add(Box.createVerticalStrut(4));
 
             JPanel corpo = new JPanel();
             corpo.setLayout(new BoxLayout(corpo, BoxLayout.Y_AXIS));
             corpo.setOpaque(false);
             corpo.setAlignmentX(Component.LEFT_ALIGNMENT);
-            corpo.setBorder(new EmptyBorder(0, 10, 0, 0));
+            corpo.setBorder(new EmptyBorder(0, 8, 0, 0));
 
             if (tipo == TipoPerguntaAnamnese.MULTIPLA_ESCOLHA) {
                 ButtonGroup bg = new ButtonGroup();
-                JPanel linhaOpcoes = new JPanel(new FlowLayout(FlowLayout.LEFT, 14, 2));
+                JPanel linhaOpcoes = new JPanel(new WrapFlowLayout(FlowLayout.LEFT, 14, 4));
                 linhaOpcoes.setOpaque(false);
                 linhaOpcoes.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -1920,12 +2695,13 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
                         ? obterValorMapaCampos(dadosFixosVisualizacao, qKey + "__OPCAO", idxKey + "__OPCAO")
                         : obterValorRascunho(prefixoRascunho, qKey + "__OPCAO", idxKey + "__OPCAO");
 
-                for (String op : p.getOpcoes()) {
+                for (String opBruta : p.getOpcoes()) {
+                    final String op = limparPrefixoParentesesOpcao(opBruta);
                     JRadioButton rb = new JRadioButton(op);
                     rb.setOpaque(false);
                     rb.setFont(new Font("Segoe UI", Font.PLAIN, 13));
                     rb.setForeground(new Color(55, 62, 68));
-                    if (opcaoSalva != null && opcaoSalva.equals(op)) {
+                    if (opcaoSalva != null && limparPrefixoParentesesOpcao(opcaoSalva).equalsIgnoreCase(op)) {
                         rb.setSelected(true);
                         if (!somenteLeitura) {
                             respostasPreenchimento.put(idx, op);
@@ -1939,7 +2715,7 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
                         });
                         bg.add(rb);
                     } else {
-                        final boolean deveFicarSelecionado = (opcaoSalva != null && opcaoSalva.equals(op));
+                        final boolean deveFicarSelecionado = (opcaoSalva != null && limparPrefixoParentesesOpcao(opcaoSalva).equalsIgnoreCase(op));
                         rb.addActionListener(e -> rb.setSelected(deveFicarSelecionado));
                     }
                     linhaOpcoes.add(rb);
@@ -1948,12 +2724,13 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
 
             } else if (tipo == TipoPerguntaAnamnese.CAIXA_SELECAO) {
                 final List<JCheckBox> checks = new ArrayList<>();
-                JPanel linhaChecks = new JPanel(new FlowLayout(FlowLayout.LEFT, 14, 2));
+                JPanel linhaChecks = new JPanel(new WrapFlowLayout(FlowLayout.LEFT, 14, 4));
                 linhaChecks.setOpaque(false);
                 linhaChecks.setAlignmentX(Component.LEFT_ALIGNMENT);
 
                 List<String> inicialmenteMarcadas = new ArrayList<>();
-                for (String op : p.getOpcoes()) {
+                for (String opBruta : p.getOpcoes()) {
+                    final String op = limparPrefixoParentesesOpcao(opBruta);
                     final String opKey = normalizarChave(op);
                     JCheckBox cb = new JCheckBox(op);
                     cb.setOpaque(false);
@@ -1993,7 +2770,7 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
                 corpo.add(linhaChecks);
 
             } else if (tipo == TipoPerguntaAnamnese.CAMPOS_LINHA) {
-                JPanel linhaCampos = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 4));
+                JPanel linhaCampos = new JPanel(new WrapFlowLayout(FlowLayout.LEFT, 12, 6));
                 linhaCampos.setOpaque(false);
                 linhaCampos.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -2007,7 +2784,7 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
                     String valSalvo = somenteLeitura
                             ? obterValorMapaCampos(dadosFixosVisualizacao, qKey + "__CAMPO_" + campoKey, idxKey + "__CAMPO_" + campoKey)
                             : obterValorRascunho(prefixoRascunho, qKey + "__CAMPO_" + campoKey, idxKey + "__CAMPO_" + campoKey);
-                    JTextField txtCampo = new JTextField(valSalvo != null ? valSalvo : "", 14);
+                    JTextField txtCampo = new JTextField(valSalvo != null ? valSalvo : "", 13);
                     txtCampo.setFont(new Font("Segoe UI", Font.PLAIN, 13));
                     txtCampo.setEditable(!somenteLeitura);
                     txtCampo.setBackground(somenteLeitura ? new Color(250, 252, 251) : Color.WHITE);
@@ -2031,25 +2808,57 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
                 corpo.add(linhaCampos);
 
             } else if (tipo == TipoPerguntaAnamnese.ESCOLHA_COM_COMPLEMENTO) {
-                final List<JCheckBox> opcoesMarcaveis = new ArrayList<>();
+                final List<AbstractButton> opcoesMarcaveis = new ArrayList<>();
                 final Map<String, JTextField> mapaComplementos = new LinkedHashMap<>();
 
-                JPanel linhaMista = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 4));
+                JPanel linhaMista = new JPanel(new WrapFlowLayout(FlowLayout.LEFT, 12, 6));
                 linhaMista.setOpaque(false);
                 linhaMista.setAlignmentX(Component.LEFT_ALIGNMENT);
 
+                // Separa opções de marcação e campos de complemento
+                List<String> opcoesLimpa = new ArrayList<>();
+                for (String item : p.getOpcoes()) {
+                    if (!item.startsWith(PREFIXO_COMPLEMENTO)
+                            && !item.startsWith(PREFIXO_COLUNA)
+                            && !item.startsWith(PREFIXO_LINHA)) {
+                        opcoesLimpa.add(limparPrefixoParentesesOpcao(item));
+                    }
+                }
+
+                // Verifica se possui o par sim/não e se é múltipla marcação (ex.: "Quem mora na casa?" ou "Os pais já tiveram...")
+                boolean temSim = false;
+                boolean temNao = false;
+                for (String op : opcoesLimpa) {
+                    if (op.equalsIgnoreCase("sim")) {
+                        temSim = true;
+                    } else if (op.equalsIgnoreCase("não") || op.equalsIgnoreCase("nao")) {
+                        temNao = true;
+                    }
+                }
+                boolean possuiParSimNao = temSim && temNao;
+                String enunciadoNorm = normalizarChave(p.getEnunciado());
+                boolean multiplaMarcacao = enunciadoNorm.contains("quem_mora_na_casa")
+                        || enunciadoNorm.contains("os_pais_j_tiveram")
+                        || enunciadoNorm.contains("atendimento_especializado");
+
+                final ButtonGroup grupoPrincipalRadio = new ButtonGroup();
+                final ButtonGroup grupoSecundarioRadio = new ButtonGroup();
+                final List<AbstractButton> botoesGrupoPrincipal = new ArrayList<>();
+                final List<AbstractButton> botoesGrupoSecundario = new ArrayList<>();
+
+                // Primeiro cria os campos complementares no mapa para poder vinculá-los à seleção de "Outro" / "sim"
                 for (String item : p.getOpcoes()) {
                     if (item.startsWith(PREFIXO_COMPLEMENTO)) {
-                        String rotuloComp = item.substring(PREFIXO_COMPLEMENTO.length());
+                        String rotuloComp = item.substring(PREFIXO_COMPLEMENTO.length()).trim();
                         final String compKey = normalizarChave(rotuloComp);
-                        JLabel lblC = new JLabel(rotuloComp + ":");
+                        JLabel lblC = new JLabel(rotuloComp.endsWith(":") ? rotuloComp : (rotuloComp + ":"));
                         lblC.setFont(new Font("Segoe UI", Font.PLAIN, 13));
                         lblC.setForeground(new Color(60, 68, 75));
 
                         String valSalvo = somenteLeitura
                                 ? obterValorMapaCampos(dadosFixosVisualizacao, qKey + "__COMP_" + compKey, idxKey + "__COMP_" + compKey)
                                 : obterValorRascunho(prefixoRascunho, qKey + "__COMP_" + compKey, idxKey + "__COMP_" + compKey);
-                        JTextField txtComp = new JTextField(valSalvo != null ? valSalvo : "", 16);
+                        JTextField txtComp = new JTextField(valSalvo != null ? valSalvo : "", 14);
                         txtComp.setFont(new Font("Segoe UI", Font.PLAIN, 13));
                         txtComp.setEditable(!somenteLeitura);
                         txtComp.setBackground(somenteLeitura ? new Color(250, 252, 251) : Color.WHITE);
@@ -2063,40 +2872,141 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
                                     idx, prefixoRascunho, qKey, idxKey, "__COMP_" + compKey, txtComp, opcoesMarcaveis, mapaComplementos
                             ));
                         }
+                    }
+                }
 
-                        linhaMista.add(lblC);
-                        linhaMista.add(txtComp);
-                    } else {
-                        final String escKey = normalizarChave(item);
-                        JCheckBox cb = new JCheckBox("( ) " + item);
-                        cb.setOpaque(false);
-                        cb.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-                        cb.setForeground(new Color(55, 62, 68));
+                // Renderiza na ordem exata definida na pergunta (sem "()" na frente das opções)
+                for (String item : p.getOpcoes()) {
+                    if (item.startsWith(PREFIXO_COMPLEMENTO)) {
+                        String rotuloComp = item.substring(PREFIXO_COMPLEMENTO.length()).trim();
+                        JLabel lblC = new JLabel(rotuloComp.endsWith(":") ? rotuloComp : (rotuloComp + ":"));
+                        lblC.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+                        lblC.setForeground(new Color(60, 68, 75));
+                        JTextField txtComp = mapaComplementos.get(rotuloComp);
+                        if (txtComp != null) {
+                            linhaMista.add(lblC);
+                            linhaMista.add(txtComp);
+                        }
+                    } else if (!item.startsWith(PREFIXO_COLUNA) && !item.startsWith(PREFIXO_LINHA)) {
+                        final String textoOpcao = limparPrefixoParentesesOpcao(item);
+                        final String escKey = normalizarChave(textoOpcao);
+
+                        boolean ehSimOuNao = textoOpcao.equalsIgnoreCase("sim")
+                                || textoOpcao.equalsIgnoreCase("não")
+                                || textoOpcao.equalsIgnoreCase("nao");
+
+                        AbstractButton botaoOpcao;
+                        if (ehSimOuNao || !multiplaMarcacao) {
+                            JRadioButton rb = new JRadioButton(textoOpcao);
+                            rb.setOpaque(false);
+                            rb.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+                            rb.setForeground(new Color(55, 62, 68));
+                            botaoOpcao = rb;
+
+                            if (!somenteLeitura) {
+                                if (possuiParSimNao && !ehSimOuNao) {
+                                    grupoSecundarioRadio.add(rb);
+                                    botoesGrupoSecundario.add(rb);
+                                } else {
+                                    grupoPrincipalRadio.add(rb);
+                                    botoesGrupoPrincipal.add(rb);
+                                }
+                            } else {
+                                if (possuiParSimNao && !ehSimOuNao) {
+                                    botoesGrupoSecundario.add(rb);
+                                } else {
+                                    botoesGrupoPrincipal.add(rb);
+                                }
+                            }
+                        } else {
+                            JCheckBox cb = new JCheckBox(textoOpcao);
+                            cb.setOpaque(false);
+                            cb.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+                            cb.setForeground(new Color(55, 62, 68));
+                            botaoOpcao = cb;
+                            if (possuiParSimNao && !ehSimOuNao) {
+                                botoesGrupoSecundario.add(cb);
+                            } else {
+                                botoesGrupoPrincipal.add(cb);
+                            }
+                        }
 
                         String escSalvo = somenteLeitura
                                 ? obterValorMapaCampos(dadosFixosVisualizacao, qKey + "__ESC_" + escKey, idxKey + "__ESC_" + escKey)
                                 : obterValorRascunho(prefixoRascunho, qKey + "__ESC_" + escKey, idxKey + "__ESC_" + escKey);
                         final boolean estadoFixo = "true".equals(escSalvo);
                         if (estadoFixo) {
-                            cb.setSelected(true);
+                            botaoOpcao.setSelected(true);
                         }
 
-                        opcoesMarcaveis.add(cb);
-                        if (!somenteLeitura) {
-                            cb.addActionListener(e -> {
-                                salvarValorRascunho(prefixoRascunho, qKey + "__ESC_" + escKey, cb.isSelected() ? "true" : "");
-                                salvarValorRascunho(prefixoRascunho, idxKey + "__ESC_" + escKey, cb.isSelected() ? "true" : "");
-                                atualizarRespostaEscolhaComComplemento(idx, opcoesMarcaveis, mapaComplementos);
-                            });
-                        } else {
-                            cb.addActionListener(e -> cb.setSelected(estadoFixo));
-                        }
-                        linhaMista.add(cb);
+                        opcoesMarcaveis.add(botaoOpcao);
+                        linhaMista.add(botaoOpcao);
                     }
                 }
-                if (!somenteLeitura) {
-                    atualizarRespostaEscolhaComComplemento(idx, opcoesMarcaveis, mapaComplementos);
+
+                // Configura a habilitação condicional do campo "Outro" / "outros" (só habilita se a opção Outro/outros estiver marcada)
+                final Runnable sincronizarEstadoOpcoesEOutro = () -> {
+                    AbstractButton botaoOutro = null;
+                    for (AbstractButton b : opcoesMarcaveis) {
+                        String t = b.getText() != null ? b.getText().trim() : "";
+                        if (t.equalsIgnoreCase("outro") || t.equalsIgnoreCase("outros")) {
+                            botaoOutro = b;
+                            break;
+                        }
+                    }
+
+                    for (Map.Entry<String, JTextField> entry : mapaComplementos.entrySet()) {
+                        String nomeCampo = entry.getKey() != null ? entry.getKey().trim() : "";
+                        JTextField campo = entry.getValue();
+                        if (nomeCampo.equalsIgnoreCase("outro") || nomeCampo.equalsIgnoreCase("outros")) {
+                            if (botaoOutro != null) {
+                                boolean outroAtivo = botaoOutro.isSelected();
+                                if (!somenteLeitura) {
+                                    campo.setEnabled(outroAtivo);
+                                    campo.setEditable(outroAtivo);
+                                    campo.setBackground(outroAtivo ? Color.WHITE : new Color(243, 245, 247));
+                                    if (!outroAtivo && !campo.getText().isEmpty()) {
+                                        campo.setText("");
+                                    }
+                                } else {
+                                    campo.setEnabled(true);
+                                    campo.setEditable(false);
+                                }
+                            }
+                        }
+                    }
+
+                    if (!somenteLeitura) {
+                        for (AbstractButton b : opcoesMarcaveis) {
+                            String bKey = normalizarChave(b.getText());
+                            salvarValorRascunho(prefixoRascunho, qKey + "__ESC_" + bKey, b.isSelected() ? "true" : "");
+                            salvarValorRascunho(prefixoRascunho, idxKey + "__ESC_" + bKey, b.isSelected() ? "true" : "");
+                        }
+                        atualizarRespostaEscolhaComComplemento(idx, opcoesMarcaveis, mapaComplementos);
+                    }
+                };
+
+                for (AbstractButton b : opcoesMarcaveis) {
+                    final boolean estadoInicial = b.isSelected();
+                    if (!somenteLeitura) {
+                        b.addActionListener(e -> {
+                            sincronizarEstadoOpcoesEOutro.run();
+                            String t = b.getText() != null ? b.getText().trim() : "";
+                            if ((t.equalsIgnoreCase("outro") || t.equalsIgnoreCase("outros")) && b.isSelected()) {
+                                for (Map.Entry<String, JTextField> entry : mapaComplementos.entrySet()) {
+                                    if (entry.getKey().trim().equalsIgnoreCase(t)) {
+                                        entry.getValue().requestFocusInWindow();
+                                    }
+                                }
+                            }
+                        });
+                    } else {
+                        b.addActionListener(e -> b.setSelected(estadoInicial));
+                    }
                 }
+
+                // Aplica o estado inicial (por exemplo, deixando o campo "Outro:" desabilitado se "Outro" não estiver marcado)
+                sincronizarEstadoOpcoesEOutro.run();
                 corpo.add(linhaMista);
 
             } else if (tipo == TipoPerguntaAnamnese.GRADE_DISPONIBILIDADE) {
@@ -2200,7 +3110,7 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
                 String textoSalvo = somenteLeitura
                         ? obterValorMapaCampos(dadosFixosVisualizacao, qKey + "__TEXTO", idxKey + "__TEXTO")
                         : obterValorRascunho(prefixoRascunho, qKey + "__TEXTO", idxKey + "__TEXTO");
-                JTextArea txtResp = new JTextArea(textoSalvo != null ? textoSalvo : "", 2, 48);
+                JTextArea txtResp = new JTextArea(textoSalvo != null ? textoSalvo : "", 2, 30);
                 if (!somenteLeitura && textoSalvo != null && !textoSalvo.isBlank()) {
                     respostasPreenchimento.put(idx, textoSalvo);
                 }
@@ -2238,13 +3148,20 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
                         }
                     });
                 }
-                corpo.add(txtResp);
+                JPanel wrapperArea = new JPanel(new BorderLayout());
+                wrapperArea.setOpaque(false);
+                wrapperArea.setAlignmentX(Component.LEFT_ALIGNMENT);
+                wrapperArea.setBorder(new EmptyBorder(0, 0, 0, 12));
+                wrapperArea.add(txtResp, BorderLayout.CENTER);
+                corpo.add(wrapperArea);
             }
 
             bloco.add(corpo);
             pnlConteudoAnamnese.add(bloco);
         }
 
+        // Evita espaçamento exagerado entre perguntas em formulários curtos (2 ou 3 perguntas)
+        pnlConteudoAnamnese.add(Box.createVerticalGlue());
         pnlConteudoAnamnese.revalidate();
         pnlConteudoAnamnese.repaint();
     }
@@ -2266,7 +3183,7 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
             final String idxKey,
             final String sufixoCampo,
             final JTextField campoTexto,
-            final List<JCheckBox> opcoesMarcaveis,
+            final List<? extends AbstractButton> opcoesMarcaveis,
             final Map<String, JTextField> mapaCampos) {
         return new DocumentListener() {
             private void atualizar() {
@@ -2295,13 +3212,13 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
 
     private void atualizarRespostaEscolhaComComplemento(
             int idxPergunta,
-            List<JCheckBox> opcoesMarcaveis,
+            List<? extends AbstractButton> opcoesMarcaveis,
             Map<String, JTextField> mapaCampos) {
         List<String> partes = new ArrayList<>();
         if (opcoesMarcaveis != null) {
-            for (JCheckBox cb : opcoesMarcaveis) {
+            for (AbstractButton cb : opcoesMarcaveis) {
                 if (cb.isSelected()) {
-                    partes.add(cb.getText().replace("( ) ", "(X) "));
+                    partes.add(limparPrefixoParentesesOpcao(cb.getText()));
                 }
             }
         }
@@ -2334,7 +3251,8 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
         }
         for (int i = 0; i < editoresPerguntas.size(); i++) {
             PerguntaEditorBinder binder = editoresPerguntas.get(i);
-            binder.sincronizar(i + 1);
+            int ord = formularioAtual.getPerguntas().indexOf(binder.pergunta) + 1;
+            binder.sincronizar(ord > 0 ? ord : (i + 1));
         }
         if (formularioAtual.getId() == null) {
             rascunhoPersonalizado = copiarFormularioComoRascunho(formularioAtual, formularioAtual.getTitulo());
@@ -2441,6 +3359,7 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
         txtDataAbertura = new javax.swing.JTextField();
         btnEditarPerguntasModelo = new javax.swing.JButton();
         btnLimparPreenchimento = new javax.swing.JButton();
+        btnBaixarAnamneseSalva = new javax.swing.JButton();
         btnEditarAnamneseSalva = new javax.swing.JButton();
         btnExpandir = new javax.swing.JButton();
         sepTituloFormulario = new javax.swing.JSeparator();
@@ -2615,6 +3534,15 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
         btnLimparPreenchimento.setFocusPainted(false);
         btnLimparPreenchimento.addActionListener(this::btnLimparPreenchimentoActionPerformed);
 
+        btnBaixarAnamneseSalva.setBackground(new java.awt.Color(18, 132, 43));
+        btnBaixarAnamneseSalva.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnBaixarAnamneseSalva.setForeground(new java.awt.Color(255, 255, 255));
+        btnBaixarAnamneseSalva.setText("Baixar");
+        btnBaixarAnamneseSalva.setToolTipText("Salvar / Baixar anamnese em arquivo (PDF, Word/DOCX, DOC, TXT)");
+        btnBaixarAnamneseSalva.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnBaixarAnamneseSalva.setFocusPainted(false);
+        btnBaixarAnamneseSalva.addActionListener(this::btnBaixarAnamneseSalvaActionPerformed);
+
         btnEditarAnamneseSalva.setBackground(new java.awt.Color(18, 132, 43));
         btnEditarAnamneseSalva.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnEditarAnamneseSalva.setForeground(new java.awt.Color(255, 255, 255));
@@ -2717,7 +3645,9 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
                         .addGap(6, 6, 6)
                         .addComponent(btnLimparPreenchimento, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(6, 6, 6)
-                        .addComponent(btnEditarAnamneseSalva, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnBaixarAnamneseSalva, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6)
+                        .addComponent(btnEditarAnamneseSalva, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(6, 6, 6)
                         .addComponent(btnExpandir, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(pnlRodapeAcoes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -2734,6 +3664,7 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
                     .addComponent(txtDataAbertura)
                     .addComponent(btnEditarPerguntasModelo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnLimparPreenchimento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnBaixarAnamneseSalva, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnEditarAnamneseSalva, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnExpandir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(4, 4, 4)
@@ -2915,6 +3846,568 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btnCriarNovaAnamneseActionPerformed
 
+    private void btnBaixarAnamneseSalvaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBaixarAnamneseSalvaActionPerformed
+        if (!modoVisualizacaoAnamnese || respostaVisualizada == null) {
+            return;
+        }
+        abrirDialogoEscolhaFormatoExportacao(respostaVisualizada);
+    }//GEN-LAST:event_btnBaixarAnamneseSalvaActionPerformed
+
+    private void abrirDialogoEscolhaFormatoExportacao(RespostaAnamnese resposta) {
+        String[] formatos = {
+            "Documento PDF (.pdf)",
+            "Documento Word Moderno (.docx)",
+            "Documento Word 97-2003 (.doc)",
+            "Arquivo de Texto (.txt)"
+        };
+
+        JPanel painelOpcoes = new JPanel();
+        painelOpcoes.setLayout(new BoxLayout(painelOpcoes, BoxLayout.Y_AXIS));
+        painelOpcoes.setBorder(new EmptyBorder(6, 6, 6, 6));
+
+        JLabel lblInstrucao = new JLabel("Escolha o formato no qual a anamnese será salva:");
+        lblInstrucao.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        lblInstrucao.setForeground(new Color(13, 82, 65));
+        lblInstrucao.setAlignmentX(Component.LEFT_ALIGNMENT);
+        painelOpcoes.add(lblInstrucao);
+        painelOpcoes.add(Box.createVerticalStrut(10));
+
+        ButtonGroup grupoFormatos = new ButtonGroup();
+        JRadioButton[] radios = new JRadioButton[formatos.length];
+        for (int i = 0; i < formatos.length; i++) {
+            radios[i] = new JRadioButton(formatos[i]);
+            radios[i].setFont(new Font("Segoe UI", Font.PLAIN, 13));
+            radios[i].setAlignmentX(Component.LEFT_ALIGNMENT);
+            if (i == 0) {
+                radios[i].setSelected(true);
+            }
+            grupoFormatos.add(radios[i]);
+            painelOpcoes.add(radios[i]);
+            painelOpcoes.add(Box.createVerticalStrut(4));
+        }
+
+        Object[] botoes = {"Salvar", "Cancelar"};
+        int escolha = JOptionPane.showOptionDialog(
+                this,
+                painelOpcoes,
+                "Salvar / Baixar Anamnese",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                botoes,
+                botoes[0]
+        );
+        if (escolha != 0) {
+            return;
+        }
+
+        int idxFormato = 0;
+        for (int i = 0; i < radios.length; i++) {
+            if (radios[i].isSelected()) {
+                idxFormato = i;
+                break;
+            }
+        }
+
+        String extensao;
+        String descricaoFiltro;
+        switch (idxFormato) {
+            case 1:
+                extensao = "docx";
+                descricaoFiltro = "Documento Microsoft Word (*.docx)";
+                break;
+            case 2:
+                extensao = "doc";
+                descricaoFiltro = "Documento Word 97-2003 (*.doc)";
+                break;
+            case 3:
+                extensao = "txt";
+                descricaoFiltro = "Arquivo de Texto (*.txt)";
+                break;
+            default:
+                extensao = "pdf";
+                descricaoFiltro = "Documento PDF (*.pdf)";
+                break;
+        }
+
+        FormularioAnamnese form = resolverFormularioDaResposta(resposta);
+        String tituloBase = (form != null && form.getTitulo() != null) ? form.getTitulo() : "Anamnese";
+        String nomePac = (paciente != null && paciente.getNome() != null && !paciente.getNome().isBlank())
+                ? paciente.getNome().trim()
+                : "Paciente";
+        String dataStr = (resposta.getDataAbertura() != null ? resposta.getDataAbertura() : LocalDate.now())
+                .format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+        String nomeSugerido = (tituloBase + "_" + nomePac + "_" + dataStr)
+                .replaceAll("[\\\\/:*?\"<>|\\s]+", "_") + "." + extensao;
+
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Salvar Anamnese como ." + extensao.toUpperCase());
+        chooser.setFileFilter(new FileNameExtensionFilter(descricaoFiltro, extensao));
+        chooser.setSelectedFile(new File(chooser.getCurrentDirectory(), nomeSugerido));
+
+        if (chooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+
+        File destino = chooser.getSelectedFile();
+        if (!destino.getName().toLowerCase().endsWith("." + extensao)) {
+            destino = new File(destino.getParentFile(), destino.getName() + "." + extensao);
+        }
+
+        try {
+            List<String[]> linhasRelatorio = montarLinhasExportacao(resposta, form);
+            switch (extensao) {
+                case "docx":
+                    exportarParaDocx(destino, linhasRelatorio);
+                    break;
+                case "doc":
+                    exportarParaDoc(destino, linhasRelatorio);
+                    break;
+                case "txt":
+                    exportarParaTxt(destino, linhasRelatorio);
+                    break;
+                default:
+                    exportarParaPdf(destino, linhasRelatorio);
+                    break;
+            }
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Anamnese salva com sucesso em:\n" + destino.getAbsolutePath(),
+                    "Arquivo Salvo",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Erro ao salvar o arquivo: " + ex.getMessage(),
+                    "Erro na Exportação",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+    }
+
+    private List<String[]> montarLinhasExportacao(RespostaAnamnese resposta, FormularioAnamnese form) {
+        List<String[]> linhas = new ArrayList<>();
+        String titulo = (form != null && form.getTitulo() != null) ? form.getTitulo() : "Anamnese";
+        linhas.add(new String[]{"TITULO", titulo});
+
+        String nomePac = (paciente != null && paciente.getNome() != null && !paciente.getNome().isBlank())
+                ? paciente.getNome()
+                : "Não informado";
+        String dataAb = (resposta.getDataAbertura() != null ? resposta.getDataAbertura() : LocalDate.now()).format(FORMATO_DATA);
+        linhas.add(new String[]{"META", "Paciente: " + nomePac + "   |   Data de abertura: " + dataAb});
+
+        if (!resposta.isAtiva()) {
+            LocalDateTime dtDesat = resposta.getDataHoraDesativacao();
+            if (dtDesat != null) {
+                linhas.add(new String[]{"META", "Status: Desativada em " + dtDesat.format(FORMATO_DATA_HORA)});
+            } else {
+                linhas.add(new String[]{"META", "Status: Desativada"});
+            }
+        }
+
+        Map<String, String> dados = desserializarDadosCampos(resposta);
+        Map<String, Integer> contadorEnunciados = new HashMap<>();
+        List<PerguntaAnamnese> perguntas = form != null ? form.getPerguntas() : Collections.emptyList();
+
+        for (int i = 0; i < perguntas.size(); i++) {
+            PerguntaAnamnese p = perguntas.get(i);
+            TipoPerguntaAnamnese tipo = p.getTipoPergunta() != null ? p.getTipoPergunta() : TipoPerguntaAnamnese.TEXTO_LIVRE;
+
+            String chaveBase = tipo.name() + "_" + normalizarChave(p.getEnunciado());
+            int ocorrencia = contadorEnunciados.getOrDefault(chaveBase, 0) + 1;
+            contadorEnunciados.put(chaveBase, ocorrencia);
+
+            String qKey = obterChavePergunta(p, ocorrencia, i);
+            String idxKey = "IDX_" + i;
+
+            if (tipo == TipoPerguntaAnamnese.SECAO_TITULO) {
+                linhas.add(new String[]{"SECAO", p.getEnunciado()});
+                continue;
+            }
+
+            String valorResposta = extrairTextoRespostaSalva(p, tipo, dados, qKey, idxKey);
+            linhas.add(new String[]{"PERGUNTA", p.getEnunciado(), valorResposta});
+        }
+        return linhas;
+    }
+
+    private String extrairTextoRespostaSalva(
+            PerguntaAnamnese p,
+            TipoPerguntaAnamnese tipo,
+            Map<String, String> dados,
+            String qKey,
+            String idxKey) {
+        if (tipo == TipoPerguntaAnamnese.MULTIPLA_ESCOLHA) {
+            String op = obterValorMapaCampos(dados, qKey + "__OPCAO", idxKey + "__OPCAO");
+            return (op != null && !op.isBlank()) ? limparPrefixoParentesesOpcao(op) : "Não preenchido";
+        }
+        if (tipo == TipoPerguntaAnamnese.CAIXA_SELECAO) {
+            List<String> marcadas = new ArrayList<>();
+            for (String opBruta : p.getOpcoes()) {
+                String op = limparPrefixoParentesesOpcao(opBruta);
+                String opKey = normalizarChave(op);
+                String v = obterValorMapaCampos(dados, qKey + "__CHK_" + opKey, idxKey + "__CHK_" + opKey);
+                if ("true".equals(v)) {
+                    marcadas.add(op);
+                }
+            }
+            return marcadas.isEmpty() ? "Não preenchido" : String.join(", ", marcadas);
+        }
+        if (tipo == TipoPerguntaAnamnese.CAMPOS_LINHA) {
+            List<String> partes = new ArrayList<>();
+            for (String rotulo : p.getOpcoes()) {
+                String cKey = normalizarChave(rotulo);
+                String v = obterValorMapaCampos(dados, qKey + "__CAMPO_" + cKey, idxKey + "__CAMPO_" + cKey);
+                if (v != null && !v.isBlank()) {
+                    partes.add(rotulo + ": " + v.trim());
+                }
+            }
+            return partes.isEmpty() ? "Não preenchido" : String.join(" | ", partes);
+        }
+        if (tipo == TipoPerguntaAnamnese.ESCOLHA_COM_COMPLEMENTO) {
+            List<String> partes = new ArrayList<>();
+            for (String item : p.getOpcoes()) {
+                if (item.startsWith(PREFIXO_COMPLEMENTO)) {
+                    String rot = item.substring(PREFIXO_COMPLEMENTO.length()).trim();
+                    String compKey = normalizarChave(rot);
+                    String v = obterValorMapaCampos(dados, qKey + "__COMP_" + compKey, idxKey + "__COMP_" + compKey);
+                    if (v != null && !v.isBlank()) {
+                        partes.add(rot + ": " + v.trim());
+                    }
+                } else if (!item.startsWith(PREFIXO_COLUNA) && !item.startsWith(PREFIXO_LINHA)) {
+                    String op = limparPrefixoParentesesOpcao(item);
+                    String escKey = normalizarChave(op);
+                    String v = obterValorMapaCampos(dados, qKey + "__ESC_" + escKey, idxKey + "__ESC_" + escKey);
+                    if ("true".equals(v)) {
+                        partes.add(op);
+                    }
+                }
+            }
+            return partes.isEmpty() ? "Não preenchido" : String.join(" | ", partes);
+        }
+        if (tipo == TipoPerguntaAnamnese.GRADE_DISPONIBILIDADE) {
+            List<String> colunas = new ArrayList<>();
+            List<String> linhas = new ArrayList<>();
+            for (String item : p.getOpcoes()) {
+                if (item.startsWith(PREFIXO_COLUNA)) {
+                    colunas.add(item.substring(PREFIXO_COLUNA.length()));
+                } else if (item.startsWith(PREFIXO_LINHA)) {
+                    linhas.add(item.substring(PREFIXO_LINHA.length()));
+                }
+            }
+            List<String> marcados = new ArrayList<>();
+            for (String lin : linhas) {
+                for (String col : colunas) {
+                    String ch = lin + " - " + col;
+                    String gKey = normalizarChave(ch);
+                    String v = obterValorMapaCampos(dados, qKey + "__GRADE_" + gKey, idxKey + "__GRADE_" + gKey);
+                    if ("true".equals(v)) {
+                        marcados.add(ch);
+                    }
+                }
+            }
+            return marcados.isEmpty() ? "Nenhum horário marcado" : String.join("; ", marcados);
+        }
+        if (tipo == TipoPerguntaAnamnese.ESTRELAS) {
+            String v = obterValorMapaCampos(dados, qKey + "__ESTRELAS", idxKey + "__ESTRELAS");
+            return (v != null && !v.isBlank()) ? (v.trim() + " estrela(s)") : "Não preenchido";
+        }
+        String v = obterValorMapaCampos(dados, qKey + "__TEXTO", idxKey + "__TEXTO");
+        return (v != null && !v.isBlank()) ? v.trim() : "Não preenchido";
+    }
+
+    private void exportarParaTxt(File destino, List<String[]> linhas) throws Exception {
+        StringBuilder sb = new StringBuilder();
+        for (String[] item : linhas) {
+            String tipo = item[0];
+            if ("TITULO".equals(tipo)) {
+                sb.append("================================================================\n");
+                sb.append("  ").append(item[1]).append("\n");
+                sb.append("================================================================\n");
+            } else if ("META".equals(tipo)) {
+                sb.append(item[1]).append("\n");
+            } else if ("SECAO".equals(tipo)) {
+                sb.append("\n----------------------------------------------------------------\n");
+                sb.append("[ ").append(item[1]).append(" ]\n");
+                sb.append("----------------------------------------------------------------\n");
+            } else if ("PERGUNTA".equals(tipo)) {
+                sb.append("• ").append(item[1]).append("\n");
+                sb.append("  Resposta: ").append(item[2]).append("\n\n");
+            }
+        }
+        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(destino), StandardCharsets.UTF_8)) {
+            writer.write(sb.toString());
+        }
+    }
+
+    private String escaparXml(String s) {
+        if (s == null) {
+            return "";
+        }
+        return s.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&apos;");
+    }
+
+    private void exportarParaDoc(File destino, List<String[]> linhas) throws Exception {
+        StringBuilder html = new StringBuilder();
+        html.append("<html xmlns:o='urn:schemas-microsoft-com:office:office' ")
+            .append("xmlns:w='urn:schemas-microsoft-com:office:word' ")
+            .append("xmlns='http://www.w3.org/TR/REC-html40'>")
+            .append("<head><meta charset='utf-8'><title>Anamnese</title>")
+            .append("<style>")
+            .append("body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11pt; color: #1e2428; }")
+            .append("h1 { color: #0d5241; font-size: 18pt; border-bottom: 2px solid #1f7a44; padding-bottom: 6px; }")
+            .append("h2 { color: #0d5241; background-color: #ecf6f0; padding: 6px 10px; font-size: 13pt; margin-top: 16px; }")
+            .append(".meta { color: #434d59; font-size: 10pt; margin-bottom: 6px; }")
+            .append(".pergunta { font-weight: bold; margin-top: 10px; }")
+            .append(".resposta { margin-left: 12px; margin-bottom: 8px; color: #222; }")
+            .append("</style></head><body>");
+
+        for (String[] item : linhas) {
+            String tipo = item[0];
+            if ("TITULO".equals(tipo)) {
+                html.append("<h1>").append(escaparXml(item[1])).append("</h1>");
+            } else if ("META".equals(tipo)) {
+                html.append("<div class='meta'><b>").append(escaparXml(item[1])).append("</b></div>");
+            } else if ("SECAO".equals(tipo)) {
+                html.append("<h2>").append(escaparXml(item[1])).append("</h2>");
+            } else if ("PERGUNTA".equals(tipo)) {
+                html.append("<div class='pergunta'>").append(escaparXml(item[1])).append("</div>");
+                html.append("<div class='resposta'>").append(escaparXml(item[2])).append("</div>");
+            }
+        }
+        html.append("</body></html>");
+
+        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(destino), StandardCharsets.UTF_8)) {
+            writer.write(html.toString());
+        }
+    }
+
+    private void exportarParaDocx(File destino, List<String[]> linhas) throws Exception {
+        String contentTypes = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+                + "<Types xmlns=\"http://schemas.openxmlformats.org/package/2006/content-types\">"
+                + "<Default Extension=\"rels\" ContentType=\"application/vnd.openxmlformats-package.relationships+xml\"/>"
+                + "<Default Extension=\"xml\" ContentType=\"application/xml\"/>"
+                + "<Override PartName=\"/word/document.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml\"/>"
+                + "</Types>";
+
+        String rels = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+                + "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">"
+                + "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument\" Target=\"word/document.xml\"/>"
+                + "</Relationships>";
+
+        StringBuilder body = new StringBuilder();
+        body.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>")
+            .append("<w:document xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">")
+            .append("<w:body>");
+
+        for (String[] item : linhas) {
+            String tipo = item[0];
+            if ("TITULO".equals(tipo)) {
+                body.append("<w:p><w:r><w:rPr><w:b/><w:color w:val=\"0D5241\"/><w:sz w:val=\"34\"/></w:rPr><w:t>")
+                    .append(escaparXml(item[1]))
+                    .append("</w:t></w:r></w:p>");
+            } else if ("META".equals(tipo)) {
+                body.append("<w:p><w:r><w:rPr><w:b/><w:color w:val=\"434D59\"/><w:sz w:val=\"20\"/></w:rPr><w:t>")
+                    .append(escaparXml(item[1]))
+                    .append("</w:t></w:r></w:p>");
+            } else if ("SECAO".equals(tipo)) {
+                body.append("<w:p><w:pPr><w:spacing w:before=\"200\" w:after=\"80\"/></w:pPr>")
+                    .append("<w:r><w:rPr><w:b/><w:color w:val=\"1F7A44\"/><w:sz w:val=\"26\"/></w:rPr><w:t>")
+                    .append(escaparXml(item[1]))
+                    .append("</w:t></w:r></w:p>");
+            } else if ("PERGUNTA".equals(tipo)) {
+                body.append("<w:p><w:pPr><w:spacing w:before=\"100\" w:after=\"40\"/></w:pPr>")
+                    .append("<w:r><w:rPr><w:b/><w:sz w:val=\"22\"/></w:rPr><w:t>")
+                    .append(escaparXml(item[1]))
+                    .append("</w:t></w:r></w:p>");
+                body.append("<w:p><w:pPr><w:ind w:left=\"240\"/><w:spacing w:after=\"120\"/></w:pPr>")
+                    .append("<w:r><w:rPr><w:sz w:val=\"21\"/></w:rPr><w:t>")
+                    .append(escaparXml(item[2]))
+                    .append("</w:t></w:r></w:p>");
+            }
+        }
+
+        body.append("<w:sectPr><w:pgSz w:w=\"11906\" w:h=\"16838\"/>")
+            .append("<w:pgMar w:top=\"1134\" w:right=\"1134\" w:bottom=\"1134\" w:left=\"1134\"/></w:sectPr>")
+            .append("</w:body></w:document>");
+
+        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(destino))) {
+            zos.putNextEntry(new ZipEntry("[Content_Types].xml"));
+            zos.write(contentTypes.getBytes(StandardCharsets.UTF_8));
+            zos.closeEntry();
+
+            zos.putNextEntry(new ZipEntry("_rels/.rels"));
+            zos.write(rels.getBytes(StandardCharsets.UTF_8));
+            zos.closeEntry();
+
+            zos.putNextEntry(new ZipEntry("word/document.xml"));
+            zos.write(body.toString().getBytes(StandardCharsets.UTF_8));
+            zos.closeEntry();
+        }
+    }
+
+    private String escaparTextoPdfWinAnsi(String texto) {
+        if (texto == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < texto.length(); i++) {
+            char c = texto.charAt(i);
+            if (c == '\u2013' || c == '\u2014') {
+                c = '-';
+            } else if (c == '\u2605') {
+                c = '*';
+            }
+            if (c == '\\' || c == '(' || c == ')') {
+                sb.append('\\').append(c);
+            } else if (c >= 32 && c <= 255) {
+                sb.append(c);
+            } else {
+                sb.append(' ');
+            }
+        }
+        return sb.toString();
+    }
+
+    private List<String> quebrarLinhasPdf(String texto, int maxChars) {
+        List<String> resultado = new ArrayList<>();
+        if (texto == null || texto.isEmpty()) {
+            resultado.add("");
+            return resultado;
+        }
+        for (String paragrafo : texto.split("\\r?\\n")) {
+            String[] palavras = paragrafo.split("\\s+");
+            StringBuilder linhaAtual = new StringBuilder();
+            for (String p : palavras) {
+                if (linhaAtual.length() + p.length() + 1 > maxChars && linhaAtual.length() > 0) {
+                    resultado.add(linhaAtual.toString());
+                    linhaAtual.setLength(0);
+                }
+                if (linhaAtual.length() > 0) {
+                    linhaAtual.append(' ');
+                }
+                linhaAtual.append(p);
+            }
+            if (linhaAtual.length() > 0) {
+                resultado.add(linhaAtual.toString());
+            }
+        }
+        return resultado;
+    }
+
+    private void exportarParaPdf(File destino, List<String[]> linhas) throws Exception {
+        List<List<String>> paginasComandos = new ArrayList<>();
+        List<String> paginaAtual = new ArrayList<>();
+        int y = 790;
+
+        for (String[] item : linhas) {
+            String tipo = item[0];
+            if ("TITULO".equals(tipo)) {
+                if (y < 90) {
+                    paginasComandos.add(paginaAtual);
+                    paginaAtual = new ArrayList<>();
+                    y = 790;
+                }
+                paginaAtual.add("BT /F2 15 Tf 45 " + y + " Td (" + escaparTextoPdfWinAnsi(item[1]) + ") Tj ET");
+                y -= 22;
+            } else if ("META".equals(tipo)) {
+                paginaAtual.add("BT /F2 10 Tf 45 " + y + " Td (" + escaparTextoPdfWinAnsi(item[1]) + ") Tj ET");
+                y -= 16;
+            } else if ("SECAO".equals(tipo)) {
+                y -= 6;
+                if (y < 80) {
+                    paginasComandos.add(paginaAtual);
+                    paginaAtual = new ArrayList<>();
+                    y = 790;
+                }
+                paginaAtual.add("BT /F2 12 Tf 45 " + y + " Td ([" + escaparTextoPdfWinAnsi(item[1]) + "]) Tj ET");
+                y -= 18;
+            } else if ("PERGUNTA".equals(tipo)) {
+                List<String> qWrap = quebrarLinhasPdf(item[1], 88);
+                List<String> rWrap = quebrarLinhasPdf("Resposta: " + item[2], 92);
+                int alturaBloco = (qWrap.size() + rWrap.size()) * 14 + 6;
+                if (y - alturaBloco < 50) {
+                    paginasComandos.add(paginaAtual);
+                    paginaAtual = new ArrayList<>();
+                    y = 790;
+                }
+                for (String ql : qWrap) {
+                    paginaAtual.add("BT /F2 10 Tf 45 " + y + " Td (" + escaparTextoPdfWinAnsi(ql) + ") Tj ET");
+                    y -= 13;
+                }
+                for (String rl : rWrap) {
+                    paginaAtual.add("BT /F1 10 Tf 55 " + y + " Td (" + escaparTextoPdfWinAnsi(rl) + ") Tj ET");
+                    y -= 13;
+                }
+                y -= 5;
+            }
+        }
+        if (!paginaAtual.isEmpty()) {
+            paginasComandos.add(paginaAtual);
+        }
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        List<Integer> offsets = new ArrayList<>();
+        out.write("%PDF-1.4\n".getBytes(StandardCharsets.ISO_8859_1));
+
+        int numPaginas = paginasComandos.size();
+        int totalObjs = 4 + (numPaginas * 2);
+
+        // 1: Catalog, 2: Pages, 3: Font Regular, 4: Font Bold
+        offsets.add(out.size());
+        out.write("1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n".getBytes(StandardCharsets.ISO_8859_1));
+
+        StringBuilder kids = new StringBuilder();
+        for (int i = 0; i < numPaginas; i++) {
+            int pageObjId = 5 + (i * 2);
+            kids.append(pageObjId).append(" 0 R ");
+        }
+        offsets.add(out.size());
+        out.write(("2 0 obj\n<< /Type /Pages /Kids [ " + kids + "] /Count " + numPaginas + " >>\nendobj\n").getBytes(StandardCharsets.ISO_8859_1));
+
+        offsets.add(out.size());
+        out.write("3 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>\nendobj\n".getBytes(StandardCharsets.ISO_8859_1));
+
+        offsets.add(out.size());
+        out.write("4 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>\nendobj\n".getBytes(StandardCharsets.ISO_8859_1));
+
+        for (int i = 0; i < numPaginas; i++) {
+            int pageObjId = 5 + (i * 2);
+            int contentObjId = pageObjId + 1;
+            String streamContent = String.join("\n", paginasComandos.get(i)) + "\n";
+            byte[] streamBytes = streamContent.getBytes(StandardCharsets.ISO_8859_1);
+
+            offsets.add(out.size());
+            out.write((pageObjId + " 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] "
+                    + "/Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents " + contentObjId + " 0 R >>\nendobj\n")
+                    .getBytes(StandardCharsets.ISO_8859_1));
+
+            offsets.add(out.size());
+            out.write((contentObjId + " 0 obj\n<< /Length " + streamBytes.length + " >>\nstream\n")
+                    .getBytes(StandardCharsets.ISO_8859_1));
+            out.write(streamBytes);
+            out.write("endstream\nendobj\n".getBytes(StandardCharsets.ISO_8859_1));
+        }
+
+        int xrefOffset = out.size();
+        out.write(("xref\n0 " + (totalObjs + 1) + "\n0000000000 65535 f \n").getBytes(StandardCharsets.ISO_8859_1));
+        for (int off : offsets) {
+            out.write(String.format("%010d 00000 n \n", off).getBytes(StandardCharsets.ISO_8859_1));
+        }
+        out.write(("trailer\n<< /Size " + (totalObjs + 1) + " /Root 1 0 R >>\nstartxref\n" + xrefOffset + "\n%%EOF\n")
+                .getBytes(StandardCharsets.ISO_8859_1));
+
+        try (FileOutputStream fos = new FileOutputStream(destino)) {
+            fos.write(out.toByteArray());
+        }
+    }
+
     private void btnEditarAnamneseSalvaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarAnamneseSalvaActionPerformed
         if (respostaVisualizada == null) {
             return;
@@ -3016,8 +4509,22 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
                 new ArrayList<>(Arrays.asList("Opção 1", "Opção 2"))
         );
         formularioAtual.adicionarPergunta(nova);
+        this.indicePerguntaSelecionadaConstrutor = formularioAtual.getPerguntas().size() - 1;
         editoresPerguntas.clear();
         renderizarConstrutorGoogleForms();
+
+        // Scroll automático até a nova pergunta criada fora da tela e foco no enunciado
+        SwingUtilities.invokeLater(() -> {
+            pnlConteudoAnamnese.revalidate();
+            JScrollBar vbar = scrPerguntas.getVerticalScrollBar();
+            if (vbar != null) {
+                vbar.setValue(vbar.getMaximum());
+            }
+            if (campoEnunciadoAtivoConstrutor != null) {
+                campoEnunciadoAtivoConstrutor.requestFocusInWindow();
+                campoEnunciadoAtivoConstrutor.selectAll();
+            }
+        });
     }//GEN-LAST:event_btnAdicionarPerguntaActionPerformed
 
     private void btnSalvarAnamneseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarAnamneseActionPerformed
@@ -3136,7 +4643,45 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btnSalvarAnamneseActionPerformed
 
+    private void ativarModoTelaCheia(JDialog dialog) {
+        this.modoTelaCheiaExpandida = true;
+        this.dialogTelaCheia = dialog;
+
+        // Oculta o cabeçalho geral e a barra de seleção de modelos superior,
+        // exibindo na janela em tela cheia APENAS a anamnese (containerFormulario)
+        pnlCabecalho.setVisible(false);
+        lblTituloModelos.setVisible(false);
+        pnlIndicadorVerde.setVisible(false);
+        sepModelos.setVisible(false);
+        btnInfantilAdolescente.setVisible(false);
+        btnAdulto.setVisible(false);
+        cmbPersonalizados.setVisible(false);
+        btnCriarPersonalizado.setVisible(false);
+        cmbAnamnesesDesativadas.setVisible(false);
+        btnCriarNovaAnamnese.setVisible(false);
+
+        this.removeAll();
+        this.setLayout(new BorderLayout());
+        this.setBackground(Color.WHITE);
+        this.setBorder(new EmptyBorder(8, 12, 8, 12));
+        this.add(containerFormulario, BorderLayout.CENTER);
+
+        // Muda o ícone de expandir para minimizar (que fecha a tela cheia)
+        btnExpandir.setIcon(iconeMinimizarPadrao);
+        btnExpandir.setToolTipText("Minimizar / Fechar tela cheia");
+
+        this.revalidate();
+        this.repaint();
+    }
+
     private void btnExpandirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExpandirActionPerformed
+        if (modoTelaCheiaExpandida && dialogTelaCheia != null) {
+            sincronizarEdicaoAtualNoFormulario();
+            salvarCachePreenchimentoNoDisco();
+            dialogTelaCheia.dispose();
+            return;
+        }
+
         if (formularioAtual == null) {
             return;
         }
@@ -3145,10 +4690,12 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
 
         Window janelaPai = SwingUtilities.getWindowAncestor(this);
         JDialog dialog = new JDialog(janelaPai, "Anamnese - " + txtTituloAnamnese.getText(), JDialog.ModalityType.APPLICATION_MODAL);
-        dialog.setSize(1040, 760);
-        dialog.setLocationRelativeTo(this);
+        Rectangle limitesTela = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+        dialog.setBounds(limitesTela);
 
         FichaAnaminaseView viewExpandida = new FichaAnaminaseView(this.paciente);
+        viewExpandida.ativarModoTelaCheia(dialog);
+
         if (this.modoVisualizacaoAnamnese && this.respostaVisualizada != null) {
             viewExpandida.desativadaAbertaAPartirDeModelos = this.desativadaAbertaAPartirDeModelos;
             viewExpandida.abaAnteriorModelos = this.abaAnteriorModelos;
@@ -3156,8 +4703,13 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
             viewExpandida.estavaEditandoQuestionarioModelos = this.estavaEditandoQuestionarioModelos;
             viewExpandida.abrirVisualizacaoResposta(this.respostaVisualizada);
         } else if (this.modoEdicaoQuestionario) {
-            viewExpandida.atualizarEstadoBarra(this.abaAtiva);
+            viewExpandida.abaAtiva = this.abaAtiva;
+            viewExpandida.modoAtual = this.modoAtual;
+            viewExpandida.chaveFormularioOrigemEdicao = this.chaveFormularioOrigemEdicao;
             viewExpandida.iniciarConstrutorComFormulario(this.formularioAtual);
+            if (this.indicePerguntaSelecionadaConstrutor >= 0) {
+                viewExpandida.selecionarPerguntaConstrutor(this.indicePerguntaSelecionadaConstrutor);
+            }
         } else if (this.abaAtiva == AbaBarraAnamnese.DROPDOWN_SELECIONAR) {
             viewExpandida.carregarDropdownFormularios(this.formularioAtual);
             viewExpandida.abrirPreenchimentoFormulario(this.formularioAtual, true);
@@ -3168,14 +4720,39 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
         dialog.setContentPane(viewExpandida);
         dialog.setVisible(true);
 
-        carregarDropdownFormularios(this.abaAtiva == AbaBarraAnamnese.DROPDOWN_SELECIONAR ? this.formularioAtual : null);
-        carregarEstadoInicialPaciente();
+        // Sincroniza de volta o estado da janela em tela cheia para a tela principal ao minimizar/fechar
+        viewExpandida.sincronizarEdicaoAtualNoFormulario();
+        salvarCachePreenchimentoNoDisco();
+
+        if (viewExpandida.modoVisualizacaoAnamnese && viewExpandida.respostaVisualizada != null) {
+            this.desativadaAbertaAPartirDeModelos = viewExpandida.desativadaAbertaAPartirDeModelos;
+            carregarDropdownFormularios(null);
+            abrirVisualizacaoResposta(viewExpandida.respostaVisualizada);
+        } else if (viewExpandida.modoEdicaoQuestionario && viewExpandida.formularioAtual != null) {
+            this.abaAtiva = viewExpandida.abaAtiva;
+            this.modoAtual = viewExpandida.modoAtual;
+            this.rascunhoPersonalizado = viewExpandida.rascunhoPersonalizado;
+            this.chaveFormularioOrigemEdicao = viewExpandida.chaveFormularioOrigemEdicao;
+            carregarDropdownFormularios(null);
+            atualizarEstadoBarra(this.abaAtiva);
+            iniciarConstrutorComFormulario(viewExpandida.formularioAtual);
+        } else if (viewExpandida.formularioAtual != null) {
+            this.abaAtiva = viewExpandida.abaAtiva;
+            this.modoAtual = viewExpandida.modoAtual;
+            boolean peloDropdown = (this.abaAtiva == AbaBarraAnamnese.DROPDOWN_SELECIONAR);
+            carregarDropdownFormularios(peloDropdown ? viewExpandida.formularioAtual : null);
+            abrirPreenchimentoFormulario(viewExpandida.formularioAtual, peloDropdown);
+        } else {
+            carregarDropdownFormularios(null);
+            carregarEstadoInicialPaciente();
+        }
     }//GEN-LAST:event_btnExpandirActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdicionarPergunta;
     private javax.swing.JButton btnAdulto;
+    private javax.swing.JButton btnBaixarAnamneseSalva;
     private javax.swing.JButton btnCriarNovaAnamnese;
     private javax.swing.JButton btnCriarPersonalizado;
     private javax.swing.JButton btnEditarAnamneseSalva;

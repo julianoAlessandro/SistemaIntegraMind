@@ -414,7 +414,9 @@
                               <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                               <Component id="btnLimparPreenchimento" min="-2" pref="38" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
-                              <Component id="btnEditarAnamneseSalva" min="-2" pref="138" max="-2" attributes="0"/>
+                              <Component id="btnBaixarAnamneseSalva" min="-2" pref="110" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+                              <Component id="btnEditarAnamneseSalva" min="-2" pref="115" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                               <Component id="btnExpandir" min="-2" pref="38" max="-2" attributes="0"/>
                           </Group>
@@ -435,6 +437,7 @@
                           <Component id="txtDataAbertura" max="32767" attributes="0"/>
                           <Component id="btnEditarPerguntasModelo" max="32767" attributes="0"/>
                           <Component id="btnLimparPreenchimento" max="32767" attributes="0"/>
+                          <Component id="btnBaixarAnamneseSalva" max="32767" attributes="0"/>
                           <Component id="btnEditarAnamneseSalva" max="32767" attributes="0"/>
                           <Component id="btnExpandir" max="32767" attributes="0"/>
                       </Group>
@@ -551,6 +554,28 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnLimparPreenchimentoActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="btnBaixarAnamneseSalva">
+              <Properties>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="2b" green="84" red="12" type="rgb"/>
+                </Property>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Segoe UI" size="14" style="1"/>
+                </Property>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Baixar"/>
+                <Property name="toolTipText" type="java.lang.String" value="Salvar / Baixar anamnese em arquivo (PDF, Word/DOCX, DOC, TXT)"/>
+                <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
+                  <Color id="Hand Cursor"/>
+                </Property>
+                <Property name="focusPainted" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnBaixarAnamneseSalvaActionPerformed"/>
               </Events>
             </Component>
             <Component class="javax.swing.JButton" name="btnEditarAnamneseSalva">
