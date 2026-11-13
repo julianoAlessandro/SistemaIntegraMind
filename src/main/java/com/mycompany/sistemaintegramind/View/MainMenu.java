@@ -23,6 +23,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JOptionPane;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.Insets;
 import java.io.File;
@@ -37,95 +38,97 @@ import javax.swing.SwingWorker;
  *
  * @author Juliano
  */
-public class MainMenu extends javax.swing.JFrame {
+  
 
-    private JButton botaoSelecionado;
-    private FinanceiroView financeiro;
-    private CardLayout cardlayout; //2025-11-08 Juliano: Criação do atributo global da classe para poder ser chamado nos métodos de eventos do java
-    private AgendaView agenda;
-    Usuarios usuarioLogado;
+    public class MainMenu extends javax.swing.JFrame {
 
-    public MainMenu() {
-        this(null);
-    }
+        private JButton botaoSelecionado;
+        private FinanceiroView financeiro;
+        private CardLayout cardlayout; //2025-11-08 Juliano: Criação do atributo global da classe para poder ser chamado nos métodos de eventos do java
+        private AgendaView agenda;
+        Usuarios usuarioLogado;
 
-    public MainMenu(Usuarios usuarioLogado) {
-        initComponents();
-        //2026-01-13 Guilherme: Define o padrão brasileiro para toda a aplicação
-        Locale.setDefault(new Locale("pt", "BR"));
+        public MainMenu() {
+            this(null);
+        }
 
-        // Carrega a imagem do seu diretório ou resource
-        ImageIcon icone = new ImageIcon(getClass().getResource("/imagens/folhas.png"));
+        public MainMenu(Usuarios usuarioLogado) {
+            initComponents();
+            //2026-01-13 Guilherme: Define o padrão brasileiro para toda a aplicação
+            Locale.setDefault(new Locale("pt", "BR"));
 
-        // Define a imagem no seu painel customizado (substitua pelo nome da variável gerada pelo NetBeans)
-        painelImagemGradiente1.setImagem((ImageIcon) ImagemUtil.recolorir(icone, new Color(5, 150, 69)));
-        //2025-12-22 Guilherme: Define o tamanho padrão da janela principal do sistema
-        this.setSize(1280, 720);
+            // Carrega a imagem do seu diretório ou resource
+            ImageIcon icone = new ImageIcon(getClass().getResource("/imagens/folhas.png"));
 
-        //2025-12-22 Guilherme: Centraliza a janela principal na tela
-        this.setLocationRelativeTo(null);
+            // Define a imagem no seu painel customizado (substitua pelo nome da variável gerada pelo NetBeans)
+            painelImagemGradiente1.setImagem((ImageIcon) ImagemUtil.recolorir(icone, new Color(5, 150, 69)));
+            //2025-12-22 Guilherme: Define o tamanho padrão da janela principal do sistema
+            this.setSize(1280, 720);
 
-        //2025-12-29 Guilherme: Abre a tela cheia na inicialização do sistema
-        this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
+            //2025-12-22 Guilherme: Centraliza a janela principal na tela
+            this.setLocationRelativeTo(null);
 
-        //2025-12-22 Guilherme: Define o título exibido na barra superior da aplicação
-        this.setTitle("IntegraMind");
+            //2025-12-29 Guilherme: Abre a tela cheia na inicialização do sistema
+            this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
 
-        //2025-11-08 Juliano: Define um tamahho fixo para o Menu, para o mesmo não quebrar os botões das páginas
-        menu1.setMaximumSize(new Dimension(225, Integer.MAX_VALUE));
-        menu1.setMinimumSize(new Dimension(225, 0));
-        menu1.setPreferredSize(new Dimension(225, getHeight()));
-
-        //2025-11-08 Juliano: Cria um layout para poder adicionar várias paginas juntas como se fosse um baralho
-        cardlayout = new CardLayout();
-        MenuPrincipal.setLayout(cardlayout);
-        MenuPrincipal.add(new PainelView(usuarioLogado), "Painel");
-        MenuPrincipal.add(new PacienteView(), "Pacientes");
-        MenuPrincipal.add(new DashboardView(), "Dashboard");
-        MenuPrincipal.add(new AgendaView(), "Agenda");
-        financeiro = new FinanceiroView();
-        MenuPrincipal.add(new FinanceiroView(), "Financeiro");
-        MenuPrincipal.add(new RecursoView(), "Recursos");
-
-        //2025-11-08 Juliano: Mostra a tela inicial de vendas antes de Clicar
-        cardlayout.show(MenuPrincipal, "Painel");
-
-        //2025-12-22 Guilherme: Faz os botões do menu lateral ficarem transparentes
-        configurarHover(tblPainel);
-        configurarHover(tblPacientes);
-        // configurarHover(tblDashboard);
-        configurarHover(tblFinanceiro);
-        configurarHover(tblAgenda);
-        configurarHover(tblRecursos);
-        btnBackup.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-
-        //2025-12-22 Guilherme: Define o botão de vendas como selecionado inicialmente
-        AlternarEntreJanelasMenu.selecionarBotao(tblPainel, botaoSelecionado);
-        if (usuarioLogado != null) {
-            setUsuarioLogado(usuarioLogado);
-        } else {
+            //2025-12-22 Guilherme: Define o título exibido na barra superior da aplicação
             this.setTitle("IntegraMind");
+
+            //2025-11-08 Juliano: Define um tamahho fixo para o Menu, para o mesmo não quebrar os botões das páginas
+            menu1.setMaximumSize(new Dimension(225, Integer.MAX_VALUE));
+            menu1.setMinimumSize(new Dimension(225, 0));
+            menu1.setPreferredSize(new Dimension(225, getHeight()));
+
+            //2025-11-08 Juliano: Cria um layout para poder adicionar várias paginas juntas como se fosse um baralho
+            cardlayout = new CardLayout();
+            MenuPrincipal.setLayout(cardlayout);
+            MenuPrincipal.add(new PainelView(usuarioLogado), "Painel");
+            MenuPrincipal.add(new PacienteView(), "Pacientes");
+            MenuPrincipal.add(new DashboardView(), "Dashboard");
+            MenuPrincipal.add(new AgendaView(), "Agenda");
+            financeiro = new FinanceiroView();
+            MenuPrincipal.add(new FinanceiroView(), "Financeiro");
+            MenuPrincipal.add(new RecursoView(), "Recursos");
+
+            //2025-11-08 Juliano: Mostra a tela inicial de vendas antes de Clicar
+            cardlayout.show(MenuPrincipal, "Painel");
+
+            //2025-12-22 Guilherme: Faz os botões do menu lateral ficarem transparentes
+            configurarHover(tblPainel);
+            configurarHover(tblPacientes);
+            // configurarHover(tblDashboard);
+            configurarHover(tblFinanceiro);
+            configurarHover(tblAgenda);
+            configurarHover(tblRecursos);
+            btnBackup.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+            //2025-12-22 Guilherme: Define o botão de vendas como selecionado inicialmente
+            AlternarEntreJanelasMenu.selecionarBotao(tblPainel, botaoSelecionado);
+            if (usuarioLogado != null) {
+                setUsuarioLogado(usuarioLogado);
+            } else {
+                this.setTitle("IntegraMind");
+            }
+            //
         }
-        //
-    }
 
-    public void setUsuarioLogado(Usuarios usuarioLogado) {
-        if (usuarioLogado != null) {
-            this.setTitle("IntegraMind - Usuário: " + usuarioLogado.getUsuario());
+        public void setUsuarioLogado(Usuarios usuarioLogado) {
+            if (usuarioLogado != null) {
+                this.setTitle("IntegraMind - Usuário: " + usuarioLogado.getUsuario());
+            }
         }
-    }
 
-    public void AtualizarMovimentacaoFinanceira() {
-        System.out.println("ENTROU NO ATUALIZAR FINANCEIRO");
+        public void AtualizarMovimentacaoFinanceira() {
+            System.out.println("ENTROU NO ATUALIZAR FINANCEIRO");
 
-        if (financeiro != null) {
-            System.out.println("Atualizar Movimentação!!! ");
-        } else {
-            System.out.println("FINANCEIRO ESTÁ NULL");
+            if (financeiro != null) {
+                System.out.println("Atualizar Movimentação!!! ");
+            } else {
+                System.out.println("FINANCEIRO ESTÁ NULL");
+            }
         }
-    }
 
-    @SuppressWarnings("unchecked")
+        @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
@@ -455,10 +458,38 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_txtNomeProdutoActionPerformed
 
     private void tblRecursosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tblRecursosActionPerformed
-        // TODO add your handling code here:
+       /*
         cardlayout.show(MenuPrincipal, "Recursos");
         AlternarEntreJanelasMenu.selecionarBotao(tblRecursos, botaoSelecionado);
+         */
+        //2026-11-13 Juliano: Abrir pasta de recursos do usuário
+        try {
 
+            File pastaRecursos = new File("C:\\IntegraMIND\\Recursos");
+
+            // Cria a pasta caso ainda não exista
+            if (!pastaRecursos.exists()) {
+                pastaRecursos.mkdirs();
+            }
+
+            // Abre a pasta no Windows Explorer
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().open(pastaRecursos);
+            }
+
+        } catch (Exception e) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Não foi possível abrir a pasta de recursos.",
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE
+            );
+
+            e.printStackTrace();
+        }
+   
+    
     }//GEN-LAST:event_tblRecursosActionPerformed
 
     private void tblAgendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tblAgendaActionPerformed
