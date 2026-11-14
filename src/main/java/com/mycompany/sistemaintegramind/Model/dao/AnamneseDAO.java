@@ -22,5 +22,7 @@ public interface AnamneseDAO {
 
     void salvarResposta(RespostaAnamnese resposta);
 
+    void desativarRespostasPorPaciente(Paciente paciente);
+
     List<RespostaAnamnese> listarRespostasPorPaciente(Paciente paciente);
 }

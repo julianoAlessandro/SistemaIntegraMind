@@ -3,10 +3,9 @@ package com.mycompany.sistemaintegramind.Model.entidades;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.TipoPerguntaAnamnese;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -16,14 +15,18 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OrderColumn;
+import javax.persistence.PostLoad;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "pergunta_anamnese")
 public class PerguntaAnamnese extends Entidade implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    private static final String SEPARADOR_OPCOES = "\n|||\n";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,10 +42,10 @@ public class PerguntaAnamnese extends Entidade implements Serializable {
     @Column(name = "tipo_pergunta", nullable = false)
     private TipoPerguntaAnamnese tipoPergunta = TipoPerguntaAnamnese.MULTIPLA_ESCOLHA;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "pergunta_anamnese_opcoes", joinColumns = @JoinColumn(name = "pergunta_id"))
-    @OrderColumn(name = "indice_opcao")
-    @Column(name = "texto_opcao")
+    @Column(name = "opcoes_texto", columnDefinition = "TEXT")
+    private String opcoesTexto;
+
+    @Transient
     private List<String> opcoes = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -56,9 +59,48 @@ public class PerguntaAnamnese extends Entidade implements Serializable {
         this.enunciado = enunciado;
         this.ordem = ordem;
         this.tipoPergunta = tipoPergunta;
-        if (opcoes != null) {
-            this.opcoes = new ArrayList<>(opcoes);
+        setOpcoes(opcoes);
+    }
+
+    private void sincronizarTextoParaLista() {
+        if (this.opcoesTexto == null || this.opcoesTexto.isEmpty()) {
+            if (this.opcoes == null) {
+                this.opcoes = new ArrayList<>();
+            }
+            return;
         }
+        this.opcoes = new ArrayList<>(Arrays.asList(this.opcoesTexto.split(PatternQuote(SEPARADOR_OPCOES), -1)));
+    }
+
+    private void sincronizarListaParaTexto() {
+        if (this.opcoes == null || this.opcoes.isEmpty()) {
+            this.opcoesTexto = "";
+        } else {
+            this.opcoesTexto = String.join(SEPARADOR_OPCOES, this.opcoes);
+        }
+    }
+
+    private static String PatternQuote(String s) {
+        return java.util.regex.Pattern.quote(s);
+    }
+
+    @PostLoad
+    protected void aoCarregarDoBanco() {
+        sincronizarTextoParaLista();
+    }
+
+    @Override
+    @PrePersist
+    protected void onCreate() {
+        super.onCreate();
+        sincronizarListaParaTexto();
+    }
+
+    @Override
+    @PreUpdate
+    protected void onUpdate() {
+        super.onUpdate();
+        sincronizarListaParaTexto();
     }
 
     public Long getId() {
@@ -94,11 +136,29 @@ public class PerguntaAnamnese extends Entidade implements Serializable {
     }
 
     public List<String> getOpcoes() {
+        if ((this.opcoes == null || this.opcoes.isEmpty())
+                && this.opcoesTexto != null && !this.opcoesTexto.isEmpty()) {
+            sincronizarTextoParaLista();
+        }
+        if (this.opcoes == null) {
+            this.opcoes = new ArrayList<>();
+        }
         return opcoes;
     }
 
     public void setOpcoes(List<String> opcoes) {
         this.opcoes = opcoes != null ? new ArrayList<>(opcoes) : new ArrayList<>();
+        sincronizarListaParaTexto();
+    }
+
+    public String getOpcoesTexto() {
+        sincronizarListaParaTexto();
+        return opcoesTexto;
+    }
+
+    public void setOpcoesTexto(String opcoesTexto) {
+        this.opcoesTexto = opcoesTexto;
+        sincronizarTextoParaLista();
     }
 
     public FormularioAnamnese getFormulario() {
