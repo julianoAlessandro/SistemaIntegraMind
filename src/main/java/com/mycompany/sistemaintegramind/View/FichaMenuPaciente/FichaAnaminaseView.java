@@ -202,8 +202,11 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
 
 
     private static final String PREFIXO_COMPLEMENTO = "COMPLEMENTO:";
+    private static final String PREFIXO_OPCAO_MULTIPLA = "MULTIPLA:";
     private static final String PREFIXO_COLUNA = "COL:";
     private static final String PREFIXO_LINHA = "LIN:";
+    private static final String OPCAO_SELECAO_UNICA = "Seleção única";
+    private static final String OPCAO_CAIXA_SELECAO = "Caixa de seleção";
     private static final DateTimeFormatter FORMATO_DATA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final DateTimeFormatter FORMATO_DATA_HORA = DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm");
 
@@ -1775,12 +1778,15 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
                     linhaMista.add(lblC);
                     linhaMista.add(txtComp);
                 } else if (!item.startsWith(PREFIXO_COLUNA) && !item.startsWith(PREFIXO_LINHA)) {
-                    JRadioButton rb = new JRadioButton(limparPrefixoParentesesOpcao(item));
-                    rb.setOpaque(false);
-                    rb.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-                    rb.setForeground(new Color(55, 62, 68));
-                    rb.setFocusable(false);
-                    linhaMista.add(rb);
+                    boolean ehCaixa = ehOpcaoCaixaSelecaoEscolha(item, p.getEnunciado());
+                    AbstractButton btnOp = ehCaixa
+                            ? new JCheckBox(limparPrefixoParentesesOpcao(item))
+                            : new JRadioButton(limparPrefixoParentesesOpcao(item));
+                    btnOp.setOpaque(false);
+                    btnOp.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+                    btnOp.setForeground(new Color(55, 62, 68));
+                    btnOp.setFocusable(false);
+                    linhaMista.add(btnOp);
                 }
             }
             corpo.add(linhaMista);
@@ -1922,15 +1928,18 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
                 new EmptyBorder(10, 12, 12, 12)
         ));
 
+        JPanel barraTopoCard = new JPanel(new BorderLayout(8, 0));
+        barraTopoCard.setOpaque(false);
+        barraTopoCard.setAlignmentX(Component.LEFT_ALIGNMENT);
+
         JPanel linhaTopo = new JPanel(new WrapFlowLayout(FlowLayout.LEFT, 6, 4));
         linhaTopo.setOpaque(false);
-        linhaTopo.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel lblNumero = new JLabel(tipo == TipoPerguntaAnamnese.SECAO_TITULO ? "Seção:" : (numero + "."));
         lblNumero.setFont(new Font("Segoe UI", Font.BOLD, 14));
         lblNumero.setForeground(VERDE_BOTAO_ATIVO);
 
-        JTextField txtEnunciado = new JTextField(pergunta.getEnunciado() != null ? pergunta.getEnunciado() : "Pergunta", 26);
+        JTextField txtEnunciado = new JTextField(pergunta.getEnunciado() != null ? pergunta.getEnunciado() : "Pergunta", 25);
         txtEnunciado.setFont(new Font("Segoe UI", tipo == TipoPerguntaAnamnese.SECAO_TITULO ? Font.BOLD : Font.PLAIN, 15));
         txtEnunciado.setForeground(new Color(30, 35, 40));
         txtEnunciado.setBackground(Color.WHITE);
@@ -1944,32 +1953,6 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
         cmbTipo.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         cmbTipo.setBackground(Color.WHITE);
         cmbTipo.setSelectedItem(tipo);
-
-        JButton btnSubir = criarBotaoAdicionarItem("↑");
-        btnSubir.setToolTipText("Mover pergunta para cima");
-        btnSubir.setEnabled(indiceZeroBased > 0);
-        btnSubir.addActionListener(e -> {
-            if (indiceZeroBased > 0) {
-                sincronizarEdicaoAtualNoFormulario();
-                Collections.swap(formularioAtual.getPerguntas(), indiceZeroBased, indiceZeroBased - 1);
-                indicePerguntaSelecionadaConstrutor = indiceZeroBased - 1;
-                editoresPerguntas.clear();
-                renderizarConstrutorGoogleForms();
-            }
-        });
-
-        JButton btnDescer = criarBotaoAdicionarItem("↓");
-        btnDescer.setToolTipText("Mover pergunta para baixo");
-        btnDescer.setEnabled(indiceZeroBased < formularioAtual.getPerguntas().size() - 1);
-        btnDescer.addActionListener(e -> {
-            if (indiceZeroBased < formularioAtual.getPerguntas().size() - 1) {
-                sincronizarEdicaoAtualNoFormulario();
-                Collections.swap(formularioAtual.getPerguntas(), indiceZeroBased, indiceZeroBased + 1);
-                indicePerguntaSelecionadaConstrutor = indiceZeroBased + 1;
-                editoresPerguntas.clear();
-                renderizarConstrutorGoogleForms();
-            }
-        });
 
         JButton btnConcluirItem = criarBotaoAdicionarItem("✓ Pré-visualizar");
         btnConcluirItem.setToolTipText("Concluir edição desta pergunta e voltar à pré-visualização");
@@ -1987,14 +1970,49 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
         linhaTopo.add(txtEnunciado);
         linhaTopo.add(Box.createHorizontalStrut(6));
         linhaTopo.add(cmbTipo);
-        linhaTopo.add(btnSubir);
-        linhaTopo.add(btnDescer);
+        linhaTopo.add(Box.createHorizontalStrut(8));
         linhaTopo.add(btnConcluirItem);
         if (formularioAtual.getPerguntas().size() > 1) {
             linhaTopo.add(btnRemoverPergunta);
         }
 
-        card.add(linhaTopo);
+        // Botões circulares azuis no canto direito para definir a posição da pergunta (∨ Descer e ∧ Subir), conforme Image2
+        JPanel painelSetasPosicao = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 2));
+        painelSetasPosicao.setOpaque(false);
+
+        boolean podeDescer = indiceZeroBased < formularioAtual.getPerguntas().size() - 1;
+        JButton btnDescer = criarBotaoSetaCircularPosicao(false, podeDescer);
+        btnDescer.setToolTipText("Mover pergunta para baixo");
+        btnDescer.addActionListener(e -> {
+            if (indiceZeroBased < formularioAtual.getPerguntas().size() - 1) {
+                sincronizarEdicaoAtualNoFormulario();
+                Collections.swap(formularioAtual.getPerguntas(), indiceZeroBased, indiceZeroBased + 1);
+                indicePerguntaSelecionadaConstrutor = indiceZeroBased + 1;
+                editoresPerguntas.clear();
+                renderizarConstrutorGoogleForms();
+            }
+        });
+
+        boolean podeSubir = indiceZeroBased > 0;
+        JButton btnSubir = criarBotaoSetaCircularPosicao(true, podeSubir);
+        btnSubir.setToolTipText("Mover pergunta para cima");
+        btnSubir.addActionListener(e -> {
+            if (indiceZeroBased > 0) {
+                sincronizarEdicaoAtualNoFormulario();
+                Collections.swap(formularioAtual.getPerguntas(), indiceZeroBased, indiceZeroBased - 1);
+                indicePerguntaSelecionadaConstrutor = indiceZeroBased - 1;
+                editoresPerguntas.clear();
+                renderizarConstrutorGoogleForms();
+            }
+        });
+
+        painelSetasPosicao.add(btnDescer);
+        painelSetasPosicao.add(btnSubir);
+
+        barraTopoCard.add(linhaTopo, BorderLayout.CENTER);
+        barraTopoCard.add(painelSetasPosicao, BorderLayout.EAST);
+
+        card.add(barraTopoCard);
         card.add(Box.createVerticalStrut(6));
 
         JPanel painelCorpo = new JPanel();
@@ -2004,6 +2022,7 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
         painelCorpo.setBorder(new EmptyBorder(0, 18, 0, 0));
 
         List<JTextField> camposOpcoes = new ArrayList<>();
+        List<JComboBox<String>> combosModosOpcoes = new ArrayList<>();
         List<JTextField> camposComplementos = new ArrayList<>();
         List<JTextField> camposColunas = new ArrayList<>();
         List<JTextField> camposLinhas = new ArrayList<>();
@@ -2096,7 +2115,9 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
                     if (item.startsWith(PREFIXO_COMPLEMENTO)) {
                         complementos.add(item.substring(PREFIXO_COMPLEMENTO.length()));
                     } else if (!item.startsWith(PREFIXO_COLUNA) && !item.startsWith(PREFIXO_LINHA)) {
-                        escolhas.add(limparPrefixoParentesesOpcao(item));
+                        boolean ehCaixa = ehOpcaoCaixaSelecaoEscolha(item, pergunta.getEnunciado());
+                        String textoLimpo = limparPrefixoParentesesOpcao(item);
+                        escolhas.add(ehCaixa ? (PREFIXO_OPCAO_MULTIPLA + textoLimpo) : textoLimpo);
                     }
                 }
             }
@@ -2116,21 +2137,43 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
             ButtonGroup grupoPreviewEsc = new ButtonGroup();
             for (int i = 0; i < escolhas.size(); i++) {
                 final int idxEsc = i;
+                String itemBrutoEsc = escolhas.get(i);
+                boolean ehCaixaSelecao = itemBrutoEsc.startsWith(PREFIXO_OPCAO_MULTIPLA);
+                String textoOpcaoLimpo = limparPrefixoParentesesOpcao(itemBrutoEsc);
+
                 JPanel linhaEsc = new JPanel(new WrapFlowLayout(FlowLayout.LEFT, 8, 2));
                 linhaEsc.setOpaque(false);
                 linhaEsc.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-                JRadioButton rb = new JRadioButton();
-                rb.setOpaque(false);
-                grupoPreviewEsc.add(rb);
-                linhaEsc.add(rb);
+                if (ehCaixaSelecao) {
+                    JCheckBox cbPrev = new JCheckBox();
+                    cbPrev.setOpaque(false);
+                    linhaEsc.add(cbPrev);
+                } else {
+                    JRadioButton rbPrev = new JRadioButton();
+                    rbPrev.setOpaque(false);
+                    grupoPreviewEsc.add(rbPrev);
+                    linhaEsc.add(rbPrev);
+                }
 
-                JTextField txtEsc = new JTextField(escolhas.get(i), 16);
+                JTextField txtEsc = new JTextField(textoOpcaoLimpo, 16);
                 txtEsc.setFont(new Font("Segoe UI", Font.PLAIN, 13));
                 camposOpcoes.add(txtEsc);
                 linhaEsc.add(txtEsc);
 
-                JButton btnRemEsc = criarBotaoExcluirItem("× Excluir opção");
+                JComboBox<String> cmbModoOpcao = new JComboBox<>(new String[]{OPCAO_SELECAO_UNICA, OPCAO_CAIXA_SELECAO});
+                cmbModoOpcao.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+                cmbModoOpcao.setBackground(Color.WHITE);
+                cmbModoOpcao.setSelectedItem(ehCaixaSelecao ? OPCAO_CAIXA_SELECAO : OPCAO_SELECAO_UNICA);
+                combosModosOpcoes.add(cmbModoOpcao);
+                cmbModoOpcao.addActionListener(e -> {
+                    sincronizarEdicaoAtualNoFormulario();
+                    editoresPerguntas.clear();
+                    renderizarConstrutorGoogleForms();
+                });
+                linhaEsc.add(cmbModoOpcao);
+
+                JButton btnRemEsc = criarBotaoExcluirItem("× Excluir campo");
                 btnRemEsc.addActionListener(e -> {
                     sincronizarEdicaoAtualNoFormulario();
                     escolhas.remove(idxEsc);
@@ -2322,7 +2365,7 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
         }
 
         PerguntaEditorBinder binder = new PerguntaEditorBinder(
-                pergunta, txtEnunciado, cmbTipo, camposOpcoes, camposComplementos, camposColunas, camposLinhas
+                pergunta, txtEnunciado, cmbTipo, camposOpcoes, combosModosOpcoes, camposComplementos, camposColunas, camposLinhas
         );
         editoresPerguntas.add(binder);
 
@@ -2591,8 +2634,91 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
         if (texto == null) {
             return "";
         }
-        return texto.trim().replaceFirst("^\\(\\s*[xX]?\\s*\\)\\s*", "");
+        String semPref = texto.trim();
+        if (semPref.startsWith(PREFIXO_OPCAO_MULTIPLA)) {
+            semPref = semPref.substring(PREFIXO_OPCAO_MULTIPLA.length()).trim();
+        }
+        return semPref.replaceFirst("^\\(\\s*[xX]?\\s*\\)\\s*", "");
     }
+
+    private Icon criarIconeSetaCircularPosicao(boolean paraCima, Color corCirculo) {
+        int d = 26;
+        BufferedImage img = new BufferedImage(d, d, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = img.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        g2.setColor(corCirculo);
+        g2.fillOval(1, 1, d - 2, d - 2);
+
+        g2.setColor(Color.WHITE);
+        g2.setStroke(new BasicStroke(2.2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        if (paraCima) {
+            // Chevron apontando para cima (∧)
+            g2.drawLine(8, 15, 13, 10);
+            g2.drawLine(13, 10, 18, 15);
+        } else {
+            // Chevron apontando para baixo (∨)
+            g2.drawLine(8, 11, 13, 16);
+            g2.drawLine(13, 16, 18, 11);
+        }
+
+        g2.dispose();
+        return new ImageIcon(img);
+    }
+
+    private JButton criarBotaoSetaCircularPosicao(boolean paraCima, boolean habilitado) {
+        Color corNormal = habilitado ? new Color(142, 180, 248) : new Color(210, 224, 246);
+        Color corHover = new Color(110, 158, 242);
+        final Icon iconeNormal = criarIconeSetaCircularPosicao(paraCima, corNormal);
+        final Icon iconeHover = criarIconeSetaCircularPosicao(paraCima, corHover);
+
+        JButton btn = new JButton(iconeNormal);
+        btn.setDisabledIcon(criarIconeSetaCircularPosicao(paraCima, new Color(210, 224, 246)));
+        btn.setPreferredSize(new Dimension(28, 28));
+        btn.setBorder(new EmptyBorder(0, 0, 0, 0));
+        btn.setContentAreaFilled(false);
+        btn.setBorderPainted(false);
+        btn.setFocusPainted(false);
+        btn.setEnabled(habilitado);
+        if (habilitado) {
+            btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            btn.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    if (btn.isEnabled()) {
+                        btn.setIcon(iconeHover);
+                    }
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    btn.setIcon(iconeNormal);
+                }
+            });
+        }
+        return btn;
+    }
+
+    private boolean ehOpcaoCaixaSelecaoEscolha(String itemBruto, String enunciadoPergunta) {
+        if (itemBruto == null) {
+            return false;
+        }
+        if (itemBruto.startsWith(PREFIXO_OPCAO_MULTIPLA)) {
+            return true;
+        }
+        String limpo = limparPrefixoParentesesOpcao(itemBruto);
+        boolean ehSimOuNao = limpo.equalsIgnoreCase("sim")
+                || limpo.equalsIgnoreCase("não")
+                || limpo.equalsIgnoreCase("nao");
+        if (ehSimOuNao) {
+            return false;
+        }
+        String enunciadoNorm = normalizarChave(enunciadoPergunta);
+        return enunciadoNorm.contains("quem_mora_na_casa")
+                || enunciadoNorm.contains("os_pais_j_tiveram")
+                || enunciadoNorm.contains("atendimento_especializado");
+    }
+
 
     private String formatarEnunciadoResponsivoHtml(String texto) {
         if (texto == null) {
@@ -2894,9 +3020,10 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
                         boolean ehSimOuNao = textoOpcao.equalsIgnoreCase("sim")
                                 || textoOpcao.equalsIgnoreCase("não")
                                 || textoOpcao.equalsIgnoreCase("nao");
+                        boolean ehCaixaSelecao = ehOpcaoCaixaSelecaoEscolha(item, p.getEnunciado());
 
                         AbstractButton botaoOpcao;
-                        if (ehSimOuNao || !multiplaMarcacao) {
+                        if (!ehCaixaSelecao) {
                             JRadioButton rb = new JRadioButton(textoOpcao);
                             rb.setOpaque(false);
                             rb.setFont(new Font("Segoe UI", Font.PLAIN, 13));
@@ -3265,6 +3392,7 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
         private final JTextField txtEnunciado;
         private final JComboBox<TipoPerguntaAnamnese> cmbTipo;
         private final List<JTextField> txtOpcoes;
+        private final List<JComboBox<String>> cmbModosOpcoes;
         private final List<JTextField> txtComplementos;
         private final List<JTextField> txtColunas;
         private final List<JTextField> txtLinhas;
@@ -3274,6 +3402,7 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
                 JTextField txtEnunciado,
                 JComboBox<TipoPerguntaAnamnese> cmbTipo,
                 List<JTextField> txtOpcoes,
+                List<JComboBox<String>> cmbModosOpcoes,
                 List<JTextField> txtComplementos,
                 List<JTextField> txtColunas,
                 List<JTextField> txtLinhas) {
@@ -3281,6 +3410,7 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
             this.txtEnunciado = txtEnunciado;
             this.cmbTipo = cmbTipo;
             this.txtOpcoes = txtOpcoes;
+            this.cmbModosOpcoes = cmbModosOpcoes;
             this.txtComplementos = txtComplementos;
             this.txtColunas = txtColunas;
             this.txtLinhas = txtLinhas;
@@ -3307,7 +3437,11 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
                 List<String> combinada = new ArrayList<>();
                 for (int i = 0; i < txtOpcoes.size(); i++) {
                     String val = txtOpcoes.get(i).getText();
-                    combinada.add((val == null || val.isBlank()) ? "Opção " + (i + 1) : val.trim());
+                    String limpo = (val == null || val.isBlank()) ? "Opção " + (i + 1) : val.trim();
+                    boolean caixaSelecao = (cmbModosOpcoes != null
+                            && i < cmbModosOpcoes.size()
+                            && OPCAO_CAIXA_SELECAO.equals(cmbModosOpcoes.get(i).getSelectedItem()));
+                    combinada.add(caixaSelecao ? (PREFIXO_OPCAO_MULTIPLA + limpo) : limpo);
                 }
                 for (int i = 0; i < txtComplementos.size(); i++) {
                     String val = txtComplementos.get(i).getText();
@@ -3955,19 +4089,19 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
         }
 
         try {
-            List<String[]> linhasRelatorio = montarLinhasExportacao(resposta, form);
+            RelatorioOficialAnamnese relatorio = montarRelatorioOficialExportacao(resposta, form);
             switch (extensao) {
                 case "docx":
-                    exportarParaDocx(destino, linhasRelatorio);
+                    exportarParaDocx(destino, relatorio);
                     break;
                 case "doc":
-                    exportarParaDoc(destino, linhasRelatorio);
+                    exportarParaDoc(destino, relatorio);
                     break;
                 case "txt":
-                    exportarParaTxt(destino, linhasRelatorio);
+                    exportarParaTxt(destino, relatorio);
                     break;
                 default:
-                    exportarParaPdf(destino, linhasRelatorio);
+                    exportarParaPdf(destino, relatorio);
                     break;
             }
             JOptionPane.showMessageDialog(
@@ -3987,33 +4121,93 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
         }
     }
 
-    private List<String[]> montarLinhasExportacao(RespostaAnamnese resposta, FormularioAnamnese form) {
-        List<String[]> linhas = new ArrayList<>();
-        String titulo = (form != null && form.getTitulo() != null) ? form.getTitulo() : "Anamnese";
-        linhas.add(new String[]{"TITULO", titulo});
+    /**
+     * Estrutura de dados para exportação formatada como documento clínico oficial de Anamnese
+     * (baseado no modelo oficial "ANAMNESE INFANTIL E ADOLESCENTE.docx").
+     */
+    private static class ParRotuloValor {
+        final String rotulo;
+        final String valor;
 
-        String nomePac = (paciente != null && paciente.getNome() != null && !paciente.getNome().isBlank())
-                ? paciente.getNome()
+        ParRotuloValor(String rotulo, String valor) {
+            this.rotulo = rotulo != null ? rotulo : "";
+            this.valor = valor != null ? valor.trim() : "";
+        }
+    }
+
+    private static class OpcaoMarcadaRelatorio {
+        final String texto;
+        final boolean marcada;
+        final boolean caixaSelecao;
+
+        OpcaoMarcadaRelatorio(String texto, boolean marcada, boolean caixaSelecao) {
+            this.texto = texto != null ? texto : "";
+            this.marcada = marcada;
+            this.caixaSelecao = caixaSelecao;
+        }
+    }
+
+    private static class ItemRelatorioAnamnese {
+        final TipoPerguntaAnamnese tipo;
+        final String enunciado;
+        final List<OpcaoMarcadaRelatorio> opcoes = new ArrayList<>();
+        final List<ParRotuloValor> campos = new ArrayList<>();
+        final List<String> colunasGrade = new ArrayList<>();
+        final List<String> linhasGrade = new ArrayList<>();
+        boolean[][] matrizGrade;
+        String textoLivre = "";
+        int estrelas = 0;
+
+        ItemRelatorioAnamnese(TipoPerguntaAnamnese tipo, String enunciado) {
+            this.tipo = tipo;
+            this.enunciado = enunciado != null ? enunciado.trim() : "";
+        }
+    }
+
+    private static class RelatorioOficialAnamnese {
+        String titulo = "ANAMNESE";
+        String nomePaciente = "Não informado";
+        String dataAbertura = "";
+        String statusDocumento = "Anamnese Principal Ativa";
+        boolean desativada = false;
+        final List<ItemRelatorioAnamnese> itens = new ArrayList<>();
+    }
+
+    private RelatorioOficialAnamnese montarRelatorioOficialExportacao(RespostaAnamnese resposta, FormularioAnamnese form) {
+        RelatorioOficialAnamnese rel = new RelatorioOficialAnamnese();
+        rel.titulo = (form != null && form.getTitulo() != null && !form.getTitulo().isBlank())
+                ? form.getTitulo().trim()
+                : "ANAMNESE";
+        rel.nomePaciente = (paciente != null && paciente.getNome() != null && !paciente.getNome().isBlank())
+                ? paciente.getNome().trim()
                 : "Não informado";
-        String dataAb = (resposta.getDataAbertura() != null ? resposta.getDataAbertura() : LocalDate.now()).format(FORMATO_DATA);
-        linhas.add(new String[]{"META", "Paciente: " + nomePac + "   |   Data de abertura: " + dataAb});
-
-        if (!resposta.isAtiva()) {
+        rel.dataAbertura = (resposta != null && resposta.getDataAbertura() != null
+                ? resposta.getDataAbertura()
+                : LocalDate.now()).format(FORMATO_DATA);
+        rel.desativada = resposta != null && !resposta.isAtiva();
+        if (rel.desativada) {
             LocalDateTime dtDesat = resposta.getDataHoraDesativacao();
-            if (dtDesat != null) {
-                linhas.add(new String[]{"META", "Status: Desativada em " + dtDesat.format(FORMATO_DATA_HORA)});
-            } else {
-                linhas.add(new String[]{"META", "Status: Desativada"});
+            if (dtDesat == null && resposta.getDataAtualizacao() != null) {
+                dtDesat = resposta.getDataAtualizacao();
             }
+            rel.statusDocumento = dtDesat != null
+                    ? ("Desativada em " + dtDesat.format(FORMATO_DATA_HORA))
+                    : "Desativada";
+        } else {
+            rel.statusDocumento = "Anamnese Principal Ativa";
         }
 
         Map<String, String> dados = desserializarDadosCampos(resposta);
         Map<String, Integer> contadorEnunciados = new HashMap<>();
-        List<PerguntaAnamnese> perguntas = form != null ? form.getPerguntas() : Collections.emptyList();
+        List<PerguntaAnamnese> perguntas = (form != null && form.getPerguntas() != null)
+                ? form.getPerguntas()
+                : Collections.emptyList();
 
         for (int i = 0; i < perguntas.size(); i++) {
             PerguntaAnamnese p = perguntas.get(i);
-            TipoPerguntaAnamnese tipo = p.getTipoPergunta() != null ? p.getTipoPergunta() : TipoPerguntaAnamnese.TEXTO_LIVRE;
+            TipoPerguntaAnamnese tipo = p.getTipoPergunta() != null
+                    ? p.getTipoPergunta()
+                    : TipoPerguntaAnamnese.TEXTO_LIVRE;
 
             String chaveBase = tipo.name() + "_" + normalizarChave(p.getEnunciado());
             int ocorrencia = contadorEnunciados.getOrDefault(chaveBase, 0) + 1;
@@ -4022,121 +4216,212 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
             String qKey = obterChavePergunta(p, ocorrencia, i);
             String idxKey = "IDX_" + i;
 
+            ItemRelatorioAnamnese itemRel = new ItemRelatorioAnamnese(tipo, p.getEnunciado());
+
             if (tipo == TipoPerguntaAnamnese.SECAO_TITULO) {
-                linhas.add(new String[]{"SECAO", p.getEnunciado()});
+                rel.itens.add(itemRel);
                 continue;
             }
 
-            String valorResposta = extrairTextoRespostaSalva(p, tipo, dados, qKey, idxKey);
-            linhas.add(new String[]{"PERGUNTA", p.getEnunciado(), valorResposta});
-        }
-        return linhas;
-    }
-
-    private String extrairTextoRespostaSalva(
-            PerguntaAnamnese p,
-            TipoPerguntaAnamnese tipo,
-            Map<String, String> dados,
-            String qKey,
-            String idxKey) {
-        if (tipo == TipoPerguntaAnamnese.MULTIPLA_ESCOLHA) {
-            String op = obterValorMapaCampos(dados, qKey + "__OPCAO", idxKey + "__OPCAO");
-            return (op != null && !op.isBlank()) ? limparPrefixoParentesesOpcao(op) : "Não preenchido";
-        }
-        if (tipo == TipoPerguntaAnamnese.CAIXA_SELECAO) {
-            List<String> marcadas = new ArrayList<>();
-            for (String opBruta : p.getOpcoes()) {
-                String op = limparPrefixoParentesesOpcao(opBruta);
-                String opKey = normalizarChave(op);
-                String v = obterValorMapaCampos(dados, qKey + "__CHK_" + opKey, idxKey + "__CHK_" + opKey);
-                if ("true".equals(v)) {
-                    marcadas.add(op);
+            if (tipo == TipoPerguntaAnamnese.MULTIPLA_ESCOLHA) {
+                String opSalva = obterValorMapaCampos(dados, qKey + "__OPCAO", idxKey + "__OPCAO");
+                String opSalvaLimpa = opSalva != null ? limparPrefixoParentesesOpcao(opSalva).trim() : "";
+                List<String> opcoesP = p.getOpcoes() != null ? p.getOpcoes() : Collections.emptyList();
+                for (String opBruta : opcoesP) {
+                    String opLimpa = limparPrefixoParentesesOpcao(opBruta).trim();
+                    boolean marcada = !opSalvaLimpa.isEmpty()
+                            && (opSalvaLimpa.equalsIgnoreCase(opLimpa)
+                            || normalizarChave(opSalvaLimpa).equals(normalizarChave(opLimpa)));
+                    itemRel.opcoes.add(new OpcaoMarcadaRelatorio(opLimpa, marcada, false));
                 }
-            }
-            return marcadas.isEmpty() ? "Não preenchido" : String.join(", ", marcadas);
-        }
-        if (tipo == TipoPerguntaAnamnese.CAMPOS_LINHA) {
-            List<String> partes = new ArrayList<>();
-            for (String rotulo : p.getOpcoes()) {
-                String cKey = normalizarChave(rotulo);
-                String v = obterValorMapaCampos(dados, qKey + "__CAMPO_" + cKey, idxKey + "__CAMPO_" + cKey);
+            } else if (tipo == TipoPerguntaAnamnese.CAIXA_SELECAO) {
+                List<String> opcoesP = p.getOpcoes() != null ? p.getOpcoes() : Collections.emptyList();
+                for (String opBruta : opcoesP) {
+                    String opLimpa = limparPrefixoParentesesOpcao(opBruta).trim();
+                    String opKey = normalizarChave(opLimpa);
+                    String v = obterValorMapaCampos(dados, qKey + "__CHK_" + opKey, idxKey + "__CHK_" + opKey);
+                    itemRel.opcoes.add(new OpcaoMarcadaRelatorio(opLimpa, "true".equals(v), true));
+                }
+            } else if (tipo == TipoPerguntaAnamnese.CAMPOS_LINHA) {
+                List<String> opcoesP = p.getOpcoes() != null ? p.getOpcoes() : Collections.emptyList();
+                for (String rotulo : opcoesP) {
+                    String cKey = normalizarChave(rotulo);
+                    String v = obterValorMapaCampos(dados, qKey + "__CAMPO_" + cKey, idxKey + "__CAMPO_" + cKey);
+                    itemRel.campos.add(new ParRotuloValor(rotulo, v != null ? v : ""));
+                }
+            } else if (tipo == TipoPerguntaAnamnese.ESCOLHA_COM_COMPLEMENTO) {
+                List<String> opcoesP = p.getOpcoes() != null ? p.getOpcoes() : Collections.emptyList();
+                for (String subItem : opcoesP) {
+                    if (subItem.startsWith(PREFIXO_COMPLEMENTO)) {
+                        String rot = subItem.substring(PREFIXO_COMPLEMENTO.length()).trim();
+                        String compKey = normalizarChave(rot);
+                        String v = obterValorMapaCampos(dados, qKey + "__COMP_" + compKey, idxKey + "__COMP_" + compKey);
+                        itemRel.campos.add(new ParRotuloValor(rot, v != null ? v : ""));
+                    } else if (!subItem.startsWith(PREFIXO_COLUNA) && !subItem.startsWith(PREFIXO_LINHA)) {
+                        boolean ehCaixa = ehOpcaoCaixaSelecaoEscolha(subItem, p.getEnunciado());
+                        String opLimpa = limparPrefixoParentesesOpcao(subItem).trim();
+                        String escKey = normalizarChave(opLimpa);
+                        String v = obterValorMapaCampos(dados, qKey + "__ESC_" + escKey, idxKey + "__ESC_" + escKey);
+                        itemRel.opcoes.add(new OpcaoMarcadaRelatorio(opLimpa, "true".equals(v), ehCaixa));
+                    }
+                }
+            } else if (tipo == TipoPerguntaAnamnese.GRADE_DISPONIBILIDADE) {
+                List<String> opcoesP = p.getOpcoes() != null ? p.getOpcoes() : Collections.emptyList();
+                for (String subItem : opcoesP) {
+                    if (subItem.startsWith(PREFIXO_COLUNA)) {
+                        itemRel.colunasGrade.add(subItem.substring(PREFIXO_COLUNA.length()));
+                    } else if (subItem.startsWith(PREFIXO_LINHA)) {
+                        itemRel.linhasGrade.add(subItem.substring(PREFIXO_LINHA.length()));
+                    }
+                }
+                if (itemRel.colunasGrade.isEmpty()) {
+                    itemRel.colunasGrade.addAll(Arrays.asList("2ª-feira", "3ª-feira", "4ª-feira", "5ª-feira", "6ª-feira"));
+                }
+                if (itemRel.linhasGrade.isEmpty()) {
+                    itemRel.linhasGrade.addAll(Arrays.asList("Manhã", "Tarde"));
+                }
+                itemRel.matrizGrade = new boolean[itemRel.linhasGrade.size()][itemRel.colunasGrade.size()];
+                for (int r = 0; r < itemRel.linhasGrade.size(); r++) {
+                    String lin = itemRel.linhasGrade.get(r);
+                    for (int c = 0; c < itemRel.colunasGrade.size(); c++) {
+                        String col = itemRel.colunasGrade.get(c);
+                        String ch = lin + " - " + col;
+                        String gKey = normalizarChave(ch);
+                        String v = obterValorMapaCampos(dados, qKey + "__GRADE_" + gKey, idxKey + "__GRADE_" + gKey);
+                        itemRel.matrizGrade[r][c] = "true".equals(v);
+                    }
+                }
+            } else if (tipo == TipoPerguntaAnamnese.ESTRELAS) {
+                String v = obterValorMapaCampos(dados, qKey + "__ESTRELAS", idxKey + "__ESTRELAS");
+                int nota = 0;
                 if (v != null && !v.isBlank()) {
-                    partes.add(rotulo + ": " + v.trim());
-                }
-            }
-            return partes.isEmpty() ? "Não preenchido" : String.join(" | ", partes);
-        }
-        if (tipo == TipoPerguntaAnamnese.ESCOLHA_COM_COMPLEMENTO) {
-            List<String> partes = new ArrayList<>();
-            for (String item : p.getOpcoes()) {
-                if (item.startsWith(PREFIXO_COMPLEMENTO)) {
-                    String rot = item.substring(PREFIXO_COMPLEMENTO.length()).trim();
-                    String compKey = normalizarChave(rot);
-                    String v = obterValorMapaCampos(dados, qKey + "__COMP_" + compKey, idxKey + "__COMP_" + compKey);
-                    if (v != null && !v.isBlank()) {
-                        partes.add(rot + ": " + v.trim());
-                    }
-                } else if (!item.startsWith(PREFIXO_COLUNA) && !item.startsWith(PREFIXO_LINHA)) {
-                    String op = limparPrefixoParentesesOpcao(item);
-                    String escKey = normalizarChave(op);
-                    String v = obterValorMapaCampos(dados, qKey + "__ESC_" + escKey, idxKey + "__ESC_" + escKey);
-                    if ("true".equals(v)) {
-                        partes.add(op);
+                    try {
+                        nota = Integer.parseInt(v.replaceAll("[^0-9]", ""));
+                    } catch (NumberFormatException ignored) {
                     }
                 }
+                itemRel.estrelas = Math.max(0, Math.min(5, nota));
+            } else {
+                String v = obterValorMapaCampos(dados, qKey + "__TEXTO", idxKey + "__TEXTO");
+                itemRel.textoLivre = v != null ? v.trim() : "";
             }
-            return partes.isEmpty() ? "Não preenchido" : String.join(" | ", partes);
+
+            rel.itens.add(itemRel);
         }
-        if (tipo == TipoPerguntaAnamnese.GRADE_DISPONIBILIDADE) {
-            List<String> colunas = new ArrayList<>();
-            List<String> linhas = new ArrayList<>();
-            for (String item : p.getOpcoes()) {
-                if (item.startsWith(PREFIXO_COLUNA)) {
-                    colunas.add(item.substring(PREFIXO_COLUNA.length()));
-                } else if (item.startsWith(PREFIXO_LINHA)) {
-                    linhas.add(item.substring(PREFIXO_LINHA.length()));
-                }
-            }
-            List<String> marcados = new ArrayList<>();
-            for (String lin : linhas) {
-                for (String col : colunas) {
-                    String ch = lin + " - " + col;
-                    String gKey = normalizarChave(ch);
-                    String v = obterValorMapaCampos(dados, qKey + "__GRADE_" + gKey, idxKey + "__GRADE_" + gKey);
-                    if ("true".equals(v)) {
-                        marcados.add(ch);
-                    }
-                }
-            }
-            return marcados.isEmpty() ? "Nenhum horário marcado" : String.join("; ", marcados);
-        }
-        if (tipo == TipoPerguntaAnamnese.ESTRELAS) {
-            String v = obterValorMapaCampos(dados, qKey + "__ESTRELAS", idxKey + "__ESTRELAS");
-            return (v != null && !v.isBlank()) ? (v.trim() + " estrela(s)") : "Não preenchido";
-        }
-        String v = obterValorMapaCampos(dados, qKey + "__TEXTO", idxKey + "__TEXTO");
-        return (v != null && !v.isBlank()) ? v.trim() : "Não preenchido";
+        return rel;
     }
 
-    private void exportarParaTxt(File destino, List<String[]> linhas) throws Exception {
+    private String formatarRotuloCampoRelatorio(String rotulo) {
+        if (rotulo == null || rotulo.isBlank()) {
+            return "";
+        }
+        String r = rotulo.trim();
+        if (r.endsWith(":") || r.endsWith("?")) {
+            return r;
+        }
+        return r + ":";
+    }
+
+    private boolean enunciadoRedundanteComCampoUnico(ItemRelatorioAnamnese item) {
+        if (item.campos.size() != 1) {
+            return false;
+        }
+        String enunNorm = normalizarChave(item.enunciado);
+        String rotNorm = normalizarChave(item.campos.get(0).rotulo);
+        return !enunNorm.isEmpty() && enunNorm.equals(rotNorm);
+    }
+
+    private void exportarParaTxt(File destino, RelatorioOficialAnamnese rel) throws Exception {
         StringBuilder sb = new StringBuilder();
-        for (String[] item : linhas) {
-            String tipo = item[0];
-            if ("TITULO".equals(tipo)) {
-                sb.append("================================================================\n");
-                sb.append("  ").append(item[1]).append("\n");
-                sb.append("================================================================\n");
-            } else if ("META".equals(tipo)) {
-                sb.append(item[1]).append("\n");
-            } else if ("SECAO".equals(tipo)) {
-                sb.append("\n----------------------------------------------------------------\n");
-                sb.append("[ ").append(item[1]).append(" ]\n");
-                sb.append("----------------------------------------------------------------\n");
-            } else if ("PERGUNTA".equals(tipo)) {
-                sb.append("• ").append(item[1]).append("\n");
-                sb.append("  Resposta: ").append(item[2]).append("\n\n");
+        sb.append("================================================================================\n");
+        sb.append("  SISTEMA INTEGRAMIND - DOCUMENTO OFICIAL DE ANAMNESE\n");
+        sb.append("  ").append(rel.titulo.toUpperCase()).append("\n");
+        sb.append("================================================================================\n");
+        sb.append("Paciente: ").append(rel.nomePaciente)
+          .append("   |   Data de abertura: ").append(rel.dataAbertura).append("\n");
+        sb.append("Situação: ").append(rel.statusDocumento).append("\n");
+        sb.append("--------------------------------------------------------------------------------\n");
+
+        for (ItemRelatorioAnamnese item : rel.itens) {
+            if (item.tipo == TipoPerguntaAnamnese.SECAO_TITULO) {
+                sb.append("\n================================================================================\n");
+                sb.append("  ").append(item.enunciado.toUpperCase()).append("\n");
+                sb.append("================================================================================\n");
+                continue;
+            }
+
+            if (item.tipo == TipoPerguntaAnamnese.MULTIPLA_ESCOLHA || item.tipo == TipoPerguntaAnamnese.CAIXA_SELECAO) {
+                sb.append(formatarRotuloCampoRelatorio(item.enunciado)).append(" ");
+                for (OpcaoMarcadaRelatorio op : item.opcoes) {
+                    String marcador = op.caixaSelecao
+                            ? (op.marcada ? "[ X ] " : "[   ] ")
+                            : (op.marcada ? "( X ) " : "(   ) ");
+                    sb.append(marcador).append(op.texto).append("    ");
+                }
+                sb.append("\n\n");
+            } else if (item.tipo == TipoPerguntaAnamnese.CAMPOS_LINHA) {
+                if (!enunciadoRedundanteComCampoUnico(item)) {
+                    sb.append(formatarRotuloCampoRelatorio(item.enunciado)).append("\n  ");
+                }
+                for (int i = 0; i < item.campos.size(); i++) {
+                    ParRotuloValor c = item.campos.get(i);
+                    String val = c.valor.isEmpty() ? "________________________" : c.valor;
+                    sb.append(formatarRotuloCampoRelatorio(c.rotulo)).append(" ").append(val);
+                    if (i < item.campos.size() - 1) {
+                        sb.append("     ");
+                    }
+                }
+                sb.append("\n\n");
+            } else if (item.tipo == TipoPerguntaAnamnese.ESCOLHA_COM_COMPLEMENTO) {
+                sb.append(formatarRotuloCampoRelatorio(item.enunciado)).append("  ");
+                for (OpcaoMarcadaRelatorio op : item.opcoes) {
+                    String marcador = op.caixaSelecao
+                            ? (op.marcada ? "[ X ] " : "[   ] ")
+                            : (op.marcada ? "( X ) " : "(   ) ");
+                    sb.append(marcador).append(op.texto).append("   ");
+                }
+                for (ParRotuloValor c : item.campos) {
+                    String val = c.valor.isEmpty() ? "____________________" : c.valor;
+                    sb.append("  ").append(formatarRotuloCampoRelatorio(c.rotulo)).append(" ").append(val);
+                }
+                sb.append("\n\n");
+            } else if (item.tipo == TipoPerguntaAnamnese.GRADE_DISPONIBILIDADE) {
+                sb.append(formatarRotuloCampoRelatorio(item.enunciado)).append("\n");
+                sb.append(String.format("  %-16s", "Dia da semana"));
+                for (String col : item.colunasGrade) {
+                    sb.append(String.format("| %-10s", col));
+                }
+                sb.append("|\n  ");
+                sb.append("-".repeat(18 + item.colunasGrade.size() * 12)).append("\n");
+                for (int r = 0; r < item.linhasGrade.size(); r++) {
+                    sb.append(String.format("  %-16s", item.linhasGrade.get(r)));
+                    for (int c = 0; c < item.colunasGrade.size(); c++) {
+                        String mark = (item.matrizGrade != null && item.matrizGrade[r][c]) ? "   ( X )  " : "   (   )  ";
+                        sb.append("| ").append(String.format("%-10s", mark));
+                    }
+                    sb.append("|\n");
+                }
+                sb.append("\n");
+            } else if (item.tipo == TipoPerguntaAnamnese.ESTRELAS) {
+                sb.append(formatarRotuloCampoRelatorio(item.enunciado)).append("  ");
+                for (int s = 1; s <= 5; s++) {
+                    sb.append(s <= item.estrelas ? "★ " : "☆ ");
+                }
+                sb.append("(").append(item.estrelas > 0 ? (item.estrelas + " de 5 estrelas") : "Não avaliado").append(")\n\n");
+            } else {
+                sb.append(formatarRotuloCampoRelatorio(item.enunciado)).append("\n");
+                if (item.textoLivre != null && !item.textoLivre.isEmpty()) {
+                    sb.append("  ").append(item.textoLivre.replace("\n", "\n  ")).append("\n\n");
+                } else {
+                    sb.append("  ____________________________________________________________________________\n\n");
+                }
             }
         }
+
+        sb.append("\n--------------------------------------------------------------------------------\n");
+        sb.append("Data de abertura: ").append(rel.dataAbertura).append("\n\n");
+        sb.append("Responsável pela anamnese: _____________________________________________________\n");
+
         try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(destino), StandardCharsets.UTF_8)) {
             writer.write(sb.toString());
         }
@@ -4153,34 +4438,155 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
                 .replace("'", "&apos;");
     }
 
-    private void exportarParaDoc(File destino, List<String[]> linhas) throws Exception {
+    private void exportarParaDoc(File destino, RelatorioOficialAnamnese rel) throws Exception {
         StringBuilder html = new StringBuilder();
         html.append("<html xmlns:o='urn:schemas-microsoft-com:office:office' ")
             .append("xmlns:w='urn:schemas-microsoft-com:office:word' ")
             .append("xmlns='http://www.w3.org/TR/REC-html40'>")
-            .append("<head><meta charset='utf-8'><title>Anamnese</title>")
+            .append("<head><meta charset='utf-8'><title>").append(escaparXml(rel.titulo)).append("</title>")
             .append("<style>")
-            .append("body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11pt; color: #1e2428; }")
-            .append("h1 { color: #0d5241; font-size: 18pt; border-bottom: 2px solid #1f7a44; padding-bottom: 6px; }")
-            .append("h2 { color: #0d5241; background-color: #ecf6f0; padding: 6px 10px; font-size: 13pt; margin-top: 16px; }")
-            .append(".meta { color: #434d59; font-size: 10pt; margin-bottom: 6px; }")
-            .append(".pergunta { font-weight: bold; margin-top: 10px; }")
-            .append(".resposta { margin-left: 12px; margin-bottom: 8px; color: #222; }")
+            .append("@page { size: 21cm 29.7cm; margin: 1.8cm 1.8cm 1.8cm 1.8cm; }")
+            .append("body { font-family: 'Calibri', 'Segoe UI', Arial, sans-serif; font-size: 11pt; color: #1a202c; line-height: 1.38; }")
+            .append(".top-bar { width: 100%; border-bottom: 2px solid #0d5241; padding-bottom: 6px; margin-bottom: 10px; }")
+            .append(".brand { font-size: 9pt; font-weight: bold; color: #1f7a44; letter-spacing: 0.8px; text-transform: uppercase; }")
+            .append(".open-date { font-size: 10pt; font-weight: bold; color: #2d3748; text-align: right; }")
+            .append(".doc-title { text-align: center; font-size: 16pt; font-weight: bold; color: #0d5241; margin: 8px 0 12px 0; text-transform: uppercase; letter-spacing: 0.5px; }")
+            .append(".meta-table { width: 100%; border-collapse: collapse; margin-bottom: 14px; background-color: #f8fbf9; border: 1px solid #cbd5e0; }")
+            .append(".meta-table td { padding: 6px 10px; font-size: 10pt; border: 1px solid #cbd5e0; }")
+            .append(".section-banner { background-color: #e6f4ec; color: #0d5241; border-left: 4px solid #1f7a44; padding: 6px 10px; font-size: 12pt; font-weight: bold; margin-top: 16px; margin-bottom: 10px; }")
+            .append(".q-row { margin-top: 6px; margin-bottom: 7px; padding-bottom: 3px; border-bottom: 1px dotted #e2e8f0; }")
+            .append(".q-label { font-weight: bold; color: #1a202c; }")
+            .append(".opt-on { font-weight: bold; color: #0d5241; margin-right: 14px; white-space: nowrap; }")
+            .append(".opt-off { color: #4a5568; margin-right: 14px; white-space: nowrap; }")
+            .append(".field-label { font-weight: bold; color: #2d3748; }")
+            .append(".field-val { border-bottom: 1px solid #2d3748; padding: 0 6px; font-weight: bold; color: #0d5241; margin-right: 16px; }")
+            .append(".field-empty { color: #718096; margin-right: 16px; }")
+            .append(".free-box { margin-top: 4px; padding: 6px 10px; border: 1px solid #cbd5e0; background-color: #fcfdfd; min-height: 24px; white-space: pre-wrap; }")
+            .append(".grid-table { width: 100%; border-collapse: collapse; margin-top: 6px; margin-bottom: 10px; }")
+            .append(".grid-table th { background-color: #e6f4ec; color: #0d5241; font-weight: bold; font-size: 10pt; border: 1px solid #a0aec0; padding: 5px 8px; text-align: center; }")
+            .append(".grid-table td { border: 1px solid #a0aec0; padding: 5px 8px; font-size: 10pt; text-align: center; }")
+            .append(".grid-table td.row-hdr { background-color: #f4f9f6; font-weight: bold; text-align: left; color: #1a202c; }")
+            .append(".sig-block { margin-top: 34px; width: 100%; }")
             .append("</style></head><body>");
 
-        for (String[] item : linhas) {
-            String tipo = item[0];
-            if ("TITULO".equals(tipo)) {
-                html.append("<h1>").append(escaparXml(item[1])).append("</h1>");
-            } else if ("META".equals(tipo)) {
-                html.append("<div class='meta'><b>").append(escaparXml(item[1])).append("</b></div>");
-            } else if ("SECAO".equals(tipo)) {
-                html.append("<h2>").append(escaparXml(item[1])).append("</h2>");
-            } else if ("PERGUNTA".equals(tipo)) {
-                html.append("<div class='pergunta'>").append(escaparXml(item[1])).append("</div>");
-                html.append("<div class='resposta'>").append(escaparXml(item[2])).append("</div>");
+        html.append("<table class='top-bar' border='0' cellspacing='0' cellpadding='0'><tr>")
+            .append("<td class='brand'>SISTEMA INTEGRAMIND &bull; FICHA CLÍNICA DE ANAMNESE</td>")
+            .append("<td class='open-date'>Data de abertura: <u>&nbsp;&nbsp;")
+            .append(escaparXml(rel.dataAbertura))
+            .append("&nbsp;&nbsp;</u></td></tr></table>");
+
+        html.append("<div class='doc-title'>").append(escaparXml(rel.titulo)).append("</div>");
+
+        html.append("<table class='meta-table'><tr>")
+            .append("<td><b>Paciente:</b> ").append(escaparXml(rel.nomePaciente)).append("</td>")
+            .append("<td><b>Situação:</b> ").append(escaparXml(rel.statusDocumento)).append("</td>")
+            .append("</tr></table>");
+
+        for (ItemRelatorioAnamnese item : rel.itens) {
+            if (item.tipo == TipoPerguntaAnamnese.SECAO_TITULO) {
+                html.append("<div class='section-banner'>").append(escaparXml(item.enunciado)).append("</div>");
+                continue;
+            }
+
+            if (item.tipo == TipoPerguntaAnamnese.MULTIPLA_ESCOLHA || item.tipo == TipoPerguntaAnamnese.CAIXA_SELECAO) {
+                html.append("<div class='q-row'><span class='q-label'>")
+                    .append(escaparXml(formatarRotuloCampoRelatorio(item.enunciado)))
+                    .append("</span>&nbsp;&nbsp;");
+                for (OpcaoMarcadaRelatorio op : item.opcoes) {
+                    String mark = op.caixaSelecao
+                            ? (op.marcada ? "[ X ] " : "[ &nbsp; ] ")
+                            : (op.marcada ? "( X ) " : "( &nbsp; ) ");
+                    html.append("<span class='").append(op.marcada ? "opt-on" : "opt-off").append("'>")
+                        .append(mark).append(escaparXml(op.texto)).append("</span>");
+                }
+                html.append("</div>");
+            } else if (item.tipo == TipoPerguntaAnamnese.CAMPOS_LINHA) {
+                html.append("<div class='q-row'>");
+                if (!enunciadoRedundanteComCampoUnico(item)) {
+                    html.append("<span class='q-label'>")
+                        .append(escaparXml(formatarRotuloCampoRelatorio(item.enunciado)))
+                        .append("</span>&nbsp;&nbsp;");
+                }
+                for (ParRotuloValor c : item.campos) {
+                    html.append("<span class='field-label'>")
+                        .append(escaparXml(formatarRotuloCampoRelatorio(c.rotulo)))
+                        .append("</span> ");
+                    if (!c.valor.isEmpty()) {
+                        html.append("<span class='field-val'>").append(escaparXml(c.valor)).append("</span>");
+                    } else {
+                        html.append("<span class='field-empty'>___________________________</span>");
+                    }
+                }
+                html.append("</div>");
+            } else if (item.tipo == TipoPerguntaAnamnese.ESCOLHA_COM_COMPLEMENTO) {
+                html.append("<div class='q-row'><span class='q-label'>")
+                    .append(escaparXml(formatarRotuloCampoRelatorio(item.enunciado)))
+                    .append("</span>&nbsp;&nbsp;");
+                for (OpcaoMarcadaRelatorio op : item.opcoes) {
+                    String mark = op.caixaSelecao
+                            ? (op.marcada ? "[ X ] " : "[ &nbsp; ] ")
+                            : (op.marcada ? "( X ) " : "( &nbsp; ) ");
+                    html.append("<span class='").append(op.marcada ? "opt-on" : "opt-off").append("'>")
+                        .append(mark).append(escaparXml(op.texto)).append("</span>");
+                }
+                for (ParRotuloValor c : item.campos) {
+                    html.append("&nbsp;<span class='field-label'>")
+                        .append(escaparXml(formatarRotuloCampoRelatorio(c.rotulo)))
+                        .append("</span> ");
+                    if (!c.valor.isEmpty()) {
+                        html.append("<span class='field-val'>").append(escaparXml(c.valor)).append("</span>");
+                    } else {
+                        html.append("<span class='field-empty'>______________________</span>");
+                    }
+                }
+                html.append("</div>");
+            } else if (item.tipo == TipoPerguntaAnamnese.GRADE_DISPONIBILIDADE) {
+                html.append("<div class='q-row'><div class='q-label'>")
+                    .append(escaparXml(formatarRotuloCampoRelatorio(item.enunciado)))
+                    .append("</div><table class='grid-table'><tr><th>Dia da semana</th>");
+                for (String col : item.colunasGrade) {
+                    html.append("<th>").append(escaparXml(col)).append("</th>");
+                }
+                html.append("</tr>");
+                for (int r = 0; r < item.linhasGrade.size(); r++) {
+                    html.append("<tr><td class='row-hdr'>").append(escaparXml(item.linhasGrade.get(r))).append("</td>");
+                    for (int c = 0; c < item.colunasGrade.size(); c++) {
+                        boolean m = item.matrizGrade != null && item.matrizGrade[r][c];
+                        html.append("<td>").append(m ? "<b>( X )</b>" : "( &nbsp; )").append("</td>");
+                    }
+                    html.append("</tr>");
+                }
+                html.append("</table></div>");
+            } else if (item.tipo == TipoPerguntaAnamnese.ESTRELAS) {
+                html.append("<div class='q-row'><span class='q-label'>")
+                    .append(escaparXml(formatarRotuloCampoRelatorio(item.enunciado)))
+                    .append("</span>&nbsp;&nbsp;<span class='opt-on'>");
+                for (int s = 1; s <= 5; s++) {
+                    html.append(s <= item.estrelas ? "&#9733; " : "&#9734; ");
+                }
+                html.append("(").append(item.estrelas > 0 ? (item.estrelas + " de 5") : "Não avaliado").append(")</span></div>");
+            } else {
+                html.append("<div class='q-row'><div class='q-label'>")
+                    .append(escaparXml(formatarRotuloCampoRelatorio(item.enunciado)))
+                    .append("</div>");
+                if (item.textoLivre != null && !item.textoLivre.isEmpty()) {
+                    html.append("<div class='free-box'>")
+                        .append(escaparXml(item.textoLivre).replace("\n", "<br/>"))
+                        .append("</div>");
+                } else {
+                    html.append("<div class='field-empty' style='margin-top:4px;'>________________________________________________________________________________________</div>");
+                }
+                html.append("</div>");
             }
         }
+
+        html.append("<table class='sig-block' border='0'><tr>")
+            .append("<td style='width:40%; font-size:10pt;'>Data: ").append(escaparXml(rel.dataAbertura)).append("</td>")
+            .append("<td style='width:60%; text-align:center; font-size:10pt;'>")
+            .append("_______________________________________________________<br/>")
+            .append("<b>Responsável pela anamnese</b></td>")
+            .append("</tr></table>");
+
         html.append("</body></html>");
 
         try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(destino), StandardCharsets.UTF_8)) {
@@ -4188,7 +4594,27 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
         }
     }
 
-    private void exportarParaDocx(File destino, List<String[]> linhas) throws Exception {
+    private String criarRunDocx(String texto, boolean negrito, boolean sublinhado, String corHex, int tamanhoMeioPonto) {
+        StringBuilder r = new StringBuilder();
+        r.append("<w:r><w:rPr><w:rFonts w:ascii=\"Calibri\" w:hAnsi=\"Calibri\" w:cs=\"Calibri\"/>");
+        if (negrito) {
+            r.append("<w:b/>");
+        }
+        if (sublinhado) {
+            r.append("<w:u w:val=\"single\"/>");
+        }
+        if (corHex != null && !corHex.isEmpty()) {
+            r.append("<w:color w:val=\"").append(corHex).append("\"/>");
+        }
+        r.append("<w:sz w:val=\"").append(tamanhoMeioPonto).append("\"/>");
+        r.append("<w:szCs w:val=\"").append(tamanhoMeioPonto).append("\"/>");
+        r.append("</w:rPr><w:t xml:space=\"preserve\">")
+         .append(escaparXml(texto))
+         .append("</w:t></w:r>");
+        return r.toString();
+    }
+
+    private void exportarParaDocx(File destino, RelatorioOficialAnamnese rel) throws Exception {
         String contentTypes = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
                 + "<Types xmlns=\"http://schemas.openxmlformats.org/package/2006/content-types\">"
                 + "<Default Extension=\"rels\" ContentType=\"application/vnd.openxmlformats-package.relationships+xml\"/>"
@@ -4206,35 +4632,176 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
             .append("<w:document xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">")
             .append("<w:body>");
 
-        for (String[] item : linhas) {
-            String tipo = item[0];
-            if ("TITULO".equals(tipo)) {
-                body.append("<w:p><w:r><w:rPr><w:b/><w:color w:val=\"0D5241\"/><w:sz w:val=\"34\"/></w:rPr><w:t>")
-                    .append(escaparXml(item[1]))
-                    .append("</w:t></w:r></w:p>");
-            } else if ("META".equals(tipo)) {
-                body.append("<w:p><w:r><w:rPr><w:b/><w:color w:val=\"434D59\"/><w:sz w:val=\"20\"/></w:rPr><w:t>")
-                    .append(escaparXml(item[1]))
-                    .append("</w:t></w:r></w:p>");
-            } else if ("SECAO".equals(tipo)) {
-                body.append("<w:p><w:pPr><w:spacing w:before=\"200\" w:after=\"80\"/></w:pPr>")
-                    .append("<w:r><w:rPr><w:b/><w:color w:val=\"1F7A44\"/><w:sz w:val=\"26\"/></w:rPr><w:t>")
-                    .append(escaparXml(item[1]))
-                    .append("</w:t></w:r></w:p>");
-            } else if ("PERGUNTA".equals(tipo)) {
-                body.append("<w:p><w:pPr><w:spacing w:before=\"100\" w:after=\"40\"/></w:pPr>")
-                    .append("<w:r><w:rPr><w:b/><w:sz w:val=\"22\"/></w:rPr><w:t>")
-                    .append(escaparXml(item[1]))
-                    .append("</w:t></w:r></w:p>");
-                body.append("<w:p><w:pPr><w:ind w:left=\"240\"/><w:spacing w:after=\"120\"/></w:pPr>")
-                    .append("<w:r><w:rPr><w:sz w:val=\"21\"/></w:rPr><w:t>")
-                    .append(escaparXml(item[2]))
-                    .append("</w:t></w:r></w:p>");
+        // Cabeçalho com Data de abertura alinhada à direita (idêntico ao modelo oficial)
+        body.append("<w:p><w:pPr><w:jc w:val=\"right\"/><w:spacing w:after=\"60\"/></w:pPr>")
+            .append(criarRunDocx("Data de abertura: ", true, false, "2D3748", 21))
+            .append(criarRunDocx("  " + rel.dataAbertura + "  ", true, true, "0D5241", 21))
+            .append("</w:p>");
+
+        // Título centralizado oficial da Anamnese
+        body.append("<w:p><w:pPr><w:jc w:val=\"center\"/><w:spacing w:before=\"40\" w:after=\"140\"/>")
+            .append("<w:pBdr><w:bottom w:val=\"single\" w:sz=\"12\" w:space=\"4\" w:color=\"1F7A44\"/></w:pBdr></w:pPr>")
+            .append(criarRunDocx(rel.titulo.toUpperCase(), true, false, "0D5241", 30))
+            .append("</w:p>");
+
+        // Quadro resumo do Paciente e Situação da Anamnese
+        body.append("<w:tbl><w:tblPr><w:tblW w:w=\"5000\" w:type=\"pct\"/>")
+            .append("<w:tblBorders>")
+            .append("<w:top w:val=\"single\" w:sz=\"6\" w:space=\"0\" w:color=\"CBD5E0\"/>")
+            .append("<w:left w:val=\"single\" w:sz=\"6\" w:space=\"0\" w:color=\"CBD5E0\"/>")
+            .append("<w:bottom w:val=\"single\" w:sz=\"6\" w:space=\"0\" w:color=\"CBD5E0\"/>")
+            .append("<w:right w:val=\"single\" w:sz=\"6\" w:space=\"0\" w:color=\"CBD5E0\"/>")
+            .append("<w:insideH w:val=\"single\" w:sz=\"4\" w:space=\"0\" w:color=\"CBD5E0\"/>")
+            .append("<w:insideV w:val=\"single\" w:sz=\"4\" w:space=\"0\" w:color=\"CBD5E0\"/>")
+            .append("</w:tblBorders></w:tblPr><w:tr>")
+            .append("<w:tc><w:tcPr><w:tcW w:w=\"2700\" w:type=\"pct\"/><w:shd w:val=\"clear\" w:color=\"auto\" w:fill=\"F8FBF9\"/></w:tcPr>")
+            .append("<w:p><w:pPr><w:spacing w:before=\"60\" w:after=\"60\"/></w:pPr>")
+            .append(criarRunDocx("Paciente: ", true, false, "1A202C", 20))
+            .append(criarRunDocx(rel.nomePaciente, false, false, "1A202C", 20))
+            .append("</w:p></w:tc>")
+            .append("<w:tc><w:tcPr><w:tcW w:w=\"2300\" w:type=\"pct\"/><w:shd w:val=\"clear\" w:color=\"auto\" w:fill=\"F8FBF9\"/></w:tcPr>")
+            .append("<w:p><w:pPr><w:spacing w:before=\"60\" w:after=\"60\"/></w:pPr>")
+            .append(criarRunDocx("Situação: ", true, false, "1A202C", 20))
+            .append(criarRunDocx(rel.statusDocumento, true, false, rel.desativada ? "9B2C2C" : "0D5241", 20))
+            .append("</w:p></w:tc></w:tr></w:tbl>");
+
+        for (ItemRelatorioAnamnese item : rel.itens) {
+            if (item.tipo == TipoPerguntaAnamnese.SECAO_TITULO) {
+                body.append("<w:p><w:pPr><w:spacing w:before=\"220\" w:after=\"100\"/>")
+                    .append("<w:shd w:val=\"clear\" w:color=\"auto\" w:fill=\"E6F4EC\"/>")
+                    .append("<w:pBdr><w:left w:val=\"single\" w:sz=\"24\" w:space=\"6\" w:color=\"1F7A44\"/></w:pBdr></w:pPr>")
+                    .append(criarRunDocx(" " + item.enunciado, true, false, "0D5241", 24))
+                    .append("</w:p>");
+                continue;
+            }
+
+            if (item.tipo == TipoPerguntaAnamnese.MULTIPLA_ESCOLHA || item.tipo == TipoPerguntaAnamnese.CAIXA_SELECAO) {
+                body.append("<w:p><w:pPr><w:spacing w:before=\"70\" w:after=\"70\"/></w:pPr>")
+                    .append(criarRunDocx(formatarRotuloCampoRelatorio(item.enunciado) + "   ", true, false, "1A202C", 21));
+                for (OpcaoMarcadaRelatorio op : item.opcoes) {
+                    String mark = op.caixaSelecao
+                            ? (op.marcada ? "[ X ] " : "[   ] ")
+                            : (op.marcada ? "( X ) " : "(   ) ");
+                    body.append(criarRunDocx(mark + op.texto + "     ", op.marcada, false, op.marcada ? "0D5241" : "2D3748", 21));
+                }
+                body.append("</w:p>");
+            } else if (item.tipo == TipoPerguntaAnamnese.CAMPOS_LINHA) {
+                body.append("<w:p><w:pPr><w:spacing w:before=\"70\" w:after=\"70\"/></w:pPr>");
+                if (!enunciadoRedundanteComCampoUnico(item)) {
+                    body.append(criarRunDocx(formatarRotuloCampoRelatorio(item.enunciado) + "   ", true, false, "1A202C", 21));
+                }
+                for (int i = 0; i < item.campos.size(); i++) {
+                    ParRotuloValor c = item.campos.get(i);
+                    body.append(criarRunDocx(formatarRotuloCampoRelatorio(c.rotulo) + " ", true, false, "2D3748", 21));
+                    if (!c.valor.isEmpty()) {
+                        body.append(criarRunDocx(" " + c.valor + " ", true, true, "0D5241", 21));
+                    } else {
+                        body.append(criarRunDocx("_______________________", false, false, "718096", 21));
+                    }
+                    if (i < item.campos.size() - 1) {
+                        body.append(criarRunDocx("     ", false, false, "1A202C", 21));
+                    }
+                }
+                body.append("</w:p>");
+            } else if (item.tipo == TipoPerguntaAnamnese.ESCOLHA_COM_COMPLEMENTO) {
+                body.append("<w:p><w:pPr><w:spacing w:before=\"70\" w:after=\"70\"/></w:pPr>")
+                    .append(criarRunDocx(formatarRotuloCampoRelatorio(item.enunciado) + "   ", true, false, "1A202C", 21));
+                for (OpcaoMarcadaRelatorio op : item.opcoes) {
+                    String mark = op.caixaSelecao
+                            ? (op.marcada ? "[ X ] " : "[   ] ")
+                            : (op.marcada ? "( X ) " : "(   ) ");
+                    body.append(criarRunDocx(mark + op.texto + "    ", op.marcada, false, op.marcada ? "0D5241" : "2D3748", 21));
+                }
+                for (ParRotuloValor c : item.campos) {
+                    body.append(criarRunDocx("  " + formatarRotuloCampoRelatorio(c.rotulo) + " ", true, false, "2D3748", 21));
+                    if (!c.valor.isEmpty()) {
+                        body.append(criarRunDocx(" " + c.valor + " ", true, true, "0D5241", 21));
+                    } else {
+                        body.append(criarRunDocx("____________________", false, false, "718096", 21));
+                    }
+                }
+                body.append("</w:p>");
+            } else if (item.tipo == TipoPerguntaAnamnese.GRADE_DISPONIBILIDADE) {
+                body.append("<w:p><w:pPr><w:spacing w:before=\"90\" w:after=\"50\"/></w:pPr>")
+                    .append(criarRunDocx(formatarRotuloCampoRelatorio(item.enunciado), true, false, "1A202C", 21))
+                    .append("</w:p>");
+
+                body.append("<w:tbl><w:tblPr><w:tblW w:w=\"5000\" w:type=\"pct\"/>")
+                    .append("<w:tblBorders>")
+                    .append("<w:top w:val=\"single\" w:sz=\"6\" w:space=\"0\" w:color=\"718096\"/>")
+                    .append("<w:left w:val=\"single\" w:sz=\"6\" w:space=\"0\" w:color=\"718096\"/>")
+                    .append("<w:bottom w:val=\"single\" w:sz=\"6\" w:space=\"0\" w:color=\"718096\"/>")
+                    .append("<w:right w:val=\"single\" w:sz=\"6\" w:space=\"0\" w:color=\"718096\"/>")
+                    .append("<w:insideH w:val=\"single\" w:sz=\"4\" w:space=\"0\" w:color=\"A0AEC0\"/>")
+                    .append("<w:insideV w:val=\"single\" w:sz=\"4\" w:space=\"0\" w:color=\"A0AEC0\"/>")
+                    .append("</w:tblBorders></w:tblPr>");
+
+                body.append("<w:tr><w:tc><w:tcPr><w:shd w:val=\"clear\" w:color=\"auto\" w:fill=\"E6F4EC\"/></w:tcPr>")
+                    .append("<w:p><w:pPr><w:jc w:val=\"center\"/><w:spacing w:before=\"40\" w:after=\"40\"/></w:pPr>")
+                    .append(criarRunDocx("Dia da semana", true, false, "0D5241", 20))
+                    .append("</w:p></w:tc>");
+                for (String col : item.colunasGrade) {
+                    body.append("<w:tc><w:tcPr><w:shd w:val=\"clear\" w:color=\"auto\" w:fill=\"E6F4EC\"/></w:tcPr>")
+                        .append("<w:p><w:pPr><w:jc w:val=\"center\"/><w:spacing w:before=\"40\" w:after=\"40\"/></w:pPr>")
+                        .append(criarRunDocx(col, true, false, "0D5241", 20))
+                        .append("</w:p></w:tc>");
+                }
+                body.append("</w:tr>");
+
+                for (int r = 0; r < item.linhasGrade.size(); r++) {
+                    body.append("<w:tr><w:tc><w:tcPr><w:shd w:val=\"clear\" w:color=\"auto\" w:fill=\"F4F9F6\"/></w:tcPr>")
+                        .append("<w:p><w:pPr><w:spacing w:before=\"40\" w:after=\"40\"/></w:pPr>")
+                        .append(criarRunDocx(" " + item.linhasGrade.get(r), true, false, "1A202C", 20))
+                        .append("</w:p></w:tc>");
+                    for (int c = 0; c < item.colunasGrade.size(); c++) {
+                        boolean m = item.matrizGrade != null && item.matrizGrade[r][c];
+                        body.append("<w:tc><w:p><w:pPr><w:jc w:val=\"center\"/><w:spacing w:before=\"40\" w:after=\"40\"/></w:pPr>")
+                            .append(criarRunDocx(m ? "( X )" : "(   )", m, false, m ? "0D5241" : "718096", 20))
+                            .append("</w:p></w:tc>");
+                    }
+                    body.append("</w:tr>");
+                }
+                body.append("</w:tbl><w:p><w:pPr><w:spacing w:after=\"40\"/></w:pPr></w:p>");
+            } else if (item.tipo == TipoPerguntaAnamnese.ESTRELAS) {
+                StringBuilder est = new StringBuilder();
+                for (int s = 1; s <= 5; s++) {
+                    est.append(s <= item.estrelas ? "★ " : "☆ ");
+                }
+                est.append("(").append(item.estrelas > 0 ? (item.estrelas + " de 5 estrelas") : "Não avaliado").append(")");
+                body.append("<w:p><w:pPr><w:spacing w:before=\"70\" w:after=\"70\"/></w:pPr>")
+                    .append(criarRunDocx(formatarRotuloCampoRelatorio(item.enunciado) + "   ", true, false, "1A202C", 21))
+                    .append(criarRunDocx(est.toString(), true, false, "0D5241", 21))
+                    .append("</w:p>");
+            } else {
+                body.append("<w:p><w:pPr><w:spacing w:before=\"80\" w:after=\"30\"/></w:pPr>")
+                    .append(criarRunDocx(formatarRotuloCampoRelatorio(item.enunciado), true, false, "1A202C", 21))
+                    .append("</w:p>");
+                if (item.textoLivre != null && !item.textoLivre.isEmpty()) {
+                    String[] paragrafos = item.textoLivre.split("\\r?\\n");
+                    for (String par : paragrafos) {
+                        body.append("<w:p><w:pPr><w:ind w:left=\"180\"/><w:spacing w:before=\"20\" w:after=\"60\"/>")
+                            .append("<w:pBdr><w:bottom w:val=\"single\" w:sz=\"4\" w:space=\"2\" w:color=\"CBD5E0\"/></w:pBdr></w:pPr>")
+                            .append(criarRunDocx(par, false, false, "1A202C", 21))
+                            .append("</w:p>");
+                    }
+                } else {
+                    body.append("<w:p><w:pPr><w:ind w:left=\"180\"/><w:spacing w:after=\"70\"/></w:pPr>")
+                        .append(criarRunDocx("__________________________________________________________________________________________", false, false, "A0AEC0", 20))
+                        .append("</w:p>");
+                }
             }
         }
 
+        // Bloco de encerramento e assinatura do responsável pela anamnese
+        body.append("<w:p><w:pPr><w:spacing w:before=\"360\" w:after=\"60\"/><w:jc w:val=\"center\"/></w:pPr>")
+            .append(criarRunDocx("_____________________________________________________________", false, false, "2D3748", 21))
+            .append("</w:p>");
+        body.append("<w:p><w:pPr><w:spacing w:before=\"0\" w:after=\"120\"/><w:jc w:val=\"center\"/></w:pPr>")
+            .append(criarRunDocx("Responsável pela anamnese", true, false, "0D5241", 21))
+            .append("</w:p>");
+
         body.append("<w:sectPr><w:pgSz w:w=\"11906\" w:h=\"16838\"/>")
-            .append("<w:pgMar w:top=\"1134\" w:right=\"1134\" w:bottom=\"1134\" w:left=\"1134\"/></w:sectPr>")
+            .append("<w:pgMar w:top=\"992\" w:right=\"992\" w:bottom=\"992\" w:left=\"992\"/></w:sectPr>")
             .append("</w:body></w:document>");
 
         try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(destino))) {
@@ -4261,8 +4828,10 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
             char c = texto.charAt(i);
             if (c == '\u2013' || c == '\u2014') {
                 c = '-';
-            } else if (c == '\u2605') {
+            } else if (c == '\u2605' || c == '\u2606') {
                 c = '*';
+            } else if (c == '\u2022') {
+                c = '-';
             }
             if (c == '\\' || c == '(' || c == ')') {
                 sb.append('\\').append(c);
@@ -4301,65 +4870,241 @@ public class FichaAnaminaseView extends javax.swing.JPanel {
         return resultado;
     }
 
-    private void exportarParaPdf(File destino, List<String[]> linhas) throws Exception {
+    private void exportarParaPdf(File destino, RelatorioOficialAnamnese rel) throws Exception {
         List<List<String>> paginasComandos = new ArrayList<>();
-        List<String> paginaAtual = new ArrayList<>();
-        int y = 790;
+        List<String> pag = new ArrayList<>();
+        int y = 795;
+        final int margemEsq = 38;
+        final int larguraUtil = 519; // 595 - 38 - 38
 
-        for (String[] item : linhas) {
-            String tipo = item[0];
-            if ("TITULO".equals(tipo)) {
-                if (y < 90) {
-                    paginasComandos.add(paginaAtual);
-                    paginaAtual = new ArrayList<>();
-                    y = 790;
+        // Topo institucional + Data de abertura
+        pag.add("0.05 0.32 0.25 rg");
+        pag.add("BT /F2 9 Tf " + margemEsq + " " + y + " Td (SISTEMA INTEGRAMIND - PRONTUARIO E FICHA DE ANAMNESE) Tj ET");
+        String topData = "Data de abertura: " + rel.dataAbertura;
+        int xData = margemEsq + larguraUtil - (topData.length() * 5);
+        pag.add("BT /F2 9 Tf " + xData + " " + y + " Td (" + escaparTextoPdfWinAnsi(topData) + ") Tj ET");
+        y -= 6;
+        pag.add("0.12 0.48 0.27 RG 1.2 w " + margemEsq + " " + y + " m " + (margemEsq + larguraUtil) + " " + y + " l S");
+        y -= 18;
+
+        // Título centralizado do documento oficial
+        String tituloUpper = rel.titulo.toUpperCase();
+        int xTitulo = Math.max(margemEsq, (595 - (tituloUpper.length() * 7)) / 2);
+        pag.add("0.05 0.32 0.25 rg");
+        pag.add("BT /F2 13 Tf " + xTitulo + " " + y + " Td (" + escaparTextoPdfWinAnsi(tituloUpper) + ") Tj ET");
+        y -= 14;
+
+        // Quadro de Identificação do Paciente e Situação da Anamnese
+        int hBoxMeta = 22;
+        int yBoxMetaBottom = y - hBoxMeta;
+        pag.add("0.96 0.98 0.97 rg " + margemEsq + " " + yBoxMetaBottom + " " + larguraUtil + " " + hBoxMeta + " re f");
+        pag.add("0.78 0.83 0.86 RG 0.7 w " + margemEsq + " " + yBoxMetaBottom + " " + larguraUtil + " " + hBoxMeta + " re S");
+        pag.add("0.12 0.15 0.18 rg");
+        String metaLinha = "Paciente: " + rel.nomePaciente + "     |     Situacao: " + rel.statusDocumento;
+        pag.add("BT /F2 9.5 Tf " + (margemEsq + 8) + " " + (yBoxMetaBottom + 7) + " Td (" + escaparTextoPdfWinAnsi(metaLinha) + ") Tj ET");
+        y = yBoxMetaBottom - 12;
+
+        for (ItemRelatorioAnamnese item : rel.itens) {
+            if (item.tipo == TipoPerguntaAnamnese.SECAO_TITULO) {
+                if (y < 95) {
+                    paginasComandos.add(pag);
+                    pag = new ArrayList<>();
+                    y = 795;
                 }
-                paginaAtual.add("BT /F2 15 Tf 45 " + y + " Td (" + escaparTextoPdfWinAnsi(item[1]) + ") Tj ET");
-                y -= 22;
-            } else if ("META".equals(tipo)) {
-                paginaAtual.add("BT /F2 10 Tf 45 " + y + " Td (" + escaparTextoPdfWinAnsi(item[1]) + ") Tj ET");
-                y -= 16;
-            } else if ("SECAO".equals(tipo)) {
+                y -= 4;
+                int hSec = 18;
+                int ySecBottom = y - hSec;
+                pag.add("0.90 0.96 0.92 rg " + margemEsq + " " + ySecBottom + " " + larguraUtil + " " + hSec + " re f");
+                pag.add("0.12 0.48 0.27 rg " + margemEsq + " " + ySecBottom + " 3.5 " + hSec + " re f");
+                pag.add("0.05 0.32 0.25 rg");
+                pag.add("BT /F2 10.5 Tf " + (margemEsq + 10) + " " + (ySecBottom + 5) + " Td (" + escaparTextoPdfWinAnsi(item.enunciado) + ") Tj ET");
+                y = ySecBottom - 10;
+                continue;
+            }
+
+            if (item.tipo == TipoPerguntaAnamnese.GRADE_DISPONIBILIDADE) {
+                int numLinhas = item.linhasGrade.size() + 1;
+                int rowH = 16;
+                int alturaTotal = 16 + (numLinhas * rowH) + 10;
+                if (y - alturaTotal < 55) {
+                    paginasComandos.add(pag);
+                    pag = new ArrayList<>();
+                    y = 795;
+                }
+                pag.add("0.10 0.12 0.15 rg");
+                pag.add("BT /F2 9.5 Tf " + margemEsq + " " + y + " Td (" + escaparTextoPdfWinAnsi(formatarRotuloCampoRelatorio(item.enunciado)) + ") Tj ET");
                 y -= 6;
-                if (y < 80) {
-                    paginasComandos.add(paginaAtual);
-                    paginaAtual = new ArrayList<>();
-                    y = 790;
+
+                int col0W = 105;
+                int otherColW = (larguraUtil - col0W) / Math.max(1, item.colunasGrade.size());
+                int tableW = col0W + otherColW * item.colunasGrade.size();
+                int yTopTable = y;
+                int yHdrBottom = yTopTable - rowH;
+
+                pag.add("0.90 0.96 0.92 rg " + margemEsq + " " + yHdrBottom + " " + tableW + " " + rowH + " re f");
+                pag.add("0.62 0.68 0.74 RG 0.6 w " + margemEsq + " " + yHdrBottom + " " + tableW + " " + rowH + " re S");
+                pag.add("0.05 0.32 0.25 rg");
+                pag.add("BT /F2 8.5 Tf " + (margemEsq + 8) + " " + (yHdrBottom + 4) + " Td (Dia da semana) Tj ET");
+
+                for (int c = 0; c < item.colunasGrade.size(); c++) {
+                    int cx = margemEsq + col0W + (c * otherColW);
+                    pag.add("0.62 0.68 0.74 RG 0.6 w " + cx + " " + yTopTable + " m " + cx + " " + (yTopTable - numLinhas * rowH) + " l S");
+                    pag.add("0.05 0.32 0.25 rg");
+                    pag.add("BT /F2 8.5 Tf " + (cx + 12) + " " + (yHdrBottom + 4) + " Td (" + escaparTextoPdfWinAnsi(item.colunasGrade.get(c)) + ") Tj ET");
                 }
-                paginaAtual.add("BT /F2 12 Tf 45 " + y + " Td ([" + escaparTextoPdfWinAnsi(item[1]) + "]) Tj ET");
-                y -= 18;
-            } else if ("PERGUNTA".equals(tipo)) {
-                List<String> qWrap = quebrarLinhasPdf(item[1], 88);
-                List<String> rWrap = quebrarLinhasPdf("Resposta: " + item[2], 92);
-                int alturaBloco = (qWrap.size() + rWrap.size()) * 14 + 6;
-                if (y - alturaBloco < 50) {
-                    paginasComandos.add(paginaAtual);
-                    paginaAtual = new ArrayList<>();
-                    y = 790;
+
+                for (int r = 0; r < item.linhasGrade.size(); r++) {
+                    int yRowTop = yHdrBottom - (r * rowH);
+                    int yRowBottom = yRowTop - rowH;
+                    pag.add("0.96 0.98 0.97 rg " + margemEsq + " " + yRowBottom + " " + col0W + " " + rowH + " re f");
+                    pag.add("0.62 0.68 0.74 RG 0.6 w " + margemEsq + " " + yRowBottom + " " + tableW + " " + rowH + " re S");
+                    pag.add("0.12 0.15 0.18 rg");
+                    pag.add("BT /F2 8.5 Tf " + (margemEsq + 8) + " " + (yRowBottom + 4) + " Td (" + escaparTextoPdfWinAnsi(item.linhasGrade.get(r)) + ") Tj ET");
+
+                    for (int c = 0; c < item.colunasGrade.size(); c++) {
+                        int cx = margemEsq + col0W + (c * otherColW);
+                        boolean marcado = item.matrizGrade != null && item.matrizGrade[r][c];
+                        if (marcado) {
+                            pag.add("0.05 0.32 0.25 rg");
+                            pag.add("BT /F2 9 Tf " + (cx + (otherColW / 2) - 10) + " " + (yRowBottom + 4) + " Td (\\( X \\)) Tj ET");
+                        } else {
+                            pag.add("0.45 0.50 0.56 rg");
+                            pag.add("BT /F1 8.5 Tf " + (cx + (otherColW / 2) - 10) + " " + (yRowBottom + 4) + " Td (\\(   \\)) Tj ET");
+                        }
+                    }
                 }
+                y = yTopTable - (numLinhas * rowH) - 10;
+                continue;
+            }
+
+            // Monta representação oficial compacta para Pergunta + Opções/Campos
+            StringBuilder linhaCombinada = new StringBuilder();
+            if (item.tipo == TipoPerguntaAnamnese.MULTIPLA_ESCOLHA || item.tipo == TipoPerguntaAnamnese.CAIXA_SELECAO) {
+                for (OpcaoMarcadaRelatorio op : item.opcoes) {
+                    String mark = op.caixaSelecao
+                            ? (op.marcada ? "[ X ] " : "[   ] ")
+                            : (op.marcada ? "( X ) " : "(   ) ");
+                    linhaCombinada.append(mark).append(op.texto).append("    ");
+                }
+            } else if (item.tipo == TipoPerguntaAnamnese.CAMPOS_LINHA) {
+                for (int i = 0; i < item.campos.size(); i++) {
+                    ParRotuloValor c = item.campos.get(i);
+                    String val = c.valor.isEmpty() ? "____________________" : c.valor;
+                    linhaCombinada.append(formatarRotuloCampoRelatorio(c.rotulo)).append(" ").append(val);
+                    if (i < item.campos.size() - 1) {
+                        linhaCombinada.append("     ");
+                    }
+                }
+            } else if (item.tipo == TipoPerguntaAnamnese.ESCOLHA_COM_COMPLEMENTO) {
+                for (OpcaoMarcadaRelatorio op : item.opcoes) {
+                    String mark = op.caixaSelecao
+                            ? (op.marcada ? "[ X ] " : "[   ] ")
+                            : (op.marcada ? "( X ) " : "(   ) ");
+                    linhaCombinada.append(mark).append(op.texto).append("   ");
+                }
+                for (ParRotuloValor c : item.campos) {
+                    String val = c.valor.isEmpty() ? "_________________" : c.valor;
+                    linhaCombinada.append("  ").append(formatarRotuloCampoRelatorio(c.rotulo)).append(" ").append(val);
+                }
+            } else if (item.tipo == TipoPerguntaAnamnese.ESTRELAS) {
+                for (int s = 1; s <= 5; s++) {
+                    linhaCombinada.append(s <= item.estrelas ? "[ X ] " : "[   ] ");
+                }
+                linhaCombinada.append("(").append(item.estrelas > 0 ? (item.estrelas + " de 5 estrelas") : "Nao avaliado").append(")");
+            } else {
+                linhaCombinada.append(item.textoLivre != null && !item.textoLivre.isEmpty()
+                        ? item.textoLivre
+                        : "_____________________________________________________________________________________");
+            }
+
+            String enunciadoFmt = formatarRotuloCampoRelatorio(item.enunciado);
+            String corpoStr = linhaCombinada.toString().trim();
+
+            boolean mesmaLinha = (item.tipo != TipoPerguntaAnamnese.TEXTO_LIVRE)
+                    && (enunciadoFmt.length() + corpoStr.length() <= 96);
+
+            if (item.tipo == TipoPerguntaAnamnese.CAMPOS_LINHA && enunciadoRedundanteComCampoUnico(item)) {
+                List<String> linhasC = quebrarLinhasPdf(corpoStr, 96);
+                int hNeed = linhasC.size() * 13 + 6;
+                if (y - hNeed < 55) {
+                    paginasComandos.add(pag);
+                    pag = new ArrayList<>();
+                    y = 795;
+                }
+                for (String lc : linhasC) {
+                    pag.add("0.10 0.12 0.15 rg");
+                    pag.add("BT /F1 9.5 Tf " + margemEsq + " " + y + " Td (" + escaparTextoPdfWinAnsi(lc) + ") Tj ET");
+                    y -= 13;
+                }
+                pag.add("0.90 0.92 0.94 RG 0.4 w " + margemEsq + " " + (y + 6) + " m " + (margemEsq + larguraUtil) + " " + (y + 6) + " l S");
+                y -= 4;
+            } else if (mesmaLinha) {
+                if (y - 18 < 55) {
+                    paginasComandos.add(pag);
+                    pag = new ArrayList<>();
+                    y = 795;
+                }
+                pag.add("0.10 0.12 0.15 rg");
+                pag.add("BT /F2 9.5 Tf " + margemEsq + " " + y + " Td (" + escaparTextoPdfWinAnsi(enunciadoFmt) + ") Tj ET");
+                int xResp = margemEsq + Math.max(48, enunciadoFmt.length() * 5 + 10);
+                pag.add("0.15 0.20 0.25 rg");
+                pag.add("BT /F1 9.5 Tf " + xResp + " " + y + " Td (" + escaparTextoPdfWinAnsi(corpoStr) + ") Tj ET");
+                y -= 13;
+                pag.add("0.90 0.92 0.94 RG 0.4 w " + margemEsq + " " + (y + 6) + " m " + (margemEsq + larguraUtil) + " " + (y + 6) + " l S");
+                y -= 4;
+            } else {
+                List<String> qWrap = quebrarLinhasPdf(enunciadoFmt, 94);
+                List<String> rWrap = quebrarLinhasPdf(corpoStr, 94);
+                int hNeed = (qWrap.size() + rWrap.size()) * 13 + 8;
+                if (y - hNeed < 55) {
+                    paginasComandos.add(pag);
+                    pag = new ArrayList<>();
+                    y = 795;
+                }
+                pag.add("0.10 0.12 0.15 rg");
                 for (String ql : qWrap) {
-                    paginaAtual.add("BT /F2 10 Tf 45 " + y + " Td (" + escaparTextoPdfWinAnsi(ql) + ") Tj ET");
-                    y -= 13;
+                    pag.add("BT /F2 9.5 Tf " + margemEsq + " " + y + " Td (" + escaparTextoPdfWinAnsi(ql) + ") Tj ET");
+                    y -= 12;
                 }
+                pag.add("0.15 0.20 0.25 rg");
                 for (String rl : rWrap) {
-                    paginaAtual.add("BT /F1 10 Tf 55 " + y + " Td (" + escaparTextoPdfWinAnsi(rl) + ") Tj ET");
-                    y -= 13;
+                    pag.add("BT /F1 9.5 Tf " + (margemEsq + 10) + " " + y + " Td (" + escaparTextoPdfWinAnsi(rl) + ") Tj ET");
+                    y -= 12;
                 }
+                pag.add("0.90 0.92 0.94 RG 0.4 w " + margemEsq + " " + (y + 5) + " m " + (margemEsq + larguraUtil) + " " + (y + 5) + " l S");
                 y -= 5;
             }
         }
-        if (!paginaAtual.isEmpty()) {
-            paginasComandos.add(paginaAtual);
+
+        // Bloco de assinatura ao final da última página
+        if (y < 95) {
+            paginasComandos.add(pag);
+            pag = new ArrayList<>();
+            y = 795;
+        }
+        y -= 24;
+        pag.add("0.20 0.25 0.30 RG 0.8 w 175 " + y + " m 420 " + y + " l S");
+        y -= 12;
+        pag.add("0.05 0.32 0.25 rg");
+        pag.add("BT /F2 9.5 Tf 235 " + y + " Td (Responsavel pela anamnese) Tj ET");
+        paginasComandos.add(pag);
+
+        int numPaginas = paginasComandos.size();
+        for (int i = 0; i < numPaginas; i++) {
+            List<String> cmds = paginasComandos.get(i);
+            cmds.add("0.82 0.86 0.89 RG 0.5 w " + margemEsq + " 36 m " + (margemEsq + larguraUtil) + " 36 l S");
+            cmds.add("0.45 0.50 0.56 rg");
+            cmds.add("BT /F1 8 Tf " + margemEsq + " 24 Td (Sistema IntegraMIND - Documento Oficial de Anamnese) Tj ET");
+            String pgStr = "Pagina " + (i + 1) + " de " + numPaginas;
+            cmds.add("BT /F1 8 Tf " + (margemEsq + larguraUtil - 65) + " 24 Td (" + pgStr + ") Tj ET");
         }
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         List<Integer> offsets = new ArrayList<>();
         out.write("%PDF-1.4\n".getBytes(StandardCharsets.ISO_8859_1));
 
-        int numPaginas = paginasComandos.size();
         int totalObjs = 4 + (numPaginas * 2);
 
-        // 1: Catalog, 2: Pages, 3: Font Regular, 4: Font Bold
         offsets.add(out.size());
         out.write("1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n".getBytes(StandardCharsets.ISO_8859_1));
 
