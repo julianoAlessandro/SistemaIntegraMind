@@ -18,6 +18,7 @@ import java.nio.file.StandardCopyOption;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import com.mycompany.sistemaintegramind.util.Utilitarios.TelasUtil.FichaDocumentosDesignUtil;
 import javax.swing.SwingUtilities;
 
 /**
@@ -35,6 +36,23 @@ public class AdicionarDocumentoPacienteView extends javax.swing.JPanel {
         initComponents();
         txtArquivo.putClientProperty("JTextField.placeholderText", "Nenhum arquivo selecionado");
         cmbTipoDocumento.setModel(new DefaultComboBoxModel<>(TipoDocumentoPaciente.values()));
+        btnCancelar.addActionListener(e -> {
+            Window janela = SwingUtilities.getWindowAncestor(this);
+            if (janela != null) {
+                janela.dispose();
+            }
+        });
+        FichaDocumentosDesignUtil.aplicarDesignAdicionarDocumento(
+                this,
+                jLabel2,
+                jLabel3,
+                jLabel1,
+                cmbTipoDocumento,
+                txtArquivo,
+                btnSelecionarArquivo,
+                btnCancelar,
+                btnSalvar
+        );
     }
 
     /**

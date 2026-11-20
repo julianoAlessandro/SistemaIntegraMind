@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import static java.time.temporal.TemporalQueries.localDate;
+import com.mycompany.sistemaintegramind.util.Utilitarios.TelasUtil.FichaProntuarioDesignUtil;
 import javax.swing.JOptionPane;
 
 /**
@@ -57,6 +58,19 @@ public class InativarNotaClinicaView extends javax.swing.JDialog {
         });
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        FichaProntuarioDesignUtil.aplicarDesignInativarNota(
+                this,
+                jLabel1,
+                jLabel2,
+                jLabel3,
+                jLabel4,
+                txtIdNotaClinica,
+                txtDataHoraAlteracao,
+                jScrollPane1,
+                txtMotivoInativacao,
+                btnCancelarInativação,
+                btnInativarNota
+        );
         setLocationRelativeTo(janelaPai);
     }
 
