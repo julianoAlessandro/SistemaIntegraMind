@@ -323,7 +323,7 @@ public final class FichaProntuarioDesignUtil {
                 super.paintComponent(g);
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setClip(new RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), 12, 12));
+                g2.clip(new RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), 12, 12));
                 g2.setColor(corFaixaLateral);
                 g2.fillRect(0, 0, 5, getHeight());
                 g2.dispose();
@@ -430,25 +430,39 @@ public final class FichaProntuarioDesignUtil {
                 iconeAlertaInativacao.setIconHeight(13);
                 iconeAlertaInativacao.setPreferredSize(new Dimension(15, 15));
 
-                JLabel lblJustificativaInativacao = new JLabel(
-                        "<html><b>Motivo da inativação:</b> "
-                        + inativacao.getMotivoInativarNota()
-                        + "</html>"
-                );
+                final String motivoCompletoInat = inativacao.getMotivoInativarNota() != null
+                        ? inativacao.getMotivoInativarNota()
+                        : "";
+                final String dtInat = inativacao.getDataInativarNota() != null
+                        ? inativacao.getDataInativarNota().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                        : "";
+                final String hrInat = inativacao.getHorario() != null
+                        ? inativacao.getHorario().format(DateTimeFormatter.ofPattern("HH:mm"))
+                        : "";
+
+                JPanel painelPrefixoInat = new JPanel();
+                painelPrefixoInat.setLayout(new BoxLayout(painelPrefixoInat, BoxLayout.X_AXIS));
+                painelPrefixoInat.setOpaque(false);
+                painelPrefixoInat.add(iconeAlertaInativacao);
+                painelPrefixoInat.add(Box.createHorizontalStrut(4));
+                JLabel lblPrefixoInat = new JLabel("Motivo da inativação: ");
+                lblPrefixoInat.setFont(new Font("Segoe UI", Font.BOLD, 11));
+                lblPrefixoInat.setForeground(new Color(71, 85, 105));
+                painelPrefixoInat.add(lblPrefixoInat);
+
+                JLabel lblJustificativaInativacao = new JLabel(motivoCompletoInat.replaceAll("\\s+", " ").trim());
                 lblJustificativaInativacao.setFont(new Font("Segoe UI", Font.PLAIN, 11));
                 lblJustificativaInativacao.setForeground(new Color(71, 85, 105));
+                lblJustificativaInativacao.setMinimumSize(new Dimension(20, 16));
 
-                JPanel painelEsquerdaInat = new JPanel(new BorderLayout(4, 0));
+                JPanel painelEsquerdaInat = new JPanel(new BorderLayout(0, 0));
                 painelEsquerdaInat.setOpaque(false);
-                painelEsquerdaInat.add(iconeAlertaInativacao, BorderLayout.WEST);
+                painelEsquerdaInat.add(painelPrefixoInat, BorderLayout.WEST);
                 painelEsquerdaInat.add(lblJustificativaInativacao, BorderLayout.CENTER);
 
                 JLabel lblDataHorarioInativacao = new JLabel(
                         "<html><div style='text-align:right;'>"
-                        + "<b>Inativada em:</b> "
-                        + inativacao.getDataInativarNota().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-                        + " "
-                        + inativacao.getHorario().format(DateTimeFormatter.ofPattern("HH:mm"))
+                        + "<b>Inativada em:</b> " + dtInat + " " + hrInat
                         + "</div></html>"
                 );
                 lblDataHorarioInativacao.setFont(new Font("Segoe UI", Font.PLAIN, 11));
@@ -456,6 +470,15 @@ public final class FichaProntuarioDesignUtil {
 
                 painelJustificativa.add(painelEsquerdaInat, BorderLayout.CENTER);
                 painelJustificativa.add(lblDataHorarioInativacao, BorderLayout.EAST);
+
+                final String subtituloInat = "Nota #" + evolucao.getId()
+                        + (dtInat.isEmpty() ? "" : ("  |  Inativada em: " + dtInat + " " + hrInat));
+                instalarCliqueTextoCompleto(
+                        new Component[]{painelJustificativa, painelEsquerdaInat, painelPrefixoInat, iconeAlertaInativacao, lblPrefixoInat, lblJustificativaInativacao, lblDataHorarioInativacao},
+                        "Motivo da Inativação",
+                        subtituloInat,
+                        motivoCompletoInat
+                );
             }
         }
 
@@ -468,28 +491,37 @@ public final class FichaProntuarioDesignUtil {
             iconeLinkRetificacao.setIconHeight(13);
             iconeLinkRetificacao.setPreferredSize(new Dimension(15, 15));
 
-            String dtRet = retificacao.getDataRetificacao() != null
+            final String dtRet = retificacao.getDataRetificacao() != null
                     ? retificacao.getDataRetificacao().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
                     : dataFmt;
-            String hrRet = retificacao.getHorarioRetificacao() != null
+            final String hrRet = retificacao.getHorarioRetificacao() != null
                     ? retificacao.getHorarioRetificacao().format(DateTimeFormatter.ofPattern("HH:mm"))
                     : horaFmt;
+            final String motivoCompletoRet = retificacao.getMotivoRetificacao() != null
+                    ? retificacao.getMotivoRetificacao()
+                    : "";
 
-            JLabel lblMotivoRetificacao = new JLabel(
-                    "<html><b>Retifica a nota #" + evolucao.getId() + " (" + dtRet + " " + hrRet + ")</b>"
-                    + " &nbsp;|&nbsp; Justificativa: "
-                    + retificacao.getMotivoRetificacao()
-                    + "</html>"
-            );
+            JPanel painelPrefixoRet = new JPanel();
+            painelPrefixoRet.setLayout(new BoxLayout(painelPrefixoRet, BoxLayout.X_AXIS));
+            painelPrefixoRet.setOpaque(false);
+            painelPrefixoRet.add(iconeLinkRetificacao);
+            painelPrefixoRet.add(Box.createHorizontalStrut(4));
+            JLabel lblPrefixoRet = new JLabel("Retifica a nota #" + evolucao.getId() + " (" + dtRet + " " + hrRet + ")  |  Justificativa: ");
+            lblPrefixoRet.setFont(new Font("Segoe UI", Font.BOLD, 11));
+            lblPrefixoRet.setForeground(new Color(29, 78, 216));
+            painelPrefixoRet.add(lblPrefixoRet);
+
+            JLabel lblMotivoRetificacao = new JLabel(motivoCompletoRet.replaceAll("\\s+", " ").trim());
             lblMotivoRetificacao.setFont(new Font("Segoe UI", Font.PLAIN, 11));
             lblMotivoRetificacao.setForeground(new Color(29, 78, 216));
+            lblMotivoRetificacao.setMinimumSize(new Dimension(20, 16));
 
-            JPanel painelEsquerdaRet = new JPanel(new BorderLayout(4, 0));
+            JPanel painelEsquerdaRet = new JPanel(new BorderLayout(0, 0));
             painelEsquerdaRet.setOpaque(false);
-            painelEsquerdaRet.add(iconeLinkRetificacao, BorderLayout.WEST);
+            painelEsquerdaRet.add(painelPrefixoRet, BorderLayout.WEST);
             painelEsquerdaRet.add(lblMotivoRetificacao, BorderLayout.CENTER);
 
-            String idNovaNota = (retificacao.getNotaRetificadora() != null && retificacao.getNotaRetificadora().getId() != null)
+            final String idNovaNota = (retificacao.getNotaRetificadora() != null && retificacao.getNotaRetificadora().getId() != null)
                     ? String.valueOf(retificacao.getNotaRetificadora().getId())
                     : "";
             JLabel lblDadosRetificacao = new JLabel(
@@ -500,6 +532,16 @@ public final class FichaProntuarioDesignUtil {
 
             painelJustificativaRetificacao.add(painelEsquerdaRet, BorderLayout.CENTER);
             painelJustificativaRetificacao.add(lblDadosRetificacao, BorderLayout.EAST);
+
+            final String subtituloRet = "Retifica a nota #" + evolucao.getId()
+                    + " (" + dtRet + " " + hrRet + ")"
+                    + (idNovaNota.isEmpty() ? "" : ("  |  Nova nota #" + idNovaNota));
+            instalarCliqueTextoCompleto(
+                    new Component[]{painelJustificativaRetificacao, painelEsquerdaRet, painelPrefixoRet, iconeLinkRetificacao, lblPrefixoRet, lblMotivoRetificacao, lblDadosRetificacao},
+                    "Justificativa da Retificação",
+                    subtituloRet,
+                    motivoCompletoRet
+            );
         }
 
         card.add(painelCabecalho, BorderLayout.NORTH);
@@ -1527,5 +1569,122 @@ public final class FichaProntuarioDesignUtil {
         g2.drawString("i", w / 2 - 2, h - 5);
         g2.dispose();
         return new ImageIcon(img);
+    }
+
+    private static void instalarCliqueTextoCompleto(
+            Component[] alvos,
+            final String tituloModal,
+            final String subtituloMeta,
+            final String textoCompleto
+    ) {
+        java.awt.event.MouseAdapter cliqueListener = new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                abrirModalTextoCompleto(e.getComponent(), tituloModal, subtituloMeta, textoCompleto);
+            }
+        };
+        for (Component c : alvos) {
+            if (c != null) {
+                c.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                if (c instanceof JComponent) {
+                    ((JComponent) c).setToolTipText("Clique para visualizar o texto completo");
+                }
+                c.addMouseListener(cliqueListener);
+            }
+        }
+    }
+
+    private static void abrirModalTextoCompleto(
+            Component origem,
+            String tituloModal,
+            String subtituloMeta,
+            String textoCompleto
+    ) {
+        java.awt.Window owner = origem != null ? javax.swing.SwingUtilities.getWindowAncestor(origem) : null;
+        final javax.swing.JDialog dialog = new javax.swing.JDialog(
+                owner,
+                tituloModal,
+                java.awt.Dialog.ModalityType.APPLICATION_MODAL
+        );
+        dialog.setResizable(false);
+
+        JPanel root = new JPanel(new BorderLayout());
+        root.setBackground(Color.WHITE);
+
+        JPanel bannerHeader = criarBannerHeaderVerde(tituloModal, criarIconeHeaderDocLupa(42, 42));
+        root.add(bannerHeader, BorderLayout.NORTH);
+
+        JPanel body = new JPanel();
+        body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
+        body.setBackground(Color.WHITE);
+        body.setBorder(new EmptyBorder(18, 24, 18, 24));
+
+        if (subtituloMeta != null && !subtituloMeta.isBlank()) {
+            JPanel metaRow = new JPanel();
+            metaRow.setLayout(new BoxLayout(metaRow, BoxLayout.X_AXIS));
+            metaRow.setOpaque(false);
+            metaRow.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+            metaRow.add(criarCirculoIconeVerde(criarIconeInfoCirculoVerde(16, 16), 32));
+            metaRow.add(Box.createHorizontalStrut(10));
+            JLabel lblMeta = new JLabel(subtituloMeta);
+            lblMeta.setFont(new Font("Segoe UI", Font.BOLD, 13));
+            lblMeta.setForeground(new Color(30, 41, 59));
+            metaRow.add(lblMeta);
+
+            body.add(metaRow);
+            body.add(Box.createVerticalStrut(14));
+        }
+
+        JTextArea areaTexto = new JTextArea(textoCompleto != null ? textoCompleto : "");
+        areaTexto.setEditable(false);
+        areaTexto.setLineWrap(true);
+        areaTexto.setWrapStyleWord(true);
+        areaTexto.setOpaque(false);
+        areaTexto.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        areaTexto.setForeground(new Color(15, 23, 42));
+        areaTexto.setBorder(new EmptyBorder(6, 8, 6, 8));
+        areaTexto.setCaretPosition(0);
+
+        JScrollPane scrollTexto = new JScrollPane(areaTexto);
+        scrollTexto.setOpaque(false);
+        scrollTexto.getViewport().setOpaque(false);
+        scrollTexto.setBorder(BorderFactory.createEmptyBorder());
+        ComponenteUtil.formatarScrollInvisivel(scrollTexto);
+
+        Container boxTexto = new Container();
+        boxTexto.removeShadow();
+        boxTexto.setBackground(new Color(248, 250, 252));
+        boxTexto.setBorderRadius(14);
+        boxTexto.setBorder(new Color(203, 213, 225), 1);
+        boxTexto.setLayout(new BorderLayout());
+        boxTexto.setBorder(new EmptyBorder(8, 10, 8, 10));
+        boxTexto.add(scrollTexto, BorderLayout.CENTER);
+        boxTexto.setAlignmentX(Component.LEFT_ALIGNMENT);
+        boxTexto.setPreferredSize(new Dimension(500, 195));
+
+        body.add(boxTexto);
+        root.add(body, BorderLayout.CENTER);
+
+        JPanel footer = new JPanel(new BorderLayout());
+        footer.setBackground(new Color(231, 246, 236));
+        footer.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(209, 235, 218)),
+                new EmptyBorder(12, 24, 12, 24)
+        ));
+
+        JButton btnFechar = new JButton("Fechar");
+        estilizarBotaoConfirmarSubtela(btnFechar, "Fechar");
+        btnFechar.addActionListener(e -> dialog.dispose());
+        footer.add(btnFechar, BorderLayout.EAST);
+
+        root.add(footer, BorderLayout.SOUTH);
+
+        dialog.setContentPane(root);
+        dialog.setMinimumSize(new Dimension(560, 390));
+        dialog.setPreferredSize(new Dimension(560, 390));
+        dialog.pack();
+        dialog.setLocationRelativeTo(owner);
+        dialog.setVisible(true);
     }
 }
