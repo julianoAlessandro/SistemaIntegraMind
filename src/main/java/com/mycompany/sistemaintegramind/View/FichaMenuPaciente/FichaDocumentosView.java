@@ -32,6 +32,7 @@ import javax.swing.ImageIcon;
 import java.awt.Image;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import com.mycompany.sistemaintegramind.util.Utilitarios.TelasUtil.FichaDocumentosDesignUtil;
 import static javax.swing.JOptionPane.YES_NO_OPTION;
 
 public class FichaDocumentosView extends javax.swing.JPanel {
@@ -43,6 +44,17 @@ public class FichaDocumentosView extends javax.swing.JPanel {
     public FichaDocumentosView(Paciente paciente) {
         this.paciente = paciente;
         initComponents();
+        FichaDocumentosDesignUtil.aplicarDesignTela(
+                this,
+                jLabel2,
+                jLabel1,
+                txtPesquisarDocumentos,
+                btnBuscarDocumentos,
+                btnLimparPesquisaDocumentos,
+                btnAdicionarDocumentos,
+                scroDocumentos,
+                pnlListarDocumentosPaciente
+        );
 
         txtPesquisarDocumentos.putClientProperty("JTextField.placeholderText", "Digite o nome do documento que deseja encontrar...");
 
@@ -355,14 +367,16 @@ public class FichaDocumentosView extends javax.swing.JPanel {
             }
         });
 
-        painelBotoes.add(btnVisualizar);
-        painelBotoes.add(btnRemover);
-
-        painelInformacoes.add(painelBotoes, BorderLayout.SOUTH);
-
-        card.add(painelInformacoes, BorderLayout.CENTER);
-
-        return card;
+        return FichaDocumentosDesignUtil.montarCardDocumento(
+                scroDocumentos,
+                lblImagemDocumento,
+                nomeArquivo,
+                lblNomeArquivo,
+                lblTipoDocumento,
+                lblData,
+                btnVisualizar,
+                btnRemover
+        );
     }
 
     //2026-10-09 Juliano: Atualiza a listagem dos documentos do paciente

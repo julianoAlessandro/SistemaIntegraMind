@@ -2,6 +2,7 @@ package com.mycompany.sistemaintegramind.View.FichaMenuPaciente;
 
 import com.mycompany.sistemaintegramind.Model.entidades.EvolucaoClinica;
 import java.time.LocalDate;
+import com.mycompany.sistemaintegramind.util.Utilitarios.TelasUtil.FichaProntuarioDesignUtil;
 import java.time.format.DateTimeFormatter;
 
 public class VisualizarNotaClinicaView extends javax.swing.JDialog {
@@ -40,6 +41,25 @@ public class VisualizarNotaClinicaView extends javax.swing.JDialog {
         txtTipoNotaClinica.setText(notaclinica.getTiponotaclinica().toString());
         txtEvolucaoClinica.setText(notaclinica.getEvolucaoSessao());
         txtObservação.setText(notaclinica.getObservacoes());
+        FichaProntuarioDesignUtil.aplicarDesignVisualizarNota(
+                this,
+                jLabel2,
+                jLabel4,
+                jLabel1,
+                jLabel5,
+                jLabel3,
+                jLabel6,
+                jLabel7,
+                txtIDNota,
+                txtData,
+                txtHorarioCriacao,
+                txtTipoNotaClinica,
+                jScrollPane2,
+                txtEvolucaoClinica,
+                jScrollPane1,
+                txtObservação
+        );
+        setLocationRelativeTo(janelaPai);
     }
 
 

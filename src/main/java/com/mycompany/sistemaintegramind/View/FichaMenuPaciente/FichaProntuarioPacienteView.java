@@ -13,44 +13,27 @@ import com.mycompany.sistemaintegramind.Model.dao.impl.RetificarNotaClinicaJPA;
 import com.mycompany.sistemaintegramind.Model.entidades.Agendamento;
 import com.mycompany.sistemaintegramind.Model.entidades.AudioEvolucaoClinica;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.StatusNotaClinica;
-import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.TipoAtendimento;
 import com.mycompany.sistemaintegramind.Model.entidades.Enumeradores.TipoNotaClinica;
 import com.mycompany.sistemaintegramind.Model.entidades.EvolucaoClinica;
 import com.mycompany.sistemaintegramind.Model.entidades.InativarNotaClinica;
 import com.mycompany.sistemaintegramind.Model.entidades.Paciente;
 import com.mycompany.sistemaintegramind.Model.entidades.RetificarNotaClinica;
 import com.mycompany.sistemaintegramind.util.Utilitarios.GravadorAudio;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.table.DefaultTableModel;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.time.LocalDateTime;
-import javax.swing.JOptionPane;
-import com.mycompany.sistemaintegramind.Model.entidades.AudioEvolucaoClinica;
-import com.mycompany.sistemaintegramind.Model.dao.impl.AudioEvolucaoClinicaJPA;
+import com.mycompany.sistemaintegramind.util.Utilitarios.TelasUtil.FichaProntuarioDesignUtil;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 public class FichaProntuarioPacienteView extends javax.swing.JPanel {
 
@@ -64,32 +47,40 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
     private InativarNotaClinicaJPA inativacaoJPA = new InativarNotaClinicaJPA();
     private GravadorAudio gravadorAudio = new GravadorAudio();
 
+    public FichaProntuarioPacienteView() {
+        initComponents();
+        aplicarDesignTela();
+    }
+
     public FichaProntuarioPacienteView(Paciente paciente) {
         this.paciente = paciente;
         initComponents();
-        txtPesquisarNotaClinicaPelaEvolucao.putClientProperty("JTextField.placeholderText", "Digite a nota clinica  que deseja encontrar...");
+        aplicarDesignTela();
+        txtPesquisarNotaClinicaPelaEvolucao.putClientProperty("JTextField.placeholderText", "Pesquisar...");
         //2026-10-29 Juliano: Campos apenas para  visualização
         txtDataAgendamento.setEditable(false);
-        txtDataAgendamento.setBackground(java.awt.Color.WHITE);
-        txtDataAgendamento.setForeground(java.awt.Color.BLACK);
+        txtDataAgendamento.setOpaque(false);
+        txtDataAgendamento.setForeground(new java.awt.Color(30, 41, 59));
         txtHorario.setEditable(false);
-        txtHorario.setBackground(java.awt.Color.WHITE);
-        txtHorario.setForeground(java.awt.Color.BLACK);
+        txtHorario.setOpaque(false);
+        txtHorario.setForeground(new java.awt.Color(30, 41, 59));
 
         cmbListarNotaClinica.setModel(new DefaultComboBoxModel<>(TipoNotaClinica.values()));
 
-        EvolucaoClinicaJPA evolucaoJPA = new EvolucaoClinicaJPA();
-
-        List<EvolucaoClinica> evolucoes = evolucaoJPA.listarEvolucoesPorPaciente(paciente.getId());
-
-        for (EvolucaoClinica evolucao : evolucoes) {
-
-            pnlListaEvolucoes.add(listarHistoricoEvolucaoClinicaPaciente(evolucao)
-            );
-        }
-
         //2026-10-02 Juliano: Organização dos futuros cards que serão adicionados
         pnlListaEvolucoes.setLayout(new BoxLayout(pnlListaEvolucoes, BoxLayout.Y_AXIS));
+
+        if (paciente != null && paciente.getId() != null) {
+            EvolucaoClinicaJPA evolucaoJPA = new EvolucaoClinicaJPA();
+
+            List<EvolucaoClinica> evolucoes = evolucaoJPA.listarEvolucoesPorPaciente(paciente.getId());
+
+            for (EvolucaoClinica evolucao : evolucoes) {
+
+                pnlListaEvolucoes.add(listarHistoricoEvolucaoClinicaPaciente(evolucao)
+                );
+            }
+        }
 
         pnlListaEvolucoes.revalidate();
         pnlListaEvolucoes.repaint();
@@ -102,16 +93,51 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
 
     }
 
+    private void aplicarDesignTela() {
+        FichaProntuarioDesignUtil.aplicarDesignTela(
+                containerNovaEvolucao,
+                containerHistoricoNotas,
+                containerDataAgendamento,
+                txtDataAgendamento,
+                iconeCalendarioData,
+                containerHorario,
+                txtHorario,
+                iconeRelogioHorario,
+                containerBarraPesquisa,
+                txtPesquisarNotaClinicaPelaEvolucao,
+                iconeHeaderHistorico,
+                scrListaEvolucoes,
+                pnlListaEvolucoes,
+                jScrollPane1,
+                txtEvolucaoSessao,
+                jScrollPane2,
+                txtObservacao,
+                cmbListarNotaClinica,
+                btnBuscarNotaClinica,
+                btnLimparPesquisa,
+                btnGravarAudioEvolucaoClinicaPaciente,
+                btnLimparEvolucao,
+                btnSalvarEvolucao
+        );
+    }
+
+
     @SuppressWarnings("unchecked")
-
-
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel2 = new javax.swing.JLabel();
-        txtDataAgendamento = new javax.swing.JTextField();
-        txtHorario = new javax.swing.JTextField();
+        containerNovaEvolucao = new com.mycompany.sistemaintegramind.View.Componentes.Container();
+        jLabel5 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
+        containerDataAgendamento = new com.mycompany.sistemaintegramind.View.Componentes.Container();
+        txtDataAgendamento = new javax.swing.JTextField();
+        iconeCalendarioData = new com.mycompany.sistemaintegramind.util.Utilitarios.CircularIconLabel();
+        containerHorario = new com.mycompany.sistemaintegramind.View.Componentes.Container();
+        txtHorario = new javax.swing.JTextField();
+        iconeRelogioHorario = new com.mycompany.sistemaintegramind.util.Utilitarios.CircularIconLabel();
+        cmbListarNotaClinica = new javax.swing.JComboBox<>();
+        jLabel2 = new javax.swing.JLabel();
+        btnGravarAudioEvolucaoClinicaPaciente = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtEvolucaoSessao = new javax.swing.JTextArea();
         jLabel4 = new javax.swing.JLabel();
@@ -119,42 +145,213 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
         txtObservacao = new javax.swing.JTextArea();
         btnLimparEvolucao = new javax.swing.JButton();
         btnSalvarEvolucao = new javax.swing.JButton();
-        jLabel5 = new javax.swing.JLabel();
-        scrListaEvolucoes = new javax.swing.JScrollPane();
-        pnlListaEvolucoes = new javax.swing.JPanel();
+        containerHistoricoNotas = new com.mycompany.sistemaintegramind.View.Componentes.Container();
+        iconeHeaderHistorico = new com.mycompany.sistemaintegramind.util.Utilitarios.CircularIconLabel();
         jLabel1 = new javax.swing.JLabel();
-        cmbListarNotaClinica = new javax.swing.JComboBox<>();
+        containerBarraPesquisa = new com.mycompany.sistemaintegramind.View.Componentes.Container();
         txtPesquisarNotaClinicaPelaEvolucao = new javax.swing.JTextField();
+        pnlBotoesPesquisa = new javax.swing.JPanel();
         btnBuscarNotaClinica = new javax.swing.JButton();
         btnLimparPesquisa = new javax.swing.JButton();
-        btnGravarAudioEvolucaoClinicaPaciente = new javax.swing.JButton();
+        scrListaEvolucoes = new javax.swing.JScrollPane();
+        pnlListaEvolucoes = new javax.swing.JPanel();
 
-        jLabel2.setText("Evolução da Sessão");
+        setBackground(new java.awt.Color(242, 246, 244));
 
-        txtDataAgendamento.addActionListener(this::txtDataAgendamentoActionPerformed);
+        containerNovaEvolucao.setBackground(new java.awt.Color(255, 255, 255));
+        containerNovaEvolucao.setBorderRadius(18);
 
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(30, 41, 59));
+        jLabel5.setText("Nova Evolução Clínica");
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(100, 116, 139));
         jLabel3.setText("Registre o que foi trabalhado durante a consulta.");
 
+        containerDataAgendamento.setBackground(new java.awt.Color(255, 255, 255));
+        containerDataAgendamento.setBorderRadius(10);
+        containerDataAgendamento.setMinimumSize(new java.awt.Dimension(126, 36));
+        containerDataAgendamento.setPreferredSize(new java.awt.Dimension(126, 36));
+        containerDataAgendamento.setLayout(new java.awt.BorderLayout());
+
+        txtDataAgendamento.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        txtDataAgendamento.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 8, 0, 2));
+        txtDataAgendamento.addActionListener(this::txtDataAgendamentoActionPerformed);
+        containerDataAgendamento.add(txtDataAgendamento, java.awt.BorderLayout.CENTER);
+
+        iconeCalendarioData.setBackground(new java.awt.Color(255, 255, 255));
+        iconeCalendarioData.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuPacienteIcons/calendar_green.png"))); // NOI18N
+        iconeCalendarioData.setIconColor(new java.awt.Color(71, 85, 105));
+        iconeCalendarioData.setIconHeight(15);
+        iconeCalendarioData.setIconWidth(15);
+        iconeCalendarioData.setPreferredSize(new java.awt.Dimension(26, 26));
+        iconeCalendarioData.setShadowBlur(0);
+        containerDataAgendamento.add(iconeCalendarioData, java.awt.BorderLayout.EAST);
+
+        containerHorario.setBackground(new java.awt.Color(255, 255, 255));
+        containerHorario.setBorderRadius(10);
+        containerHorario.setMinimumSize(new java.awt.Dimension(108, 36));
+        containerHorario.setPreferredSize(new java.awt.Dimension(108, 36));
+        containerHorario.setLayout(new java.awt.BorderLayout());
+
+        txtHorario.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        txtHorario.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 8, 0, 2));
+        containerHorario.add(txtHorario, java.awt.BorderLayout.CENTER);
+
+        iconeRelogioHorario.setBackground(new java.awt.Color(255, 255, 255));
+        iconeRelogioHorario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/alarm (1).png"))); // NOI18N
+        iconeRelogioHorario.setIconColor(new java.awt.Color(71, 85, 105));
+        iconeRelogioHorario.setIconHeight(15);
+        iconeRelogioHorario.setIconWidth(15);
+        iconeRelogioHorario.setPreferredSize(new java.awt.Dimension(26, 26));
+        iconeRelogioHorario.setShadowBlur(0);
+        containerHorario.add(iconeRelogioHorario, java.awt.BorderLayout.EAST);
+
+        cmbListarNotaClinica.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(51, 65, 85));
+        jLabel2.setText("Evolução da Sessão");
+
+        btnGravarAudioEvolucaoClinicaPaciente.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnGravarAudioEvolucaoClinicaPaciente.setForeground(new java.awt.Color(13, 82, 65));
+        btnGravarAudioEvolucaoClinicaPaciente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/ferramenta-de-audio-com-alto-falante.png"))); // NOI18N
+        btnGravarAudioEvolucaoClinicaPaciente.setText("Gravar áudio");
+        btnGravarAudioEvolucaoClinicaPaciente.addActionListener(this::btnGravarAudioEvolucaoClinicaPacienteActionPerformed);
+
         txtEvolucaoSessao.setColumns(20);
+        txtEvolucaoSessao.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
+        txtEvolucaoSessao.setLineWrap(true);
         txtEvolucaoSessao.setRows(5);
+        txtEvolucaoSessao.setWrapStyleWord(true);
         jScrollPane1.setViewportView(txtEvolucaoSessao);
 
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(51, 65, 85));
         jLabel4.setText("Observações");
 
         txtObservacao.setColumns(20);
+        txtObservacao.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
+        txtObservacao.setLineWrap(true);
         txtObservacao.setRows(5);
+        txtObservacao.setWrapStyleWord(true);
         jScrollPane2.setViewportView(txtObservacao);
 
+        btnLimparEvolucao.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnLimparEvolucao.setForeground(new java.awt.Color(71, 85, 105));
         btnLimparEvolucao.setText("Limpar");
         btnLimparEvolucao.addActionListener(this::btnLimparEvolucaoActionPerformed);
 
+        btnSalvarEvolucao.setBackground(new java.awt.Color(21, 128, 61));
+        btnSalvarEvolucao.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnSalvarEvolucao.setForeground(new java.awt.Color(255, 255, 255));
         btnSalvarEvolucao.setText("Salvar evolução");
         btnSalvarEvolucao.addActionListener(this::btnSalvarEvolucaoActionPerformed);
 
-        jLabel5.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        jLabel5.setText("Nova Evolução Clínica");
+        javax.swing.GroupLayout containerNovaEvolucaoLayout = new javax.swing.GroupLayout(containerNovaEvolucao);
+        containerNovaEvolucao.setLayout(containerNovaEvolucaoLayout);
+        containerNovaEvolucaoLayout.setHorizontalGroup(
+            containerNovaEvolucaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(containerNovaEvolucaoLayout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addGroup(containerNovaEvolucaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
+                    .addComponent(jScrollPane2)
+                    .addGroup(containerNovaEvolucaoLayout.createSequentialGroup()
+                        .addComponent(containerDataAgendamento, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(8, 8, 8)
+                        .addComponent(containerHorario, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(8, 8, 8)
+                        .addComponent(cmbListarNotaClinica, 0, 234, Short.MAX_VALUE))
+                    .addGroup(containerNovaEvolucaoLayout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnGravarAudioEvolucaoClinicaPaciente))
+                    .addGroup(containerNovaEvolucaoLayout.createSequentialGroup()
+                        .addGroup(containerNovaEvolucaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4)
+                            .addGroup(containerNovaEvolucaoLayout.createSequentialGroup()
+                                .addComponent(btnLimparEvolucao, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(12, 12, 12)
+                                .addComponent(btnSalvarEvolucao, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addGap(18, 18, 18))
+        );
+        containerNovaEvolucaoLayout.setVerticalGroup(
+            containerNovaEvolucaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(containerNovaEvolucaoLayout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addComponent(jLabel5)
+                .addGap(2, 2, 2)
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(14, 14, 14)
+                .addGroup(containerNovaEvolucaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(containerDataAgendamento, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(containerHorario, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cmbListarNotaClinica, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(containerNovaEvolucaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(btnGravarAudioEvolucaoClinicaPaciente, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(8, 8, 8)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel4)
+                .addGap(8, 8, 8)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(containerNovaEvolucaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnLimparEvolucao, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSalvarEvolucao, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(40, Short.MAX_VALUE))
+        );
 
-        pnlListaEvolucoes.setBackground(new java.awt.Color(204, 51, 0));
+        containerHistoricoNotas.setBackground(new java.awt.Color(255, 255, 255));
+        containerHistoricoNotas.setBorderRadius(18);
+
+        iconeHeaderHistorico.setBackground(new java.awt.Color(255, 255, 255));
+        iconeHeaderHistorico.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/MenuPacienteIcons/docs_green.png"))); // NOI18N
+        iconeHeaderHistorico.setIconColor(new java.awt.Color(51, 65, 85));
+        iconeHeaderHistorico.setIconHeight(18);
+        iconeHeaderHistorico.setIconWidth(18);
+        iconeHeaderHistorico.setPreferredSize(new java.awt.Dimension(24, 24));
+        iconeHeaderHistorico.setShadowBlur(0);
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(30, 41, 59));
+        jLabel1.setText("Histórico das notas Clínicas");
+
+        containerBarraPesquisa.setBackground(new java.awt.Color(255, 255, 255));
+        containerBarraPesquisa.setBorderRadius(10);
+        containerBarraPesquisa.setMinimumSize(new java.awt.Dimension(265, 34));
+        containerBarraPesquisa.setPreferredSize(new java.awt.Dimension(265, 34));
+        containerBarraPesquisa.setLayout(new java.awt.BorderLayout());
+
+        txtPesquisarNotaClinicaPelaEvolucao.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        txtPesquisarNotaClinicaPelaEvolucao.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 10, 0, 4));
+        containerBarraPesquisa.add(txtPesquisarNotaClinicaPelaEvolucao, java.awt.BorderLayout.CENTER);
+
+        pnlBotoesPesquisa.setOpaque(false);
+        pnlBotoesPesquisa.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 2, 2));
+
+        btnBuscarNotaClinica.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/lupa.png"))); // NOI18N
+        btnBuscarNotaClinica.setPreferredSize(new java.awt.Dimension(26, 26));
+        btnBuscarNotaClinica.addActionListener(this::btnBuscarNotaClinicaActionPerformed);
+        pnlBotoesPesquisa.add(btnBuscarNotaClinica);
+
+        btnLimparPesquisa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/limpar.png"))); // NOI18N
+        btnLimparPesquisa.setPreferredSize(new java.awt.Dimension(26, 26));
+        btnLimparPesquisa.addActionListener(this::btnLimparPesquisaActionPerformed);
+        pnlBotoesPesquisa.add(btnLimparPesquisa);
+
+        containerBarraPesquisa.add(pnlBotoesPesquisa, java.awt.BorderLayout.EAST);
+
+        scrListaEvolucoes.setBorder(null);
+
+        pnlListaEvolucoes.setBackground(new java.awt.Color(255, 255, 255));
         pnlListaEvolucoes.addAncestorListener(new javax.swing.event.AncestorListener() {
             public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
                 pnlListaEvolucoesAncestorAdded(evt);
@@ -169,135 +366,63 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
         pnlListaEvolucoes.setLayout(pnlListaEvolucoesLayout);
         pnlListaEvolucoesLayout.setHorizontalGroup(
             pnlListaEvolucoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 621, Short.MAX_VALUE)
+            .addGap(0, 545, Short.MAX_VALUE)
         );
         pnlListaEvolucoesLayout.setVerticalGroup(
             pnlListaEvolucoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 751, Short.MAX_VALUE)
+            .addGap(0, 680, Short.MAX_VALUE)
         );
 
         scrListaEvolucoes.setViewportView(pnlListaEvolucoes);
 
-        jLabel1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        jLabel1.setText("Histórico das notas Clínicas ");
-
-        btnBuscarNotaClinica.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/lupa.png"))); // NOI18N
-        btnBuscarNotaClinica.addActionListener(this::btnBuscarNotaClinicaActionPerformed);
-
-        btnLimparPesquisa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/limpar.png"))); // NOI18N
-        btnLimparPesquisa.addActionListener(this::btnLimparPesquisaActionPerformed);
-
-        btnGravarAudioEvolucaoClinicaPaciente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/ferramenta-de-audio-com-alto-falante.png"))); // NOI18N
-        btnGravarAudioEvolucaoClinicaPaciente.addActionListener(this::btnGravarAudioEvolucaoClinicaPacienteActionPerformed);
+        javax.swing.GroupLayout containerHistoricoNotasLayout = new javax.swing.GroupLayout(containerHistoricoNotas);
+        containerHistoricoNotas.setLayout(containerHistoricoNotasLayout);
+        containerHistoricoNotasLayout.setHorizontalGroup(
+            containerHistoricoNotasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(containerHistoricoNotasLayout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addGroup(containerHistoricoNotasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(scrListaEvolucoes)
+                    .addGroup(containerHistoricoNotasLayout.createSequentialGroup()
+                        .addComponent(iconeHeaderHistorico, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+                        .addComponent(containerBarraPesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(12, 12, 12))
+        );
+        containerHistoricoNotasLayout.setVerticalGroup(
+            containerHistoricoNotasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(containerHistoricoNotasLayout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addGroup(containerHistoricoNotasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(containerBarraPesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(iconeHeaderHistorico, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(10, 10, 10)
+                .addComponent(scrListaEvolucoes, javax.swing.GroupLayout.DEFAULT_SIZE, 680, Short.MAX_VALUE)
+                .addGap(14, 14, 14))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(158, 158, 158))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(23, 23, 23)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(txtDataAgendamento, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(36, 36, 36)
-                                .addComponent(txtHorario, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(cmbListarNotaClinica, 0, 123, Short.MAX_VALUE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel2)
-                                        .addGap(118, 118, 118)
-                                        .addComponent(btnGravarAudioEvolucaoClinicaPaciente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addGap(19, 19, 19))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(133, 133, 133)
-                                        .addComponent(btnLimparEvolucao, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(btnSalvarEvolucao, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18))
-                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(0, 0, Short.MAX_VALUE))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(31, 31, 31)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 358, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addGap(20, 20, 20)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(txtPesquisarNotaClinicaPelaEvolucao, javax.swing.GroupLayout.PREFERRED_SIZE, 478, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnBuscarNotaClinica, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnLimparPesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(scrListaEvolucoes, javax.swing.GroupLayout.PREFERRED_SIZE, 637, javax.swing.GroupLayout.PREFERRED_SIZE)))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(33, 33, 33)
-                    .addComponent(jLabel3)
-                    .addContainerGap(802, Short.MAX_VALUE)))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(33, 33, 33)
-                    .addComponent(jLabel5)
-                    .addContainerGap(874, Short.MAX_VALUE)))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addComponent(containerNovaEvolucao, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
+                .addGap(12, 12, 12)
+                .addComponent(containerHistoricoNotas, javax.swing.GroupLayout.PREFERRED_SIZE, 635, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(10, 10, 10)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(74, 74, 74)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(cmbListarNotaClinica, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
-                            .addComponent(txtHorario, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
-                            .addComponent(txtDataAgendamento))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(30, 30, 30)
-                                .addComponent(jLabel2))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addComponent(btnGravarAudioEvolucaoClinicaPaciente, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(30, 30, 30)
-                        .addComponent(jLabel4)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnLimparEvolucao)
-                            .addComponent(btnSalvarEvolucao)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel1)
-                        .addGap(9, 9, 9)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btnBuscarNotaClinica, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txtPesquisarNotaClinicaPelaEvolucao)
-                            .addComponent(btnLimparPesquisa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(scrListaEvolucoes, javax.swing.GroupLayout.PREFERRED_SIZE, 694, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(41, Short.MAX_VALUE))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(50, 50, 50)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(748, Short.MAX_VALUE)))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(32, 32, 32)
-                    .addComponent(jLabel5)
-                    .addContainerGap(770, Short.MAX_VALUE)))
+                    .addComponent(containerNovaEvolucao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(containerHistoricoNotas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(10, 10, 10))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -533,67 +658,15 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
 
     private JPanel listarHistoricoEvolucaoClinicaPaciente(EvolucaoClinica evolucao) {
 
-        // Painel externo que contém o card e a justificativa
-        JPanel painelContainer = new JPanel();
-        painelContainer.setLayout(new BoxLayout(painelContainer, BoxLayout.Y_AXIS));
-        painelContainer.setOpaque(false);
-        painelContainer.setAlignmentX(Component.LEFT_ALIGNMENT);
-        painelContainer.setPreferredSize(new Dimension(600, 192));
+        //2026-10-30 Juliano: Verifica se a nota está inativa
+        boolean notaInativa = evolucao.getStatusnotaclinica() == StatusNotaClinica.INATIVA;
+        //2026-10-30 Juliano: Verifica se a nota está retificada
+        boolean notaRetificada = evolucao.getStatusnotaclinica() == StatusNotaClinica.RETIFICADA;
 
-        // Configurações do card
-        JPanel card = new JPanel(new BorderLayout(10, 8));
-
-        card.setPreferredSize(new Dimension(600, 140));
-        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
-        card.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.LIGHT_GRAY),
-                BorderFactory.createEmptyBorder(10, 10, 10, 10)
-        ));
-
-        // Data e horário
-        JLabel lblData = new JLabel(
-                evolucao.getDataEvolucao() + " - " + evolucao.getHorario()
-        );
-        lblData.setFont(new Font("Arial", Font.BOLD, 13));
-
-        // ID e tipo da nota
-        JLabel lblTipo = new JLabel(
-                "ID da nota: " + evolucao.getId()
-                + " # | " + evolucao.getTiponotaclinica()
-        );
-
-        // Status da nota
-        JLabel lblStatusNotaClinica = new JLabel(
-                evolucao.getStatusnotaclinica().toString()
-        );
-
-        // Cabeçalho
-        JPanel painelCabecalho = new JPanel(new BorderLayout(10, 0));
-        painelCabecalho.add(lblData, BorderLayout.WEST);
-        painelCabecalho.add(lblTipo, BorderLayout.CENTER);
-        painelCabecalho.add(lblStatusNotaClinica, BorderLayout.EAST);
-        painelCabecalho.setOpaque(false);
-
-        // Conteúdo da evolução clínica
-        JTextArea txtEvolucao = new JTextArea(
-                evolucao.getEvolucaoSessao()
-        );
-
-        txtEvolucao.setLineWrap(true);
-        txtEvolucao.setWrapStyleWord(true);
-        txtEvolucao.setEditable(false);
-        txtEvolucao.setOpaque(false);
-        txtEvolucao.setFont(new Font("Arial", Font.PLAIN, 12));
-
-        // Painel dos botões
-        JPanel painelBotoes = new JPanel(
-                new FlowLayout(FlowLayout.RIGHT, 5, 0)
-        );
-        painelBotoes.setOpaque(false);
-        JButton btnReproduzirAudio = new JButton("Reproduzir áudio");
-        JButton btnVisualizar = new JButton("Visualizar");
-        JButton btnRetificar = new JButton("Retificar");
-        JButton btnInativar = new JButton("Inativar");
+        JButton btnReproduzirAudio = FichaProntuarioDesignUtil.criarBotaoReproduzirAudio();
+        JButton btnVisualizar = FichaProntuarioDesignUtil.criarBotaoVisualizar();
+        JButton btnRetificar = FichaProntuarioDesignUtil.criarBotaoRetificar(notaInativa);
+        JButton btnInativar = FichaProntuarioDesignUtil.criarBotaoInativar(notaInativa);
 
         //2026-11-07 Juliano: Verifica se a evolução possui áudio
         AudioEvolucaoClinicaJPA audioJPA = new AudioEvolucaoClinicaJPA();
@@ -602,8 +675,6 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
                 = audioJPA.buscarAudioPorEvolucao(evolucao.getId());
 
         if (audioEvolucao != null) {
-
-            painelBotoes.add(btnReproduzirAudio);
 
             String caminhoAudio = audioEvolucao.getCaminhoArquivo();
 
@@ -651,187 +722,20 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
             }
         }
 
-        //2026-10-30 Juliano: Verifica se a nota está inativa
-        boolean notaInativa = evolucao.getStatusnotaclinica() == StatusNotaClinica.INATIVA;
-        //2026-10-30 Juliano: Verifica se a nota está  retifcada
-        boolean notaRetificada = evolucao.getStatusnotaclinica() == StatusNotaClinica.RETIFICADA;
-
-        // Desabilita os botões de retificação e inativação
-        // quando a nota estiver inativa
+        // Desabilita os botões de retificação e inativação quando a nota estiver inativa
         btnInativar.setEnabled(!notaInativa);
         btnRetificar.setEnabled(!notaInativa);
 
-        painelBotoes.add(btnVisualizar);
-        painelBotoes.add(btnRetificar);
-        painelBotoes.add(btnInativar);
-
         InativarNotaClinica inativacao = null;
-
-        //2026-10-28 Juliano: Configuração do Painel para exibir a justificativa e os dados da inativação
-        JPanel painelJustificativa = new JPanel(new BorderLayout(10, 0));
-        painelJustificativa.setOpaque(false);
-        painelJustificativa.setBorder(
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)
-        );
-
-        //2026-10-30 Juliano: Configuração do Painel para exibir a justificativa e os dados da retificaçaõ
-        JPanel painelJustificativaRetificacao = new JPanel(new BorderLayout(10, 0));
-        painelJustificativaRetificacao.setOpaque(false);
-        painelJustificativaRetificacao.setBorder(
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)
-        );
-
-        // Aplica o efeito de texto riscado e cria a justificativa
         if (notaInativa) {
-
-            java.util.Map<java.awt.font.TextAttribute, Object> atributos
-                    = new java.util.HashMap<>();
-
-            atributos.put(
-                    java.awt.font.TextAttribute.STRIKETHROUGH,
-                    java.awt.font.TextAttribute.STRIKETHROUGH_ON
-            );
-
-            // Risca data e horário
-            lblData.setFont(lblData.getFont().deriveFont(atributos));
-
-            // Risca ID e tipo da nota
-            lblTipo.setFont(lblTipo.getFont().deriveFont(atributos));
-
-            // Risca o conteúdo da evolução
-            txtEvolucao.setFont(txtEvolucao.getFont().deriveFont(atributos));
-
-            // Destaca o status INATIVA em vermelho
-            lblStatusNotaClinica.setForeground(Color.RED);
-
             InativarNotaClinicaJPA inativacaoJPA = new InativarNotaClinicaJPA();
-
             inativacao = inativacaoJPA.buscarInativacaoPorNotaClinica(evolucao.getId());
-
-            System.out.println("ID da nota exibida no card: " + evolucao.getId());
-            System.out.println("Inativação encontrada: " + inativacao);
-
-            // Recupera a justificativa da inativação
-            System.out.println("================================");
-            System.out.println("ID da nota no card: " + evolucao.getId());
-            System.out.println("================================");
-
-            if (inativacao != null) {
-
-                // Justificativa à esquerda
-                JLabel lblJustificativaInativacao = new JLabel(
-                        "<html><b>Motivo da inativação:</b> "
-                        + inativacao.getMotivoInativarNota()
-                        + "</html>"
-                );
-
-                lblJustificativaInativacao.setFont(
-                        new Font("Arial", Font.PLAIN, 11)
-                );
-
-                // Data e horário à direita
-                JLabel lblDataHorarioInativacao = new JLabel(
-                        "<html><div style='text-align:right;'>"
-                        + "<b>Inativada em:</b> "
-                        + inativacao.getDataInativarNota().format(
-                                java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")
-                        )
-                        + " "
-                        + inativacao.getHorario().format(
-                                java.time.format.DateTimeFormatter.ofPattern("HH:mm")
-                        )
-                        + "</div></html>"
-                );
-
-                lblDataHorarioInativacao.setFont(
-                        new Font("Arial", Font.PLAIN, 11)
-                );
-
-                // Adiciona cada informação em seu lado
-                painelJustificativa.add(
-                        lblJustificativaInativacao,
-                        BorderLayout.CENTER
-                );
-
-                painelJustificativa.add(
-                        lblDataHorarioInativacao,
-                        BorderLayout.EAST
-                );
-
-                // Texto em vermelho, como no histórico atual
-                lblJustificativaInativacao.setForeground(Color.RED);
-                lblDataHorarioInativacao.setForeground(Color.GRAY);
-
-            } else {
-                System.out.println("Inativação não encontrada.");
-            }
         }
 
-        //2026-10-30 Juliano:Definindo as configurações de exibição do card da nota retificada
+        RetificarNotaClinica retificacao = null;
         if (notaRetificada) {
-
-            java.util.Map<java.awt.font.TextAttribute, Object> atributos
-                    = new java.util.HashMap<>();
-
-            atributos.put(
-                    java.awt.font.TextAttribute.STRIKETHROUGH,
-                    java.awt.font.TextAttribute.STRIKETHROUGH_ON
-            );
-
-            // Destaca o status RETIFICADA
-            lblStatusNotaClinica.setForeground(Color.ORANGE);
-
             RetificarNotaClinicaJPA retificacaoJPA = new RetificarNotaClinicaJPA();
-
-            RetificarNotaClinica retificacao
-                    = retificacaoJPA.buscarRetificacaoPorNotaOriginal(evolucao.getId());
-
-            if (retificacao != null) {
-
-                // Motivo da retificação
-                JLabel lblMotivoRetificacao = new JLabel(
-                        "<html><b>Motivo da retificação:</b> "
-                        + retificacao.getMotivoRetificacao()
-                        + "</html>"
-                );
-
-                lblMotivoRetificacao.setFont(
-                        new Font("Arial", Font.PLAIN, 11)
-                );
-
-                // Data, horário e ID da nova nota
-                JLabel lblDadosRetificacao = new JLabel(
-                        "<html><div style='text-align:right;'>"
-                        + "<b>Retificada em:</b> "
-                        + retificacao.getDataRetificacao().format(
-                                java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")
-                        )
-                        + " "
-                        + retificacao.getHorarioRetificacao().format(
-                                java.time.format.DateTimeFormatter.ofPattern("HH:mm")
-                        )
-                        + "<br><b>Nova nota gerada com o ID:</b> "
-                        + retificacao.getNotaRetificadora().getId()
-                        + "</div></html>"
-                );
-
-                lblDadosRetificacao.setFont(
-                        new Font("Arial", Font.PLAIN, 11)
-                );
-
-                painelJustificativaRetificacao.add(
-                        lblMotivoRetificacao,
-                        BorderLayout.CENTER
-                );
-
-                painelJustificativaRetificacao.add(
-                        lblDadosRetificacao,
-                        BorderLayout.EAST
-                );
-
-                lblMotivoRetificacao.setForeground(new Color(180, 100, 0));
-                lblDadosRetificacao.setForeground(Color.GRAY);
-            }
+            retificacao = retificacaoJPA.buscarRetificacaoPorNotaOriginal(evolucao.getId());
         }
 
         //2026-10-27 Juliano: Pegando a nota especifica que será inativa e passando o objeto da mesma para poder se comunicar com a tela de justificativa da inativação
@@ -919,33 +823,19 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
             System.out.println("Nota clinica desabilitada com sucesso!! ");
         });
 
-        // Painel inferior com os botões
-        card.add(painelCabecalho, BorderLayout.NORTH);
-
-        JPanel painelConteudo = new JPanel();
-        painelConteudo.setLayout(
-                new BoxLayout(painelConteudo, BoxLayout.Y_AXIS)
+        return FichaProntuarioDesignUtil.montarCardNotaClinica(
+                evolucao,
+                scrListaEvolucoes,
+                notaInativa,
+                notaRetificada,
+                inativacao,
+                retificacao,
+                audioEvolucao != null,
+                btnReproduzirAudio,
+                btnVisualizar,
+                btnRetificar,
+                btnInativar
         );
-        painelConteudo.setOpaque(false);
-
-        painelConteudo.add(txtEvolucao);
-
-        // Painel para exibir a justificativa e os dados da inativação
-        if (notaInativa && inativacao != null) {
-            painelConteudo.add(painelJustificativa);
-        }
-        // Painel para exibir a justificativa e os dados da retificação
-        if (notaRetificada) {
-            painelConteudo.add(painelJustificativaRetificacao);
-        }
-
-        card.add(painelConteudo, BorderLayout.CENTER);
-        card.add(painelBotoes, BorderLayout.SOUTH);
-
-        // Adiciona o card ao histórico, mesmo quando a nota estiver inativa
-        painelContainer.add(card);
-
-        return painelContainer;
     }
 
     private void Limpar() {
@@ -979,6 +869,7 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
     }
 
 
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBuscarNotaClinica;
     private javax.swing.JButton btnGravarAudioEvolucaoClinicaPaciente;
@@ -986,6 +877,14 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
     private javax.swing.JButton btnLimparPesquisa;
     private javax.swing.JButton btnSalvarEvolucao;
     private javax.swing.JComboBox<TipoNotaClinica> cmbListarNotaClinica;
+    private com.mycompany.sistemaintegramind.View.Componentes.Container containerBarraPesquisa;
+    private com.mycompany.sistemaintegramind.View.Componentes.Container containerDataAgendamento;
+    private com.mycompany.sistemaintegramind.View.Componentes.Container containerHistoricoNotas;
+    private com.mycompany.sistemaintegramind.View.Componentes.Container containerHorario;
+    private com.mycompany.sistemaintegramind.View.Componentes.Container containerNovaEvolucao;
+    private com.mycompany.sistemaintegramind.util.Utilitarios.CircularIconLabel iconeCalendarioData;
+    private com.mycompany.sistemaintegramind.util.Utilitarios.CircularIconLabel iconeHeaderHistorico;
+    private com.mycompany.sistemaintegramind.util.Utilitarios.CircularIconLabel iconeRelogioHorario;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -993,6 +892,7 @@ public class FichaProntuarioPacienteView extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JPanel pnlBotoesPesquisa;
     private javax.swing.JPanel pnlListaEvolucoes;
     private javax.swing.JScrollPane scrListaEvolucoes;
     private javax.swing.JTextField txtDataAgendamento;
