@@ -4,6 +4,11 @@
  */
 package com.mycompany.sistemaintegramind.View.ModalValidarToken;
 
+import com.mycompany.sistemaintegramind.SegurancaLicenca.LicencaService;
+import com.mycompany.sistemaintegramind.View.Login.LoginView;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Micro
@@ -47,6 +52,11 @@ public class ValidarTokenView extends javax.swing.JFrame {
         jLabel4.setText("Token de Licença");
 
         btnAtivarLicenca.setText("ATIVAR LICENÇA");
+        btnAtivarLicenca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAtivarLicencaActionPerformed(evt);
+            }
+        });
 
         txtAreaToken.setColumns(20);
         txtAreaToken.setRows(5);
@@ -98,6 +108,78 @@ public class ValidarTokenView extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnAtivarLicencaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtivarLicencaActionPerformed
+       
+
+
+    String token = txtAreaToken.getText().trim();
+
+    //2026-11-25 Juliano: Verifica se o campo está vazio
+    if (token.isEmpty()) {
+        JOptionPane.showMessageDialog(
+                this,
+                "Informe o token da licença.",
+                "Atenção",
+                JOptionPane.WARNING_MESSAGE
+        );
+        return;
+    }
+
+    try {
+
+        //2026-11-25 Juliano: Chama o serviço de ativação
+        LicencaService licencaService = new LicencaService();
+
+        boolean ativada = licencaService.ativarLicenca(token);
+
+        // 2026-11-25 Juliano: Se não ativar, permanece na tela
+        if (!ativada) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Token inválido ou licença não autorizada.",
+                    "Falha na ativação",
+                    JOptionPane.ERROR_MESSAGE
+            );
+
+            return;
+        }
+
+        //2026-11-25 Juliano: Licença ativada com sucesso
+        JOptionPane.showMessageDialog(
+                this,
+                "Licença ativada com sucesso!\nBem-vindo ao IntegraMIND.",
+                "Ativação concluída",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+
+        
+        this.dispose();
+
+        //2026-11-25 Juliano: Abre a tela de login
+        JFrame frameLogin = new JFrame("IntegraMIND - Login");
+
+        frameLogin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frameLogin.setContentPane(new LoginView());
+        frameLogin.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frameLogin.setLocationRelativeTo(null);
+        frameLogin.setVisible(true);
+
+    } catch (Exception e) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Erro ao ativar a licença:\n" + e.getMessage(),
+                "Erro",
+                JOptionPane.ERROR_MESSAGE
+        );
+
+        e.printStackTrace();
+    }
+
+
+    }//GEN-LAST:event_btnAtivarLicencaActionPerformed
 
     /**
      * @param args the command line arguments

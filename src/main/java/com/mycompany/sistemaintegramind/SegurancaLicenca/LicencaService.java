@@ -1,4 +1,3 @@
-
 package com.mycompany.sistemaintegramind.SegurancaLicenca;
 
 import java.time.LocalDate;
@@ -19,16 +18,16 @@ public class LicencaService {
 
         try {
 
-            // 1. Verifica a assinatura RSA
+            //2026-11-25 Juliano: Verifica a assinatura RSA
             if (!validadorTokenRSA.validarToken(licenca.getToken())) {
                 return false;
             }
 
-            // 2. Extrai os dados assinados
-            ValidadorTokenRSA.DadosLicenca dados =
-                    validadorTokenRSA.extrairDadosToken(licenca.getToken());
+            //2026-11-25 Juliano: Extrai os dados assinados
+            ValidadorTokenRSA.DadosLicenca dados
+                    = validadorTokenRSA.extrairDadosToken(licenca.getToken());
 
-            // 3. Compara os identificadores
+            //2026-11-25 Juliano: Compara os identificadores
             if (!dados.clinicaId().equals(licenca.getClinicaId())) {
                 return false;
             }
@@ -37,7 +36,7 @@ public class LicencaService {
                 return false;
             }
 
-            // 4. Compara as datas armazenadas no banco
+            //2026-11-25 Juliano: Compara as datas armazenadas no banco
             if (!dados.dataInicio().equals(licenca.getDataInicio())) {
                 return false;
             }
@@ -46,7 +45,7 @@ public class LicencaService {
                 return false;
             }
 
-            // 5. Verifica o período de validade
+            //2026-11-25 Juliano: Verifica o período de validade
             LocalDate hoje = LocalDate.now();
 
             if (hoje.isBefore(dados.dataInicio())) {
@@ -57,11 +56,52 @@ public class LicencaService {
                 return false;
             }
 
-            // 6. Verifica o status
+            //2026-11-25 Juliano: Verifica o status
             return "ATIVA".equals(licenca.getStatus());
 
         } catch (Exception e) {
             return false;
         }
     }
+
+    public boolean ativarLicenca(String token) {
+
+        try {
+
+            //2026-11-25 Juliano: Validar assinatura e extrair os dados do token
+            ValidadorTokenRSA.DadosLicenca dados = validadorTokenRSA.extrairDadosToken(token);
+
+            //2026-11-25 Juliano: Conferir as datas
+            LocalDate hoje = LocalDate.now();
+
+            if (hoje.isBefore(dados.dataInicio())
+                    || hoje.isAfter(dados.dataVencimento())) {
+                return false;
+            }
+
+            //2026-11-25 Juliano: Montar a licença
+            Licenca licenca = new Licenca();
+
+            licenca.setToken(token);
+            licenca.setClinicaId(dados.clinicaId());
+            licenca.setPagamentoId(dados.pagamentoId());
+            licenca.setDataInicio(dados.dataInicio());
+            licenca.setDataVencimento(dados.dataVencimento());
+            licenca.setDataAtivacao(hoje);
+            licenca.setStatus("ATIVA");
+
+            
+            LicencaRepository repository = new LicencaRepository();
+
+            repository.salvarOuAtualizar(licenca);
+
+            return true;
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }

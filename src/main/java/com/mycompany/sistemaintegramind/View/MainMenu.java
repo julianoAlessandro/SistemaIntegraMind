@@ -10,7 +10,11 @@ import com.mycompany.sistemaintegramind.View.Financeiro.FinanceiroView;
 import com.mycompany.sistemaintegramind.View.Login.LoginView;
 import com.mycompany.sistemaintegramind.View.Pacientes.PacienteView;
 import com.mycompany.sistemaintegramind.Model.entidades.Usuarios;
+import com.mycompany.sistemaintegramind.SegurancaLicenca.Licenca;
+import com.mycompany.sistemaintegramind.SegurancaLicenca.LicencaRepository;
+import com.mycompany.sistemaintegramind.SegurancaLicenca.LicencaService;
 import com.mycompany.sistemaintegramind.View.Agenda.AgendaView;
+import com.mycompany.sistemaintegramind.View.ModalValidarToken.ValidarTokenView;
 import com.mycompany.sistemaintegramind.View.Painel.PainelView;
 import com.mycompany.sistemaintegramind.View.Recursos.RecursoView;
 import com.mycompany.sistemaintegramind.util.Utilitarios.AlternarEntreJanelasMenu;
@@ -38,97 +42,95 @@ import javax.swing.SwingWorker;
  *
  * @author Juliano
  */
-  
+public class MainMenu extends javax.swing.JFrame {
 
-    public class MainMenu extends javax.swing.JFrame {
+    private JButton botaoSelecionado;
+    private FinanceiroView financeiro;
+    private CardLayout cardlayout; //2025-11-08 Juliano: Criação do atributo global da classe para poder ser chamado nos métodos de eventos do java
+    private AgendaView agenda;
+    Usuarios usuarioLogado;
 
-        private JButton botaoSelecionado;
-        private FinanceiroView financeiro;
-        private CardLayout cardlayout; //2025-11-08 Juliano: Criação do atributo global da classe para poder ser chamado nos métodos de eventos do java
-        private AgendaView agenda;
-        Usuarios usuarioLogado;
+    public MainMenu() {
+        this(null);
+    }
 
-        public MainMenu() {
-            this(null);
-        }
+    public MainMenu(Usuarios usuarioLogado) {
+        initComponents();
+        //2026-01-13 Guilherme: Define o padrão brasileiro para toda a aplicação
+        Locale.setDefault(new Locale("pt", "BR"));
 
-        public MainMenu(Usuarios usuarioLogado) {
-            initComponents();
-            //2026-01-13 Guilherme: Define o padrão brasileiro para toda a aplicação
-            Locale.setDefault(new Locale("pt", "BR"));
+        // Carrega a imagem do seu diretório ou resource
+        ImageIcon icone = new ImageIcon(getClass().getResource("/imagens/folhas.png"));
 
-            // Carrega a imagem do seu diretório ou resource
-            ImageIcon icone = new ImageIcon(getClass().getResource("/imagens/folhas.png"));
+        // Define a imagem no seu painel customizado (substitua pelo nome da variável gerada pelo NetBeans)
+        painelImagemGradiente1.setImagem((ImageIcon) ImagemUtil.recolorir(icone, new Color(5, 150, 69)));
+        //2025-12-22 Guilherme: Define o tamanho padrão da janela principal do sistema
+        this.setSize(1280, 720);
 
-            // Define a imagem no seu painel customizado (substitua pelo nome da variável gerada pelo NetBeans)
-            painelImagemGradiente1.setImagem((ImageIcon) ImagemUtil.recolorir(icone, new Color(5, 150, 69)));
-            //2025-12-22 Guilherme: Define o tamanho padrão da janela principal do sistema
-            this.setSize(1280, 720);
+        //2025-12-22 Guilherme: Centraliza a janela principal na tela
+        this.setLocationRelativeTo(null);
 
-            //2025-12-22 Guilherme: Centraliza a janela principal na tela
-            this.setLocationRelativeTo(null);
+        //2025-12-29 Guilherme: Abre a tela cheia na inicialização do sistema
+        this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
 
-            //2025-12-29 Guilherme: Abre a tela cheia na inicialização do sistema
-            this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
+        //2025-12-22 Guilherme: Define o título exibido na barra superior da aplicação
+        this.setTitle("IntegraMind");
 
-            //2025-12-22 Guilherme: Define o título exibido na barra superior da aplicação
+        //2025-11-08 Juliano: Define um tamahho fixo para o Menu, para o mesmo não quebrar os botões das páginas
+        menu1.setMaximumSize(new Dimension(225, Integer.MAX_VALUE));
+        menu1.setMinimumSize(new Dimension(225, 0));
+        menu1.setPreferredSize(new Dimension(225, getHeight()));
+
+        //2025-11-08 Juliano: Cria um layout para poder adicionar várias paginas juntas como se fosse um baralho
+        cardlayout = new CardLayout();
+        MenuPrincipal.setLayout(cardlayout);
+        MenuPrincipal.add(new PainelView(usuarioLogado), "Painel");
+        MenuPrincipal.add(new PacienteView(), "Pacientes");
+        MenuPrincipal.add(new DashboardView(), "Dashboard");
+        MenuPrincipal.add(new AgendaView(), "Agenda");
+        financeiro = new FinanceiroView();
+        MenuPrincipal.add(new FinanceiroView(), "Financeiro");
+        MenuPrincipal.add(new RecursoView(), "Recursos");
+
+        //2025-11-08 Juliano: Mostra a tela inicial de vendas antes de Clicar
+        cardlayout.show(MenuPrincipal, "Painel");
+
+        //2025-12-22 Guilherme: Faz os botões do menu lateral ficarem transparentes
+        configurarHover(tblPainel);
+        configurarHover(tblPacientes);
+        // configurarHover(tblDashboard);
+        configurarHover(tblFinanceiro);
+        configurarHover(tblAgenda);
+        configurarHover(tblRecursos);
+        btnBackup.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        //2025-12-22 Guilherme: Define o botão de vendas como selecionado inicialmente
+        AlternarEntreJanelasMenu.selecionarBotao(tblPainel, botaoSelecionado);
+        if (usuarioLogado != null) {
+            setUsuarioLogado(usuarioLogado);
+        } else {
             this.setTitle("IntegraMind");
-
-            //2025-11-08 Juliano: Define um tamahho fixo para o Menu, para o mesmo não quebrar os botões das páginas
-            menu1.setMaximumSize(new Dimension(225, Integer.MAX_VALUE));
-            menu1.setMinimumSize(new Dimension(225, 0));
-            menu1.setPreferredSize(new Dimension(225, getHeight()));
-
-            //2025-11-08 Juliano: Cria um layout para poder adicionar várias paginas juntas como se fosse um baralho
-            cardlayout = new CardLayout();
-            MenuPrincipal.setLayout(cardlayout);
-            MenuPrincipal.add(new PainelView(usuarioLogado), "Painel");
-            MenuPrincipal.add(new PacienteView(), "Pacientes");
-            MenuPrincipal.add(new DashboardView(), "Dashboard");
-            MenuPrincipal.add(new AgendaView(), "Agenda");
-            financeiro = new FinanceiroView();
-            MenuPrincipal.add(new FinanceiroView(), "Financeiro");
-            MenuPrincipal.add(new RecursoView(), "Recursos");
-
-            //2025-11-08 Juliano: Mostra a tela inicial de vendas antes de Clicar
-            cardlayout.show(MenuPrincipal, "Painel");
-
-            //2025-12-22 Guilherme: Faz os botões do menu lateral ficarem transparentes
-            configurarHover(tblPainel);
-            configurarHover(tblPacientes);
-            // configurarHover(tblDashboard);
-            configurarHover(tblFinanceiro);
-            configurarHover(tblAgenda);
-            configurarHover(tblRecursos);
-            btnBackup.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-
-            //2025-12-22 Guilherme: Define o botão de vendas como selecionado inicialmente
-            AlternarEntreJanelasMenu.selecionarBotao(tblPainel, botaoSelecionado);
-            if (usuarioLogado != null) {
-                setUsuarioLogado(usuarioLogado);
-            } else {
-                this.setTitle("IntegraMind");
-            }
-            //
         }
+        //
+    }
 
-        public void setUsuarioLogado(Usuarios usuarioLogado) {
-            if (usuarioLogado != null) {
-                this.setTitle("IntegraMind - Usuário: " + usuarioLogado.getUsuario());
-            }
+    public void setUsuarioLogado(Usuarios usuarioLogado) {
+        if (usuarioLogado != null) {
+            this.setTitle("IntegraMind - Usuário: " + usuarioLogado.getUsuario());
         }
+    }
 
-        public void AtualizarMovimentacaoFinanceira() {
-            System.out.println("ENTROU NO ATUALIZAR FINANCEIRO");
+    public void AtualizarMovimentacaoFinanceira() {
+        System.out.println("ENTROU NO ATUALIZAR FINANCEIRO");
 
-            if (financeiro != null) {
-                System.out.println("Atualizar Movimentação!!! ");
-            } else {
-                System.out.println("FINANCEIRO ESTÁ NULL");
-            }
+        if (financeiro != null) {
+            System.out.println("Atualizar Movimentação!!! ");
+        } else {
+            System.out.println("FINANCEIRO ESTÁ NULL");
         }
+    }
 
-        @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
@@ -458,7 +460,7 @@ import javax.swing.SwingWorker;
     }//GEN-LAST:event_txtNomeProdutoActionPerformed
 
     private void tblRecursosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tblRecursosActionPerformed
-       /*
+        /*
         cardlayout.show(MenuPrincipal, "Recursos");
         AlternarEntreJanelasMenu.selecionarBotao(tblRecursos, botaoSelecionado);
          */
@@ -488,8 +490,8 @@ import javax.swing.SwingWorker;
 
             e.printStackTrace();
         }
-   
-    
+
+
     }//GEN-LAST:event_tblRecursosActionPerformed
 
     private void tblAgendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tblAgendaActionPerformed
@@ -697,19 +699,39 @@ import javax.swing.SwingWorker;
             }
         });
 
+        //2026-11-25 Juliano: Iniciando primeiro a tela de validação do token antes de ir para a tela de login
         javax.swing.SwingUtilities.invokeLater(() -> {
 
-            JFrame frame = new JFrame("IntegraERP");
+            LicencaRepository repository = new LicencaRepository();
+            LicencaService service = new LicencaService();
 
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setContentPane(new LoginView());
+            // Busca a licença no MariaDB
+            Licenca licenca = repository.buscarLicenca();
 
-            frame.setSize(850, 600);
-            frame.setLocationRelativeTo(null);
-            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-            frame.setVisible(true);
+            if (service.verificarLicenca(licenca)) {
+
+                // LICENÇA VÁLIDA: abre o sistema
+                JFrame frame = new JFrame("IntegraMIND");
+
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setContentPane(new LoginView());
+                frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
+
+            } else {
+
+                // SEM LICENÇA OU LICENÇA INVÁLIDA:
+                // Abre a tela de ativação como uma janela independente.
+                ValidarTokenView telaAtivacao = new ValidarTokenView();
+
+                telaAtivacao.setLocationRelativeTo(null);
+                telaAtivacao.setVisible(true);
+
+            }
 
         });
+
     }
 
 
