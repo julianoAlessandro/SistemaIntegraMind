@@ -5,6 +5,7 @@
         <class>com.mycompany.sistemaintegramind.Model.entidades.FormularioAnamnese</class>
         <class>com.mycompany.sistemaintegramind.Model.entidades.PerguntaAnamnese</class>
         <class>com.mycompany.sistemaintegramind.Model.entidades.RespostaAnamnese</class>
+        <class>com.mycompany.sistemaintegramind.SegurancaLicenca.Licenca</class>
         <properties>
             <!-- URL JDBC PARA SEU MARIADB -->
       
